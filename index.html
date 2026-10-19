@@ -4046,7 +4046,8 @@ function setGradeFilter(grade) {
         shieldActive: false,
         answeredCurrent: false,
         correctCount: 0,
-        disabledOptions: []
+        disabledOptions: [],
+        userAnswers: []
       };
 
       document.getElementById('battleStatusPill').classList.remove('hidden');
@@ -4184,6 +4185,8 @@ function setGradeFilter(grade) {
       if (!q) return;
 
       b.answeredCurrent = true;
+      if (!b.userAnswers) b.userAnswers = [];
+      b.userAnswers[b.currentIndex] = selectedIdx;
       const isCorrect = selectedIdx === q.answer;
 
       q.options.forEach((_, idx) => {
@@ -4331,15 +4334,19 @@ function setGradeFilter(grade) {
 
       // 自動同步雲端學習評量紀錄
       if (window.FirebaseService) {
-        const battleDetails = b.questions.map((q, idx) => ({
-          concept: q.concept,
-          stem: q.stem,
-          options: q.options,
-          correctAnswer: q.answer,
-          selectedAnswer: b.userAnswers ? b.userAnswers[idx] : null,
-          isCorrect: b.userAnswers ? (b.userAnswers[idx] === q.answer) : false,
-          explanation: q.explanation
-        }));
+        const battleDetails = b.questions.map((q, idx) => {
+          const userAns = (b.userAnswers && b.userAnswers[idx] !== undefined) ? b.userAnswers[idx] : null;
+          const isCorr = (userAns !== null && userAns === q.answer);
+          return {
+            concept: q.concept,
+            stem: q.stem,
+            options: q.options,
+            correctAnswer: q.answer,
+            selectedAnswer: userAns,
+            isCorrect: isCorr,
+            explanation: q.explanation
+          };
+        });
 
         window.FirebaseService.saveAssessmentRecord(appState.currentUser, {
           title: b.title,
@@ -5110,26 +5117,40 @@ function setGradeFilter(grade) {
       if (!record.details || record.details.length === 0) {
         list.innerHTML = '<p class="text-sm text-slate-400 py-4 text-center">本筆紀錄未包含個別題目明細。</p>';
       } else {
-        list.innerHTML = record.details.map((q, qIdx) => `
-          <div class="p-3.5 rounded-2xl bg-slate-900 border ${q.isCorrect ? 'border-emerald-500/30' : 'border-rose-500/30'} space-y-2">
+        list.innerHTML = record.details.map((q, qIdx) => {
+          const hasUserAns = (q.selectedAnswer !== null && q.selectedAnswer !== undefined);
+          const isCorr = hasUserAns ? (q.selectedAnswer === q.correctAnswer) : (q.isCorrect || false);
+          let statusText = isCorr ? '✅ 答對' : '❌ 答錯';
+          let statusColor = isCorr ? 'text-emerald-400' : 'text-rose-400';
+          let borderColor = isCorr ? 'border-emerald-500/30' : 'border-rose-500/30';
+          
+          if (!hasUserAns && !q.isCorrect && (record.score > 0)) {
+            statusText = '⚠️ 早期紀錄未保存選項';
+            statusColor = 'text-amber-400';
+            borderColor = 'border-amber-500/30';
+          }
+          
+          return `
+          <div class="p-3.5 rounded-2xl bg-slate-900 border ${borderColor} space-y-2">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold ${q.isCorrect ? 'text-emerald-400' : 'text-rose-400'}">
-                第 ${qIdx + 1} 題：${q.isCorrect ? '✅ 答對' : '❌ 答錯'} (${q.concept || '核心觀念'})
+              <span class="text-xs font-bold ${statusColor}">
+                第 ${qIdx + 1} 題：${statusText} (${q.concept || '核心觀念'})
               </span>
             </div>
             <p class="text-xs sm:text-sm font-bold text-white">${q.stem || ''}</p>
             <div class="text-xs text-slate-300 space-y-1">
               ${q.options ? q.options.map((opt, oIdx) => {
                 let badge = '';
-                if (oIdx === q.selectedAnswer && oIdx === q.correctAnswer) badge = '<span class="text-emerald-400 font-bold ml-1">(您的選擇・正確)</span>';
-                else if (oIdx === q.selectedAnswer) badge = '<span class="text-rose-400 font-bold ml-1">(您的選擇・錯誤)</span>';
+                if (hasUserAns && oIdx === q.selectedAnswer && oIdx === q.correctAnswer) badge = '<span class="text-emerald-400 font-bold ml-1">(您的選擇・正確)</span>';
+                else if (hasUserAns && oIdx === q.selectedAnswer) badge = '<span class="text-rose-400 font-bold ml-1">(您的選擇・錯誤)</span>';
                 else if (oIdx === q.correctAnswer) badge = '<span class="text-emerald-400 font-bold ml-1">(正確解答)</span>';
                 return `<div class="p-1 rounded ${oIdx === q.correctAnswer ? 'bg-emerald-950/40 text-emerald-200' : ''}">${opt} ${badge}</div>`;
               }).join('') : ''}
             </div>
             ${q.explanation ? `<div class="text-[11px] text-slate-400 bg-slate-950 p-2 rounded-xl border border-slate-800">💡 詳解：${q.explanation}</div>` : ''}
           </div>
-        `).join('');
+        `;
+        }).join('');
       }
       modal.classList.remove('hidden');
     }
