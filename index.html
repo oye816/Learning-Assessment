@@ -71,6 +71,69 @@
   <!-- Gemini AI & Firebase Open Source Modules -->
   <script type="module" src="js/gemini.js"></script>
   <script type="module" src="js/firebase.js"></script>
+  <!-- 全域彈窗控制函式（置於 head 保證按鈕渲染與點擊前已就緒） -->
+  <script>
+    window.openGeminiKeyModal = function() {
+      const modal = document.getElementById("geminiKeyModal");
+      if (!modal) return;
+      const input = document.getElementById("inputGeminiApiKey");
+      const statusEl = document.getElementById("geminiKeyModalStatus");
+      const modelSel = document.getElementById("selectGeminiModel");
+      
+      if (input) {
+        input.value = (window.GeminiService && window.GeminiService.getApiKey) 
+          ? window.GeminiService.getApiKey() 
+          : (localStorage.getItem("jh_quest_gemini_api_key") || "");
+      }
+      if (modelSel) {
+        modelSel.value = (window.GeminiService && window.GeminiService.getModel) 
+          ? window.GeminiService.getModel() 
+          : (localStorage.getItem("jh_quest_gemini_model") || "gemini-3.5-flash-lite");
+      }
+      if (statusEl) statusEl.textContent = "";
+
+      const curEmailEl = document.getElementById("settingsCurrentEmailText");
+      const adminStatEl = document.getElementById("settingsAdminStatusText");
+      const user = (window.appState && window.appState.currentUser) || null;
+      if (curEmailEl) curEmailEl.textContent = user ? user.email : "尚未登入 (請先點選右上角 Google 登入)";
+      if (adminStatEl) {
+        const isAdmin = window.appState ? window.appState.isAdmin : false;
+        adminStatEl.textContent = isAdmin ? "👑 管理員 (已獲授權)" : "一般學員 (可點下方按鈕授權)";
+        adminStatEl.className = isAdmin ? "text-xs font-bold text-amber-300" : "text-xs font-bold text-slate-400";
+      }
+      modal.classList.remove("hidden");
+    };
+
+    window.closeGeminiKeyModal = function() {
+      const modal = document.getElementById("geminiKeyModal");
+      if (modal) modal.classList.add("hidden");
+    };
+
+    window.toggleApiKeyVisibility = function() {
+      const input = document.getElementById("inputGeminiApiKey");
+      if (input) input.type = input.type === "password" ? "text" : "password";
+    };
+
+    window.switchSettingModalTab = function(tabKey) {
+      ["ai", "firebase", "deploy"].forEach(k => {
+        const btn = document.getElementById("settingTabBtn-" + k);
+        const panel = document.getElementById("settingPanel-" + k);
+        if (btn) {
+          btn.className = (k === tabKey) 
+            ? "px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-violet-600 text-white" 
+            : "px-3 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white";
+        }
+        if (panel) panel.classList.toggle("hidden", k !== tabKey);
+      });
+      if (tabKey === "deploy") {
+        const host = window.location.hostname || "localhost";
+        const ch = document.getElementById("currentHostDisplay");
+        const cs = document.getElementById("copyHostSnippet");
+        if (ch) ch.textContent = host;
+        if (cs) cs.textContent = host;
+      }
+    };
+  </script>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-violet-500 selection:text-white">
 
@@ -369,7 +432,7 @@
                 <span id="alchemyAiKeyBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 cursor-pointer" onclick="openGeminiKeyModal()">檢查中...</span>
               </div>
               <p class="text-[10px] text-slate-300 leading-tight">
-                運用 Google Gemini 3.8 Flash 深度推理出題，自動解析卡關核心並生成 4 道素養單選題！
+                運用 Google Gemini 3.5 Flash Lite 深度推理出題，自動解析卡關核心並生成 4 道素養單選題！
               </p>
               <button type="button" onclick="runGeminiAiAlchemy()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-violet-600 via-fuchsia-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-md shadow-violet-600/30 flex items-center justify-center gap-1.5 transition-all active:scale-95">
                 <span id="aiSpinIcon" class="hidden animate-spin">🌀</span>
@@ -905,16 +968,15 @@
         <!-- Panel 1: Gemini AI BYOK -->
         <div id="settingPanel-ai" class="space-y-3">
           <p class="text-xs text-slate-300 leading-relaxed">
-            設定您的 Google AI Studio API Key，出題由瀏覽器前端直接請求 Gemini 3.8 Flash，開源維護者與使用者互不干擾額度。
+            設定您的 Google AI Studio API Key，出題由瀏覽器前端直接請求 Gemini 3.5 Flash Lite，開源維護者與使用者互不干擾額度。
           </p>
           <div class="space-y-3">
             <div>
-              <label class="block text-xs font-bold text-slate-300 mb-1">Gemini AI 出題模型 (預設 Gemini 3.8 Flash)：</label>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Gemini AI 出題模型 (預設 Gemini 3.5 Flash Lite)：</label>
               <select id="selectGeminiModel" onchange="handleModelChange()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-violet-400 font-mono">
-                <option value="gemini-3.8-flash" selected>gemini-3.8-flash (最新推薦・超高敏捷思考)</option>
-                <option value="gemini-2.5-flash">gemini-2.5-flash</option>
-                <option value="gemini-2.0-flash">gemini-2.0-flash</option>
-                <option value="gemini-1.5-flash">gemini-1.5-flash</option>
+                <option value="gemini-3.5-flash-lite" selected>Gemini 3.5 Flash Lite (預設推薦・極速省流思考)</option>
+                <option value="gemini-3.1-flash-lite">Gemini 3.1 Flash Lite (輕量穩定・高性價比)</option>
+                <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite (經典輕量級模型)</option>
               </select>
             </div>
             <div>
@@ -3185,7 +3247,7 @@ function setGradeFilter(grade) {
       statusEl.className = 'font-bold text-amber-300';
       try {
         await window.GeminiService.testConnection(key);
-        statusEl.textContent = '✅ 連線成功！(Gemini 3.8 Flash)';
+        statusEl.textContent = '✅ 連線成功！(Gemini 3.5 Flash Lite)';
         statusEl.className = 'font-bold text-emerald-400';
       } catch (e) {
         statusEl.textContent = '❌ 連線失敗: ' + (e.message || '無效金鑰');
@@ -3247,7 +3309,7 @@ function setGradeFilter(grade) {
       }
 
       if (spinIcon) spinIcon.classList.remove('hidden');
-      showToast('🤖 正在召喚 Gemini 3.8 魔法解析題意與出題中...', 'info');
+      showToast('🤖 正在召喚 Gemini 3.5 Flash Lite 魔法解析題意與出題中...', 'info');
 
       try {
         const pack = await window.GeminiService.generateQuizPack({

@@ -1,11 +1,21 @@
 # 📚 星耀國中冒險學院｜遊戲化複習評量 ＆ 錯題煉金工坊
-> **Learning-Assessment**：結合 Google Gemini 3.8 Flash 智慧出題、Google 帳號認證與全員學習進度監控的開源純前端評量系統。
+> **Learning-Assessment**：結合 Google Gemini Flash Lite 智慧出題、Google 帳號認證與全員學習進度監控的開源純前端評量系統。
 
 [![Deploy to GitHub Pages](https://github.com/oye816/Learning-Assessment/actions/workflows/deploy.yml/badge.svg)](https://github.com/oye816/Learning-Assessment/actions/workflows/deploy.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Gemini AI](https://img.shields.io/badge/AI-Gemini%201.5%20Flash-blue)](https://aistudio.google.com/)
+[![Gemini AI](https://img.shields.io/badge/AI-Gemini%203.5%20Flash%20Lite-blue)](https://aistudio.google.com/)
 [![Firebase](https://img.shields.io/badge/Backend-Serverless%20Firebase-orange)](https://firebase.google.com/)
 [![Tailwind CSS](https://img.shields.io/badge/UI-Tailwind%20CSS-38bdf8)](https://tailwindcss.com/)
+
+---
+
+## 🤖 支援的 Gemini AI Flash Lite 系列模型
+
+本專案支援 Google 最新世代的高敏捷、省流出題模型，使用者可自備 API Key（BYOK 模式）並於設定中自由切換：
+
+1. **Gemini 3.5 Flash Lite (`gemini-3.5-flash-lite`)**：預設推薦首選，具備超高反應速度與精準的會考素養題型推理能力。
+2. **Gemini 3.1 Flash Lite (`gemini-3.1-flash-lite`)**：輕量穩定版本，適合各類標準單選題與公式變體生成。
+3. **Gemini 2.5 Flash Lite (`gemini-2.5-flash-lite`)**：經典輕量級架構模型，高相容度與高性價比。
 
 ---
 
@@ -17,9 +27,8 @@
 1. 進入您的 GitHub 倉庫：`https://github.com/oye816/Learning-Assessment`。
 2. 點選上方頁籤 **Settings**（設定）> 左側選單 **Pages**。
 3. 在 **Build and deployment** 區塊：
-   - **Source** 選擇 **GitHub Actions**（推薦，系統會自動使用內建的自動發布流程）。
-   - *（或選擇 Deploy from a branch：Branch 選 `main`，資料夾選 `/ (root)` 後點選 Save）*。
-4. 稍等約 1 分鐘，GitHub 就會自動完成部屬，並在 Pages 頁面顯示您的專屬網站網址：  
+   - **Source** 選擇 **GitHub Actions**（系統會自動使用內建的自動發布流程）。
+4. 稍等約 1 分鐘，GitHub Actions 完成打包後，頁面頂端即會顯示您的專屬網站網址：  
    `https://<你的GitHub帳號>.github.io/Learning-Assessment/`
 
 ---
@@ -40,32 +49,13 @@
 
 ---
 
-### 步驟 3：在 GitHub Pages 上啟用 Firebase（兩種方式任選）
+### 步驟 3：在網頁上啟用設定
 
-#### 方式 A：免 commit 憑證，直接在網頁介面貼上（推薦）
-1. 打開您的 GitHub Pages 網址。
-2. 點擊右上角「**🤖 AI 金鑰**」打開設定視窗，切換至「**☁️ Firebase 與 Google 登入**」。
-3. 直接貼上 Firebase Config JSON，並填寫您的管理員 Google 信箱，點擊儲存即可！
-4. 設定會安全保存在該瀏覽器的 `localStorage` 中，適合任何人 Fork 後直接使用。
-
-#### 方式 B：將設定檔納入倉庫全域預設
-1. 將本專案根目錄的 `config.example.js` 複製一份並命名為 `config.js`。
-2. 填入您的 Firebase 設定與管理員信箱後，commit 推送至 GitHub `main` 分支。
-3. GitHub Actions 會自動重新打包發布，所有造訪者皆能共用該學校/班級的 Firebase 雲端資料庫！
-
----
-
-## ✨ 系統功能簡介
-
-1. **🤖 Gemini AI 智慧出題（BYOK 模式）**：
-   - 使用者在右上角輸入個人的 [Google AI Studio API Key](https://aistudio.google.com/)。
-   - 在「錯題煉金工坊」點擊「**🤖 啟動 Gemini AI 魔法生題**」，調用 Gemini 3.8 Flash 即時分析弱點並出題。
-2. **🔐 個人學習歷程**：
-   - 點擊「Google 登入」後，所有地下城評量與 Boss 戰績自動存入雲端 Firestore。
-   - 於「📜 我的學習歷程」分頁查閱歷史答題曲線、得分與等級。
-3. **👑 導師管理後台**：
-   - 指定的 Google 管理員帳號登入後自動解鎖「👑 導師管理後台」。
-   - 提供全校大數據分析、學員作答明細調閱、以及一鍵匯出 CSV 報表。
+1. 打開您的網站網址。
+2. 點擊右上角「**🤖 AI 金鑰**」打開設定視窗：
+   - **Gemini AI 出題**：貼上您的 [Google AI Studio API Key](https://aistudio.google.com/)，並可切換 Gemini 3.5 / 3.1 / 2.5 Flash Lite 模型。
+   - **Firebase 與 Google 登入**：直接貼上 Firebase Config JSON，並填寫您的管理員 Google 信箱，點擊儲存即可！
+   - 登入後可隨時點選姓名旁的 **`👑 設為管理員`** 一鍵解鎖「👑 導師管理後台」。
 
 ---
 

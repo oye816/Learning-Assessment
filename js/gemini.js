@@ -1,18 +1,28 @@
 // ==============================================================================
 // 星耀國中冒險學院｜Gemini AI 智慧生題服務 (js/gemini.js)
 // 
-// 支援 BYOK (Bring Your Own Key) 模式與多模型切換：
-// 預設採用最新「Gemini 3.8 Flash」高敏捷架構模型，使用者於網頁輸入個人的
-// Google AI Studio API Key，保存在瀏覽器端 localStorage，安全且開源零成本。
+// 支援 BYOK (Bring Your Own Key) 模式與 Flash Lite 多模型切換：
+// 支援模型包含：
+// 1. Gemini 3.5 Flash Lite (gemini-3.5-flash-lite) - 預設推薦
+// 2. Gemini 3.1 Flash Lite (gemini-3.1-flash-lite)
+// 3. Gemini 2.5 Flash Lite (gemini-2.5-flash-lite)
+// 使用者於網頁輸入個人的 Google AI Studio API Key，保存在瀏覽器端 localStorage，安全開源零成本。
 // ==============================================================================
 
 export class GeminiService {
   static STORAGE_KEY = 'jh_quest_gemini_api_key';
   static MODEL_STORAGE_KEY = 'jh_quest_gemini_model';
-  static DEFAULT_MODEL = 'gemini-3.8-flash';
+  static DEFAULT_MODEL = 'gemini-3.5-flash-lite';
+
+  // 支援的 Flash Lite 系列模型清單
+  static SUPPORTED_MODELS = [
+    { id: 'gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash Lite (預設推薦・極速省流思考)' },
+    { id: 'gemini-3.1-flash-lite', name: 'Gemini 3.1 Flash Lite (輕量穩定・高性價比)' },
+    { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash Lite (經典輕量級模型)' }
+  ];
 
   /**
-   * 取得當前使用的 Gemini 模型名稱 (預設: gemini-3.8-flash)
+   * 取得當前使用的 Gemini 模型名稱 (預設: gemini-3.5-flash-lite)
    */
   static getModel() {
     return localStorage.getItem(this.MODEL_STORAGE_KEY) || this.DEFAULT_MODEL;
