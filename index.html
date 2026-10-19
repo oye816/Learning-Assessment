@@ -79,6 +79,44 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #475569;
     }
+    /* 題目、選項與詳解字級自適應放大系統 */
+    :root {
+      --q-font-scale: 1.15;
+    }
+    .q-stem-scalable {
+      font-size: calc(1.35rem * var(--q-font-scale, 1.15)) !important;
+      line-height: 1.75 !important;
+    }
+    @media (min-width: 640px) {
+      .q-stem-scalable {
+        font-size: calc(1.6rem * var(--q-font-scale, 1.15)) !important;
+      }
+    }
+    @media (min-width: 1024px) {
+      .q-stem-scalable {
+        font-size: calc(1.85rem * var(--q-font-scale, 1.15)) !important;
+      }
+    }
+
+    .q-opt-scalable {
+      font-size: calc(1.15rem * var(--q-font-scale, 1.15)) !important;
+      line-height: 1.6 !important;
+    }
+    @media (min-width: 640px) {
+      .q-opt-scalable {
+        font-size: calc(1.3rem * var(--q-font-scale, 1.15)) !important;
+      }
+    }
+
+    .q-exp-scalable {
+      font-size: calc(1.08rem * var(--q-font-scale, 1.15)) !important;
+      line-height: 1.7 !important;
+    }
+    @media (min-width: 640px) {
+      .q-exp-scalable {
+        font-size: calc(1.22rem * var(--q-font-scale, 1.15)) !important;
+      }
+    }
   </style>
   <!-- Gemini AI & Firebase Open Source Modules -->
   <script type="module" src="js/gemini.js"></script>
@@ -661,41 +699,53 @@
 
       <!-- Active Question Card -->
       <div id="battleActiveQuestionBox" class="rpg-card rounded-3xl p-5 sm:p-7 border border-slate-700/80 space-y-5">
-        <div class="flex flex-wrap items-center justify-between gap-2">
+        <div class="flex flex-wrap items-center justify-between gap-3">
           <div class="flex flex-wrap items-center gap-2">
-            <span id="qSubjectBadge" class="px-2.5 py-1 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs font-bold">數學</span>
-            <span id="qGradeBadge" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 text-xs font-semibold">八年級</span>
-            <span id="qSchoolBadge" class="hidden px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold">🏫 段考真題</span>
-            <span id="qConceptBadge" class="px-2.5 py-1 rounded-lg bg-amber-500/15 text-amber-300 border border-amber-500/30 text-xs font-semibold">核心考點</span>
+            <span id="qSubjectBadge" class="px-3 py-1 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs sm:text-sm font-bold">數學</span>
+            <span id="qGradeBadge" class="px-3 py-1 rounded-lg bg-slate-800 text-slate-300 text-xs sm:text-sm font-semibold">八年級</span>
+            <span id="qSchoolBadge" class="hidden px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs sm:text-sm font-bold">🏫 段考真題</span>
+            <span id="qConceptBadge" class="px-3 py-1 rounded-lg bg-amber-500/15 text-amber-300 border border-amber-500/30 text-xs sm:text-sm font-semibold">核心考點</span>
           </div>
-          <span class="text-xs text-slate-400">💡 支援鍵盤數字鍵 1 ~ 4 快速作答</span>
+          <div class="flex items-center gap-3">
+            <!-- 題目字級即時微調 -->
+            <div class="flex items-center gap-1.5 bg-slate-900/90 border border-slate-700/80 px-2.5 py-1 rounded-xl text-xs shadow-inner">
+              <span class="text-slate-400 font-semibold mr-0.5">字級</span>
+              <button type="button" onclick="changeQuestionFontSize(-1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-violet-600 text-white font-bold flex items-center justify-center transition-all active:scale-95" title="縮小字型">A-</button>
+              <span id="fontScaleDisplay" class="px-1.5 text-amber-300 font-bold font-mono">放大</span>
+              <button type="button" onclick="changeQuestionFontSize(1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-violet-600 text-white font-bold flex items-center justify-center transition-all active:scale-95" title="放大字型">A+</button>
+            </div>
+            <span class="text-xs text-slate-400 hidden sm:inline">💡 鍵盤 1 ~ 4 作答</span>
+            <button type="button" id="btnSettleBattleEarly" onclick="settleBattleEarly()" class="hidden px-2.5 py-1 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-xs font-bold transition-all active:scale-95 flex items-center gap-1" title="提前結束並將目前已作答題目收錄到學習歷程">
+              <span>🏁</span> <span>提前結算戰果</span>
+            </button>
+          </div>
         </div>
 
         <!-- Question Stem -->
-        <div id="qStemText" class="text-lg sm:text-xl md:text-2xl font-bold text-white leading-relaxed bg-slate-950/70 border border-slate-800/90 rounded-2xl p-5 sm:p-6 tracking-wide shadow-inner">
+        <div id="qStemText" class="q-stem-scalable text-xl sm:text-2xl md:text-3xl font-bold text-white leading-relaxed bg-slate-950/70 border border-slate-800/90 rounded-2xl p-6 sm:p-8 tracking-wide shadow-inner">
           題目載入中...
         </div>
 
         <!-- Mentor Hint Box (Hidden until Hint item used) -->
-        <div id="battleHintBanner" class="hidden rounded-2xl bg-amber-500/15 border border-amber-400/40 p-3.5 text-xs sm:text-sm text-amber-200 flex items-start gap-2.5">
-          <span class="text-lg">🧙‍♂️</span>
-          <div>
+        <div id="battleHintBanner" class="hidden rounded-2xl bg-amber-500/15 border border-amber-400/40 p-4 text-sm sm:text-base md:text-lg text-amber-200 flex items-start gap-3">
+          <span class="text-xl">🧙‍♂️</span>
+          <div class="leading-relaxed">
             <span class="font-bold">星耀大魔導師破題提示：</span>
             <span id="battleHintText"></span>
           </div>
         </div>
 
         <!-- 4 Option Buttons -->
-        <div id="battleOptionsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div id="battleOptionsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <!-- Populated by JS -->
         </div>
 
         <!-- Post-Answer Explanation & Follow-up Action Box -->
-        <div id="battleFeedbackBox" class="hidden rounded-2xl p-4 sm:p-5 border transition-all space-y-3">
+        <div id="battleFeedbackBox" class="hidden rounded-2xl p-5 sm:p-6 border transition-all space-y-3.5">
           <div class="flex flex-wrap items-center justify-between gap-2">
-            <div id="feedbackTitle" class="font-black text-base flex items-center gap-2"></div>
+            <div id="feedbackTitle" class="font-black text-lg sm:text-xl flex items-center gap-2"></div>
             <div class="flex flex-wrap items-center gap-2">
-              <button type="button" onclick="generateSimilarFromCurrentBattleQuestion()" class="px-3 py-1.5 rounded-xl bg-fuchsia-600/30 hover:bg-fuchsia-600/50 border border-fuchsia-400/50 text-fuchsia-200 text-xs font-bold flex items-center gap-1 transition-colors">
+              <button type="button" onclick="generateSimilarFromCurrentBattleQuestion()" class="px-3.5 py-2 rounded-xl bg-fuchsia-600/30 hover:bg-fuchsia-600/50 border border-fuchsia-400/50 text-fuchsia-200 text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-colors">
                 <span>⚗️</span>
                 <span>這題不熟？立即生成 4 道同型練習題</span>
               </button>
@@ -704,7 +754,7 @@
               </button>
             </div>
           </div>
-          <p id="feedbackExplanationText" class="text-sm sm:text-base md:text-lg text-slate-200 leading-relaxed font-medium"></p>
+          <p id="feedbackExplanationText" class="q-exp-scalable text-base sm:text-lg md:text-xl text-slate-200 leading-relaxed font-medium"></p>
         </div>
       </div>
 
@@ -734,6 +784,9 @@
         <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
           <button type="button" onclick="restartCurrentBattle()" class="px-5 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-sm">
             ⚔️ 再戰一局
+          </button>
+          <button type="button" onclick="switchTab('history')" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold text-sm shadow-lg shadow-cyan-600/20">
+            📜 查看個人學習歷程
           </button>
           <button type="button" onclick="switchTab('alchemy')" class="px-5 py-2.5 rounded-xl bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold text-sm">
             ⚗️ 前往錯題煉金工坊
@@ -1156,16 +1209,24 @@
     </div>
     <!-- ==================== MODAL: ASSESSMENT RECORD DETAIL ==================== -->
     <div id="recordDetailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
-      <div class="rpg-card rounded-3xl p-6 sm:p-7 max-w-2xl w-full max-h-[85vh] overflow-y-auto border border-slate-700 shadow-2xl relative space-y-4">
+      <div class="rpg-card rounded-3xl p-6 sm:p-8 max-w-3xl sm:max-w-4xl w-full max-h-[85vh] overflow-y-auto border border-slate-700 shadow-2xl relative space-y-4">
         <button type="button" onclick="closeRecordDetailModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg font-bold">✕</button>
-        <div class="flex items-center gap-2">
-          <span class="text-2xl">📋</span>
-          <div>
-            <h3 id="modalDetailTitle" class="text-lg font-black text-white">試煉答題明細</h3>
-            <span id="modalDetailSubtitle" class="text-xs text-slate-400"></span>
+        <div class="flex flex-wrap items-center justify-between gap-3 pr-8">
+          <div class="flex items-center gap-2.5">
+            <span class="text-2xl">📋</span>
+            <div>
+              <h3 id="modalDetailTitle" class="text-xl font-black text-white">試煉答題明細</h3>
+              <span id="modalDetailSubtitle" class="text-xs sm:text-sm text-slate-400"></span>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5 bg-slate-900/90 border border-slate-700/80 px-2.5 py-1 rounded-xl text-xs shadow-inner">
+            <span class="text-slate-400 font-semibold mr-0.5">字級</span>
+            <button type="button" onclick="changeQuestionFontSize(-1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-violet-600 text-white font-bold flex items-center justify-center transition-all active:scale-95" title="縮小字型">A-</button>
+            <span class="fontScaleDisplayModal px-1.5 text-amber-300 font-bold font-mono">放大</span>
+            <button type="button" onclick="changeQuestionFontSize(1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-violet-600 text-white font-bold flex items-center justify-center transition-all active:scale-95" title="放大字型">A+</button>
           </div>
         </div>
-        <div id="modalDetailQuestionsList" class="space-y-3 mt-4">
+        <div id="modalDetailQuestionsList" class="space-y-4 mt-4">
           <!-- Populated dynamically -->
         </div>
       </div>
@@ -3841,27 +3902,27 @@ function setGradeFilter(grade) {
 
       const questionsHtml = pack.questions.map((q, idx) => {
         const optsHtml = q.options.map((opt, oIdx) => `
-          <button type="button" id="alkOpt-${idx}-${oIdx}" onclick="checkAlchemyInlineAnswer(${idx}, ${oIdx})" class="text-left px-4 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-sm sm:text-base font-semibold text-slate-200 transition-all">
+          <button type="button" id="alkOpt-${idx}-${oIdx}" onclick="checkAlchemyInlineAnswer(${idx}, ${oIdx})" class="q-opt-scalable text-left px-5 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-base sm:text-lg font-semibold text-slate-200 transition-all">
             ${escapeHtml(opt)}
           </button>
         `).join('');
 
         return `
-          <div class="rpg-card rounded-2xl p-4 sm:p-5 border border-slate-800 hover:border-violet-500/40 transition-all space-y-3">
+          <div class="rpg-card rounded-2xl p-5 sm:p-6 border border-slate-800 hover:border-violet-500/40 transition-all space-y-3.5">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div class="flex items-center gap-2">
                 <span class="w-6 h-6 rounded-lg bg-fuchsia-600 text-white text-xs font-black flex items-center justify-center">Q${idx + 1}</span>
-                <span class="text-xs font-bold text-amber-300">${escapeHtml(q.concept)}</span>
+                <span class="text-xs sm:text-sm font-bold text-amber-300">${escapeHtml(q.concept)}</span>
               </div>
-              <button type="button" onclick="saveQuestionToGrimoireFromAlchemy(${idx})" class="text-xs text-slate-400 hover:text-amber-300 font-semibold">
+              <button type="button" onclick="saveQuestionToGrimoireFromAlchemy(${idx})" class="text-xs sm:text-sm text-slate-400 hover:text-amber-300 font-semibold">
                 📌 收錄至錯題封印書
               </button>
             </div>
-            <p class="text-base sm:text-lg font-bold text-white leading-relaxed">${escapeHtml(q.stem)}</p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <p class="q-stem-scalable text-lg sm:text-xl md:text-2xl font-bold text-white leading-relaxed">${escapeHtml(q.stem)}</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               ${optsHtml}
             </div>
-            <div id="alkFeedback-${idx}" class="hidden rounded-xl p-3.5 text-sm leading-relaxed border"></div>
+            <div id="alkFeedback-${idx}" class="q-exp-scalable hidden rounded-xl p-4 text-sm sm:text-base md:text-lg leading-relaxed border"></div>
           </div>
         `;
       }).join('');
@@ -3927,23 +3988,66 @@ function setGradeFilter(grade) {
         const btn = document.getElementById(`alkOpt-${qIdx}-${oIdx}`);
         if (!btn) return;
         if (oIdx === q.answer) {
-          btn.className = 'text-left px-3.5 py-2.5 rounded-xl bg-emerald-500/25 border border-emerald-400 text-xs sm:text-sm font-bold text-emerald-200';
+          btn.className = 'q-opt-scalable text-left px-5 py-3.5 rounded-xl bg-emerald-500/25 border-2 border-emerald-400 text-base sm:text-lg font-bold text-emerald-200';
         } else if (oIdx === selectedOptIdx && !isCorrect) {
-          btn.className = 'text-left px-3.5 py-2.5 rounded-xl bg-rose-500/25 border border-rose-400 text-xs sm:text-sm font-bold text-rose-200';
+          btn.className = 'q-opt-scalable text-left px-5 py-3.5 rounded-xl bg-rose-500/25 border-2 border-rose-400 text-base sm:text-lg font-bold text-rose-200';
         }
       });
 
       fbEl.classList.remove('hidden');
       if (isCorrect) {
         playSoundEffect('correct');
-        fbEl.className = 'rounded-xl p-3 text-xs leading-relaxed border bg-emerald-950/60 border-emerald-500/50 text-emerald-200';
+        fbEl.className = 'q-exp-scalable rounded-xl p-4 text-sm sm:text-base md:text-lg leading-relaxed border bg-emerald-950/60 border-emerald-500/50 text-emerald-200';
         fbEl.innerHTML = `<strong>✅ 答對了！ (+15 EXP, +10 🪙)</strong><br/>${escapeHtml(q.explanation)}`;
         addPlayerReward(15, 10);
       } else {
         playSoundEffect('wrong');
-        fbEl.className = 'rounded-xl p-3 text-xs leading-relaxed border bg-rose-950/60 border-rose-500/50 text-rose-200';
+        fbEl.className = 'q-exp-scalable rounded-xl p-4 text-sm sm:text-base md:text-lg leading-relaxed border bg-rose-950/60 border-rose-500/50 text-rose-200';
         fbEl.innerHTML = `<strong>❌ 再想一下！提示：${escapeHtml(q.hint)}</strong><br/>詳解：${escapeHtml(q.explanation)}`;
         addMistakeRecord(q);
+      }
+
+      // 當整組 4 題均已作答完畢時，自動將煉金成果同步收錄至個人學習歷程
+      const pack = appState.alchemyCurrentPack;
+      if (pack && pack.questions) {
+        if (!pack.userAnswers) pack.userAnswers = {};
+        pack.userAnswers[qIdx] = { selectedOptIdx, isCorrect };
+
+        const answeredCount = Object.keys(pack.userAnswers).length;
+        if (answeredCount >= pack.questions.length && !pack.hasSavedToHistory) {
+          pack.hasSavedToHistory = true;
+          const correctCount = Object.values(pack.userAnswers).filter(a => a.isCorrect).length;
+          const totalQ = pack.questions.length;
+          const acc = Math.round((correctCount / totalQ) * 100);
+          const rank = acc >= 80 ? 'S' : (acc >= 60 ? 'A' : 'B');
+
+          if (window.FirebaseService) {
+            window.FirebaseService.saveAssessmentRecord(appState.currentUser, {
+              title: `⚗️ 錯題煉金特訓：${pack.topicTitle}`,
+              subject: pack.subject,
+              score: correctCount,
+              total: totalQ,
+              accuracy: acc,
+              rank: rank,
+              expEarned: correctCount * 15,
+              goldEarned: correctCount * 10,
+              details: pack.questions.map((pq, idx) => {
+                const uAns = pack.userAnswers[idx];
+                return {
+                  concept: pq.concept,
+                  stem: pq.stem,
+                  options: pq.options,
+                  correctAnswer: pq.answer,
+                  selectedAnswer: uAns ? uAns.selectedOptIdx : null,
+                  isCorrect: uAns ? uAns.isCorrect : false,
+                  explanation: pq.explanation
+                };
+              })
+            }).then(() => {
+              showToast('📜 煉金工坊 4 題特訓成果已自動登錄至個人學習歷程！', 'success');
+            }).catch(e => console.warn(e));
+          }
+        }
       }
     }
 
@@ -4037,6 +4141,7 @@ function setGradeFilter(grade) {
         active: true,
         title: title,
         bossName: bossName,
+        subject: questionsList[0]?.subject || 'math',
         questions: questionsList.map(q => Object.assign({}, q)),
         currentIndex: 0,
         heroHp: 100,
@@ -4053,6 +4158,8 @@ function setGradeFilter(grade) {
       document.getElementById('battleStatusPill').classList.remove('hidden');
       document.getElementById('battleSummaryScreen').classList.add('hidden');
       document.getElementById('battleActiveQuestionBox').classList.remove('hidden');
+      const btnSettle = document.getElementById('btnSettleBattleEarly');
+      if (btnSettle) btnSettle.classList.add('hidden');
 
       switchTab('battle');
       renderBattleState();
@@ -4115,15 +4222,15 @@ function setGradeFilter(grade) {
         const isDisabled = b.disabledOptions.includes(idx);
         if (isDisabled) {
           return `
-            <button type="button" disabled class="p-4 rounded-2xl bg-slate-950/40 border border-slate-800/50 text-slate-600 line-through text-left text-sm font-semibold cursor-not-allowed">
+            <button type="button" disabled class="q-opt-scalable p-5 sm:p-6 rounded-2xl bg-slate-950/40 border border-slate-800/50 text-slate-600 line-through text-left text-base sm:text-lg font-semibold cursor-not-allowed">
               ${safeOptText} （已被秘藥封印）
             </button>
           `;
         }
         return `
-          <button type="button" id="battleOptBtn-${idx}" onclick="submitBattleAnswer(${idx})" class="p-4 sm:p-5 rounded-2xl bg-slate-900 hover:bg-violet-950/60 border border-slate-700 hover:border-violet-400 text-left text-base sm:text-lg font-bold text-slate-100 transition-all flex items-center justify-between group active:scale-98">
+          <button type="button" id="battleOptBtn-${idx}" onclick="submitBattleAnswer(${idx})" class="q-opt-scalable p-5 sm:p-6 rounded-2xl bg-slate-900 hover:bg-violet-950/60 border border-slate-700 hover:border-violet-400 text-left text-lg sm:text-xl md:text-2xl font-bold text-slate-100 transition-all flex items-center justify-between group active:scale-98">
             <span class="leading-relaxed">${safeOptText}</span>
-            <span class="text-xs px-2.5 py-1 rounded-lg bg-slate-800 group-hover:bg-violet-600 text-slate-400 group-hover:text-white font-mono shrink-0 ml-2">${idx + 1}</span>
+            <span class="text-xs sm:text-sm px-3 py-1 rounded-lg bg-slate-800 group-hover:bg-violet-600 text-slate-400 group-hover:text-white font-mono shrink-0 ml-3">${idx + 1}</span>
           </button>
         `;
       }).join('');
@@ -4193,11 +4300,11 @@ function setGradeFilter(grade) {
         const btn = document.getElementById('battleOptBtn-' + idx);
         if (!btn) return;
         if (idx === q.answer) {
-          btn.className = 'p-4 sm:p-5 rounded-2xl bg-emerald-500/25 border-2 border-emerald-400 text-left text-base sm:text-lg font-black text-emerald-200 flex items-center justify-between';
+          btn.className = 'q-opt-scalable p-5 sm:p-6 rounded-2xl bg-emerald-500/25 border-2 border-emerald-400 text-left text-lg sm:text-xl md:text-2xl font-black text-emerald-200 flex items-center justify-between';
         } else if (idx === selectedIdx && !isCorrect) {
-          btn.className = 'p-4 sm:p-5 rounded-2xl bg-rose-500/25 border-2 border-rose-500 text-left text-base sm:text-lg font-black text-rose-200 flex items-center justify-between';
+          btn.className = 'q-opt-scalable p-5 sm:p-6 rounded-2xl bg-rose-500/25 border-2 border-rose-500 text-left text-lg sm:text-xl md:text-2xl font-black text-rose-200 flex items-center justify-between';
         } else {
-          btn.className = 'p-4 sm:p-5 rounded-2xl bg-slate-950/50 border border-slate-800 text-left text-base sm:text-lg text-slate-500 flex items-center justify-between opacity-60';
+          btn.className = 'q-opt-scalable p-5 sm:p-6 rounded-2xl bg-slate-950/50 border border-slate-800 text-left text-lg sm:text-xl md:text-2xl text-slate-500 flex items-center justify-between opacity-60';
         }
       });
 
@@ -4205,6 +4312,9 @@ function setGradeFilter(grade) {
       const fbTitle = document.getElementById('feedbackTitle');
       const fbExp = document.getElementById('feedbackExplanationText');
       fbBox.classList.remove('hidden');
+
+      const btnSettle = document.getElementById('btnSettleBattleEarly');
+      if (btnSettle) btnSettle.classList.remove('hidden');
 
       const subStat = appState.player.subjectStats[q.subject] || { answered: 0, correct: 0, mastery: 75 };
       subStat.answered += 1;
@@ -4350,7 +4460,7 @@ function setGradeFilter(grade) {
 
         window.FirebaseService.saveAssessmentRecord(appState.currentUser, {
           title: b.title,
-          subject: b.subject,
+          subject: b.subject || b.questions[0]?.subject || 'math',
           score: b.correctCount,
           total: total,
           accuracy: acc,
@@ -4368,6 +4478,29 @@ function setGradeFilter(grade) {
         window.FirebaseService.syncUserProfile(appState.currentUser, appState);
       }
     }
+
+    function settleBattleEarly() {
+      const b = appState.battle;
+      if (!b || !b.active) return;
+      const answeredIndices = [];
+      if (b.userAnswers) {
+        b.userAnswers.forEach((ans, idx) => {
+          if (ans !== null && ans !== undefined) answeredIndices.push(idx);
+        });
+      }
+      if (answeredIndices.length === 0) {
+        showToast('您尚未回答任何題目，請先作答至少 1 題後再結算！', 'warning');
+        return;
+      }
+      if (!confirm(`確定要提前結算嗎？已完成 ${answeredIndices.length} 道題目的作答，將把這 ${answeredIndices.length} 題的成果立即收錄到學習歷程！`)) {
+        return;
+      }
+      b.questions = answeredIndices.map(i => b.questions[i]);
+      b.userAnswers = answeredIndices.map(i => b.userAnswers[i]);
+      b.currentIndex = b.questions.length;
+      finishBattleSession();
+    }
+    window.settleBattleEarly = settleBattleEarly;
 
     function generateSimilarFromCurrentBattleQuestion() {
       const b = appState.battle;
@@ -4456,17 +4589,17 @@ function setGradeFilter(grade) {
               </div>
             </div>
 
-            <p class="text-base sm:text-lg font-bold text-white leading-relaxed">${m.stem}</p>
+            <p class="q-stem-scalable text-lg sm:text-xl md:text-2xl font-bold text-white leading-relaxed">${m.stem}</p>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-sm sm:text-base">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               ${m.options.map((opt, idx) => `
-                <div class="px-3.5 py-2.5 rounded-xl border ${idx === m.answer ? 'bg-emerald-950/50 border-emerald-500/50 text-emerald-200 font-bold' : 'bg-slate-950/60 border-slate-800 text-slate-400'}">
+                <div class="q-opt-scalable px-4 py-3 rounded-xl border text-base sm:text-lg ${idx === m.answer ? 'bg-emerald-950/50 border-emerald-500/50 text-emerald-200 font-bold' : 'bg-slate-950/60 border-slate-800 text-slate-400'}">
                   ${opt} ${idx === m.answer ? '✓ (正確解答)' : ''}
                 </div>
               `).join('')}
             </div>
 
-            <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 text-xs sm:text-sm text-slate-200 leading-relaxed">
+            <div class="q-exp-scalable bg-slate-950/80 border border-slate-800 rounded-xl p-4 text-sm sm:text-base md:text-lg text-slate-200 leading-relaxed">
               <span class="text-amber-300 font-bold">💡 破題關鍵：</span>${m.explanation}
             </div>
           </div>
@@ -4921,10 +5054,22 @@ function setGradeFilter(grade) {
       tbody.innerHTML = '<tr><td colspan="7" class="text-center py-6 text-slate-400">⏳ 正在同步讀取您的歷程紀錄...</td></tr>';
 
       let records = [];
-      if (window.FirebaseService) {
-        records = await window.FirebaseService.getMyRecords(appState.currentUser);
+      try {
+        if (window.FirebaseService) {
+          records = await window.FirebaseService.getMyRecords(appState.currentUser);
+        }
+      } catch (e) {
+        console.warn('雲端讀取歷程失敗，使用本機快取:', e);
       }
-      appState.personalRecords = records;
+
+      if (!records || records.length === 0) {
+        try {
+          records = JSON.parse(localStorage.getItem('jh_quest_local_history') || '[]');
+        } catch (e) {
+          records = [];
+        }
+      }
+      appState.personalRecords = records || [];
 
       // Summary metrics
       const totalCount = records.length;
@@ -4938,7 +5083,19 @@ function setGradeFilter(grade) {
       document.getElementById('histTotalGold').textContent = `${totalGold} 🪙`;
 
       if (records.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-6 text-slate-500">尚無評量紀錄。快去挑戰地下城或使用錯題煉金進行測驗吧！</td></tr>';
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="text-center py-8 text-slate-400">
+              <p class="text-base font-bold text-slate-300">尚無評量紀錄</p>
+              <p class="text-xs text-slate-500 mt-1">前往「五科地下城」挑戰或在「錯題煉金」完成題組練習後，成效將自動記錄在此！</p>
+              <div class="mt-3">
+                <button type="button" onclick="switchTab('battle')" class="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-xs shadow-md">
+                  ⚔️ 前往地下城挑戰
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
         return;
       }
 
@@ -5131,23 +5288,23 @@ function setGradeFilter(grade) {
           }
           
           return `
-          <div class="p-4 sm:p-5 rounded-2xl bg-slate-900 border ${borderColor} space-y-3">
+          <div class="p-5 sm:p-6 rounded-2xl bg-slate-900 border ${borderColor} space-y-4">
             <div class="flex items-center justify-between">
-              <span class="text-sm sm:text-base font-extrabold ${statusColor}">
+              <span class="text-base sm:text-lg font-extrabold ${statusColor}">
                 第 ${qIdx + 1} 題：${statusText} (${q.concept || '核心觀念'})
               </span>
             </div>
-            <p class="text-base sm:text-lg md:text-xl font-bold text-white leading-relaxed tracking-wide">${q.stem || ''}</p>
-            <div class="text-sm sm:text-base md:text-lg text-slate-200 space-y-2 leading-relaxed">
+            <p class="q-stem-scalable text-lg sm:text-xl md:text-2xl font-bold text-white leading-relaxed tracking-wide">${q.stem || ''}</p>
+            <div class="q-opt-scalable text-base sm:text-lg md:text-xl text-slate-200 space-y-2.5 leading-relaxed">
               ${q.options ? q.options.map((opt, oIdx) => {
                 let badge = '';
-                if (hasUserAns && oIdx === q.selectedAnswer && oIdx === q.correctAnswer) badge = '<span class="text-emerald-400 font-bold ml-1.5">(您的選擇・正確)</span>';
-                else if (hasUserAns && oIdx === q.selectedAnswer) badge = '<span class="text-rose-400 font-bold ml-1.5">(您的選擇・錯誤)</span>';
-                else if (oIdx === q.correctAnswer) badge = '<span class="text-emerald-400 font-bold ml-1.5">(正確解答)</span>';
-                return `<div class="p-2.5 sm:p-3 rounded-xl transition-all ${oIdx === q.correctAnswer ? 'bg-emerald-950/50 border border-emerald-500/40 text-emerald-100 font-semibold' : 'bg-slate-950/40'}">${opt} ${badge}</div>`;
+                if (hasUserAns && oIdx === q.selectedAnswer && oIdx === q.correctAnswer) badge = '<span class="text-emerald-400 font-bold ml-2">(您的選擇・正確)</span>';
+                else if (hasUserAns && oIdx === q.selectedAnswer) badge = '<span class="text-rose-400 font-bold ml-2">(您的選擇・錯誤)</span>';
+                else if (oIdx === q.correctAnswer) badge = '<span class="text-emerald-400 font-bold ml-2">(正確解答)</span>';
+                return `<div class="p-3.5 sm:p-4 rounded-xl transition-all ${oIdx === q.correctAnswer ? 'bg-emerald-950/50 border border-emerald-500/40 text-emerald-100 font-semibold' : 'bg-slate-950/40'}">${opt} ${badge}</div>`;
               }).join('') : ''}
             </div>
-            ${q.explanation ? `<div class="text-xs sm:text-sm md:text-base text-slate-300 bg-slate-950/90 p-3.5 rounded-xl border border-slate-800 leading-relaxed">💡 詳解：${q.explanation}</div>` : ''}
+            ${q.explanation ? `<div class="q-exp-scalable text-sm sm:text-base md:text-lg text-slate-200 bg-slate-950/90 p-4 rounded-xl border border-slate-800 leading-relaxed">💡 詳解：${q.explanation}</div>` : ''}
           </div>
         `;
         }).join('');
@@ -5233,8 +5390,54 @@ function setGradeFilter(grade) {
     window.openRecordDetailModal = openRecordDetailModal;
     window.closeRecordDetailModal = closeRecordDetailModal;
 
-        // ==================== 12. INITIALIZATION ====================
+    // ==================== 11.5 QUESTION FONT SCALE CONTROLLER ====================
+    const FONT_SCALES = [
+      { label: '標準', scale: 1.0 },
+      { label: '放大', scale: 1.15 },
+      { label: '特大', scale: 1.30 },
+      { label: '極大', scale: 1.45 }
+    ];
+    let currentFontScaleIdx = 1; // 預設「放大」 (1.15x)
+
+    function initQuestionFontScale() {
+      const saved = localStorage.getItem('star_q_font_scale_idx');
+      if (saved !== null) {
+        const parsed = parseInt(saved, 10);
+        if (!isNaN(parsed) && parsed >= 0 && parsed < FONT_SCALES.length) {
+          currentFontScaleIdx = parsed;
+        }
+      }
+      applyQuestionFontScale();
+    }
+
+    function applyQuestionFontScale() {
+      const current = FONT_SCALES[currentFontScaleIdx] || FONT_SCALES[1];
+      document.documentElement.style.setProperty('--q-font-scale', current.scale);
+      const display = document.getElementById('fontScaleDisplay');
+      if (display) display.textContent = current.label;
+      const modalDisplays = document.querySelectorAll('.fontScaleDisplayModal');
+      modalDisplays.forEach(el => { el.textContent = current.label; });
+    }
+
+    function changeQuestionFontSize(delta) {
+      let nextIdx = currentFontScaleIdx + delta;
+      if (nextIdx < 0) nextIdx = 0;
+      if (nextIdx >= FONT_SCALES.length) nextIdx = FONT_SCALES.length - 1;
+      if (nextIdx !== currentFontScaleIdx) {
+        currentFontScaleIdx = nextIdx;
+        localStorage.setItem('star_q_font_scale_idx', currentFontScaleIdx);
+        applyQuestionFontScale();
+        playSoundEffect('click');
+        showToast(`🔤 題目字級已切換為：【${FONT_SCALES[currentFontScaleIdx].label}】`, 'info');
+      }
+    }
+
+    window.changeQuestionFontSize = changeQuestionFontSize;
+    window.initQuestionFontScale = initQuestionFontScale;
+
+    // ==================== 12. INITIALIZATION ====================
     window.onload = function () {
+      initQuestionFontScale();
       // 1. 立即讀取本機快取使用者，防止非同步認證造成的未登入閃爍
       const cachedUserStr = localStorage.getItem('jh_quest_cached_user');
       if (cachedUserStr) {
@@ -5255,6 +5458,18 @@ function setGradeFilter(grade) {
       const defaultPack = generatePracticePack(ALCHEMY_PRESETS[0].sampleInput, 'math', '7', 'progressive');
       appState.alchemyCurrentPack = defaultPack;
       renderAlchemyPackOutput(defaultPack);
+
+      // 處理網址 hash 切換分頁（支援 #history, #profile, #battle, #alchemy, #grimoire, #stats, #admin）
+      function handleUrlHashTab() {
+        const hash = (window.location.hash || '').replace('#', '').toLowerCase();
+        if (hash === 'history' || hash === 'profile') {
+          switchTab('history');
+        } else if (['hub', 'alchemy', 'battle', 'grimoire', 'stats', 'admin'].includes(hash)) {
+          switchTab(hash);
+        }
+      }
+      handleUrlHashTab();
+      window.addEventListener('hashchange', handleUrlHashTab);
     };
   </script>
 </body>

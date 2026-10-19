@@ -273,17 +273,22 @@ export class FirebaseService {
       expEarned: recordData.expEarned || 0,
       goldEarned: recordData.goldEarned || 0,
       createdAtDate: new Date().toISOString(),
-      details: recordData.details || []
+      details: recordData.details || [],
+      userId: user ? user.uid : 'guest',
+      userEmail: user ? user.email : 'guest'
     };
 
-    if (!user) {
+    // 1. 本機一律保存一份，確保離線、網路延遲或雲端權限異常時紀錄絕不遺失
+    try {
       const localHistory = JSON.parse(localStorage.getItem('jh_quest_local_history') || '[]');
       localHistory.unshift(record);
       if (localHistory.length > 50) localHistory.pop();
       localStorage.setItem('jh_quest_local_history', JSON.stringify(localHistory));
-      return record;
+    } catch (e) {
+      console.warn("本機存檔警告:", e);
     }
 
+    // 2. 若使用者已登入且 Firebase 可用，同步上傳雲端
     if (this.isAvailable() && user) {
       try {
         const docRef = await addDoc(collection(db, "assessment_records"), {
@@ -304,22 +309,29 @@ export class FirebaseService {
         });
         record.id = docRef.id;
       } catch (err) {
-        console.error("雲端存檔失敗:", err);
+        console.error("雲端存檔失敗 (已保存在本機快取):", err);
       }
     }
     return record;
   }
 
   /**
-   * 取得使用者的歷史評量紀錄 (嚴格資料隔離：新使用者為空陣列)
+   * 取得使用者的歷史評量紀錄 (整合雲端與本機雙重備份，確保隨時可列出)
    */
   static async getMyRecords(user) {
+    let localRecords = [];
+    try {
+      localRecords = JSON.parse(localStorage.getItem('jh_quest_local_history') || '[]');
+    } catch (e) {
+      localRecords = [];
+    }
+
     if (!user) {
-      return JSON.parse(localStorage.getItem('jh_quest_local_history') || '[]');
+      return localRecords;
     }
 
     if (!this.isAvailable()) {
-      return [];
+      return localRecords;
     }
 
     try {
@@ -332,7 +344,6 @@ export class FirebaseService {
         );
         snap = await getDocs(q);
       } catch (indexErr) {
-        // 若 Firestore 尚未建立 (userId + createdAt) 複合索引，降級為無 orderBy 查詢並在前端排序
         console.warn("Firestore 複合索引尚未建立，啟動本機客戶端排序降級方案:", indexErr.message);
         const fallbackQ = query(
           collection(db, "assessment_records"),
@@ -341,10 +352,11 @@ export class FirebaseService {
         snap = await getDocs(fallbackQ);
       }
 
-      if (snap.empty) {
-        return [];
+      if (!snap || snap.empty) {
+        return localRecords;
       }
-      const list = snap.docs.map(doc => {
+
+      const cloudList = snap.docs.map(doc => {
         const d = doc.data();
         return {
           id: doc.id,
@@ -353,12 +365,22 @@ export class FirebaseService {
         };
       });
 
-      // 確保一律以建立時間降序排序（最新優先）
+      // 聚合雲端與本機紀錄（以 id 或建立時間去重，保障離線/登入前作答紀錄不遺失）
+      const map = new Map();
+      cloudList.forEach(r => map.set(r.id || r.createdAtDate, r));
+      localRecords.forEach(r => {
+        const key = r.id || r.createdAtDate;
+        if (!map.has(key)) {
+          map.set(key, r);
+        }
+      });
+
+      const list = Array.from(map.values());
       list.sort((a, b) => new Date(b.createdAtDate).getTime() - new Date(a.createdAtDate).getTime());
       return list;
     } catch (err) {
-      console.warn("無法從雲端讀取歷史紀錄:", err);
-      return [];
+      console.warn("無法從雲端讀取歷史紀錄，無縫降級使用本機紀錄:", err);
+      return localRecords;
     }
   }
 

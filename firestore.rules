@@ -11,7 +11,8 @@ service cloud.firestore {
       allow read: if request.auth != null && (
         resource.data.userId == request.auth.uid ||
         request.auth.token.email in [
-          "admin@gmail.com" // 請在此加入您的管理員 Google 信箱
+          "oye816@gmail.com",
+          "admin@gmail.com"
         ]
       );
 
@@ -24,6 +25,7 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
       // 管理者可讀取學員角色資料
       allow read: if request.auth != null && request.auth.token.email in [
+        "oye816@gmail.com",
         "admin@gmail.com"
       ];
     }
