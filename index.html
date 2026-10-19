@@ -1373,6 +1373,50 @@
       }
     };
 
+    const escapeHtml = window.escapeHtml || function(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    };
+
+    /**
+     * 隨機洗牌單一題目的選項（A/B/C/D），並自動重新對應正確答案索引與解析文字
+     */
+    function shuffleQuestion(q) {
+      if (!q || !Array.isArray(q.options) || q.options.length < 2) return q;
+      const cloned = Object.assign({}, q);
+      const rawOptions = cloned.options.map(opt => opt.replace(/^[A-D]\.\s*/, '').trim());
+      const oldAnswerIdx = (typeof cloned.answer === 'number' && cloned.answer >= 0 && cloned.answer < rawOptions.length) ? cloned.answer : 0;
+      const letters = ['A', 'B', 'C', 'D'];
+      const oldLetter = letters[oldAnswerIdx] || 'A';
+
+      // 產生洗牌索引
+      const indices = rawOptions.map((_, i) => i);
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+
+      const newOptions = indices.map((origIdx, newIdx) => `${letters[newIdx]}. ${rawOptions[origIdx]}`);
+      const newAnswerIdx = indices.indexOf(oldAnswerIdx);
+      const finalAnswerIdx = newAnswerIdx >= 0 ? newAnswerIdx : 0;
+      const newLetter = letters[finalAnswerIdx];
+
+      cloned.options = newOptions;
+      cloned.answer = finalAnswerIdx;
+
+      // 若解析包含「正確答案為 X」，自動更新為新的選項英文字母
+      if (typeof cloned.explanation === 'string' && oldLetter !== newLetter) {
+        cloned.explanation = cloned.explanation.replace(new RegExp(`(正確答案[為是]\\s*)[A-D]`, 'g'), `$1${newLetter}`);
+      }
+
+      return cloned;
+    }
+
     const CORE_QUESTIONS = [
       {
         id: 'q-ch-1',
@@ -1702,15 +1746,19 @@
       };
     }
 
+    function getFreshDailyQuests() {
+      return [
+        { id: 'dq-1', title: '完成 1 次錯題煉金生成', desc: '在錯題煉金工坊生成專屬練習題', progress: 0, target: 1, rewardGold: 60, rewardExp: 80, claimed: false },
+        { id: 'dq-2', title: '在魔王試煉答對 3 題', desc: '於任一科目競技場累計答對 3 題', progress: 0, target: 3, rewardGold: 80, rewardExp: 100, claimed: false },
+        { id: 'dq-3', title: '達成 3 連擊 Combo', desc: '在單場試煉中連續答對 3 題不中斷', progress: 0, target: 3, rewardGold: 100, rewardExp: 120, claimed: false }
+      ];
+    }
+
     let appState = {
       activeTab: 'hub',
       gradeFilter: 'all',
       player: getFreshPlayerState(),
-      dailyQuests: [
-        { id: 'dq-1', title: '完成 1 次錯題煉金生成', desc: '在錯題煉金工坊生成專屬練習題', progress: 0, target: 1, rewardGold: 60, rewardExp: 80, claimed: false },
-        { id: 'dq-2', title: '在魔王試煉答對 3 題', desc: '於任一科目競技場累計答對 3 題', progress: 0, target: 3, rewardGold: 80, rewardExp: 100, claimed: false },
-        { id: 'dq-3', title: '達成 3 連擊 Combo', desc: '在單場試煉中連續答對 3 題不中斷', progress: 0, target: 3, rewardGold: 100, rewardExp: 120, claimed: false }
-      ],
+      dailyQuests: getFreshDailyQuests(),
       mistakes: [], // 新使用者錯題庫預設完全為空
       alchemyCurrentPack: null,
       currentUser: null,
@@ -1753,13 +1801,24 @@
           } else {
             appState.mistakes = [];
           }
+          if (parsed && Array.isArray(parsed.dailyQuests) && parsed.dailyQuests.length > 0) {
+            const fresh = getFreshDailyQuests();
+            appState.dailyQuests = fresh.map(f => {
+              const saved = parsed.dailyQuests.find(s => s.id === f.id);
+              return saved ? Object.assign({}, f, saved) : f;
+            });
+          } else {
+            appState.dailyQuests = getFreshDailyQuests();
+          }
         } else {
           appState.player = getFreshPlayerState();
           appState.mistakes = [];
+          appState.dailyQuests = getFreshDailyQuests();
         }
       } catch (e) {
         appState.player = getFreshPlayerState();
         appState.mistakes = [];
+        appState.dailyQuests = getFreshDailyQuests();
       }
     }
 
@@ -1767,10 +1826,15 @@
       try {
         localStorage.setItem(getStorageKey(), JSON.stringify({
           player: appState.player,
-          mistakes: appState.mistakes
+          mistakes: appState.mistakes,
+          dailyQuests: appState.dailyQuests
         }));
       } catch (e) {
         // Ignore storage restrictions
+      }
+      // 同步勇者雲端存檔（包含經驗值、星幣、每日任務進度）
+      if (appState.currentUser && window.FirebaseService && typeof window.FirebaseService.syncUserProfile === 'function') {
+        window.FirebaseService.syncUserProfile(appState.currentUser, appState);
       }
     }
 // ==================== 6. UI HEADER & TAB NAVIGATION ====================
@@ -1808,14 +1872,13 @@
         p.expToNext = Math.round(p.expToNext * 1.25);
         leveledUp = true;
       }
-      updateHeaderUI();
-      saveState();
       if (leveledUp) {
         playSoundEffect('levelup');
         showToast('🎉 恭喜升級！目前達到 Lv.' + p.level + '！獲得 50 星幣獎勵！', 'success');
         p.gold += 50;
-        updateHeaderUI();
       }
+      updateHeaderUI();
+      saveState();
     }
 
     function switchTab(tabId) {
@@ -1938,6 +2001,7 @@ function setGradeFilter(grade) {
       addPlayerReward(q.rewardExp, q.rewardGold);
       showToast(`🎁 已領取任務獎勵：+${q.rewardExp} EXP、+${q.rewardGold} 星幣！`, 'success');
       renderDailyQuests();
+      saveState();
     }
 
     function renderSubjectDungeons() {
@@ -1999,9 +2063,13 @@ function setGradeFilter(grade) {
     function openAlchemyForSubject(subjectId) {
       switchTab('alchemy');
       document.getElementById('alchemySubjectSelect').value = subjectId;
-      const preset = ALCHEMY_PRESETS.find(p => p.subject === subjectId);
+      const subPresets = ALCHEMY_PRESETS.filter(p => p.subject === subjectId);
+      const preset = subPresets.length > 0
+        ? subPresets[Math.floor(Math.random() * subPresets.length)]
+        : ALCHEMY_PRESETS.find(p => p.subject === subjectId);
       if (preset) {
         document.getElementById('alchemyQuestionInput').value = preset.sampleInput;
+        if (preset.grade) document.getElementById('alchemyGradeSelect').value = preset.grade;
         runMistakeAlchemy();
       }
     }
@@ -2044,11 +2112,12 @@ function setGradeFilter(grade) {
       const subMeta = SUBJECT_META[detectedSub] || SUBJECT_META.math;
 
       const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+      const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
       let diagnosis = {
         subject: detectedSub,
         subjectName: subMeta.name,
-        grade: grade,
+        grade: grade || '8',
         topicTitle: '',
         coreConcept: '',
         commonTrap: '',
@@ -2058,152 +2127,275 @@ function setGradeFilter(grade) {
 
       const lower = cleanInput.toLowerCase();
 
-      if (detectedSub === 'math' && /(打折|折|成本|定價|方程|賺|賠|元)/.test(lower)) {
-        const price = randInt(6, 15) * 100;
-        const cost = Math.round(price * 0.8) - 120;
-        const lossAtSix = cost - Math.round(price * 0.6);
+      // ==================== 數學領域 ====================
+      if (detectedSub === 'math') {
+        let branch = 'discount';
+        if (/(打折|折|成本|定價|賺|賠|利潤)/.test(lower)) branch = 'discount';
+        else if (/(二次|函數|頂點|極值|配方|對稱軸|拋物線)/.test(lower)) branch = 'quadratic';
+        else if (/(直角|畢氏|三角形|股|斜邊|坐標|距離)/.test(lower)) branch = 'pythagoras';
+        else if (/(聯立|二元|雞兔|門票|消去)/.test(lower)) branch = 'system';
+        else branch = pickRandom(['discount', 'quadratic', 'pythagoras', 'system']);
 
-        const p2 = randInt(5, 12) * 100;
-        const profit2 = Math.round(p2 * 0.85) - Math.round(p2 * 0.65);
+        if (branch === 'discount') {
+          const price = randInt(6, 16) * 100;
+          const cost = Math.round(price * 0.8) - 120;
+          const lossAtSix = cost - Math.round(price * 0.6);
+          const p2 = randInt(5, 12) * 100;
+          const profit2 = Math.round(p2 * 0.85) - Math.round(p2 * 0.65);
 
-        diagnosis.topicTitle = '一元一次方程式：定價、打折與成本利潤問題';
-        diagnosis.coreConcept = '掌握三大公式：① 售價 ＝ 定價 × 折數；② 利潤 ＝ 售價 － 成本；③ 無論打幾折，「成本」與「定價」本身是固定不變的常數。';
-        diagnosis.commonTrap = '最常把「打八折」寫成 8x（正確應為 0.8x），或把「賺 120 元」在列等式時加減號寫反！';
-        diagnosis.mnemonic = '🔮 破題口訣：「設定價為 x，八折就是 0.8x；賺錢減回去是成本，賠錢加回來也是成本！」';
-        diagnosis.questions = [
-          {
-            id: 'alk-m-1',
-            subject: 'math',
-            grade: grade,
-            concept: '【暖身拆解】折數與售價表示法',
-            stem: `若雙肩背包的「定價」為 x 元，周年慶全面「打七五折」出售，且結帳時再使用折價券折抵 50 元，則實際售價應如何以 x 表示？`,
-            options: ['A. (7.5x - 50) 元', 'B. (0.75x - 50) 元', 'C. 0.25(x - 50) 元', 'D. (0.75x + 50) 元'],
-            answer: 1,
-            hint: '打七五折代表乘以 75%（即 0.75），再折抵 50 元就是減 50。',
-            explanation: '打七五折即定價乘以 0.75，再折抵 50 元，故實際售價為 (0.75x - 50) 元。'
-          },
-          {
-            id: 'alk-m-2',
-            subject: 'math',
-            grade: grade,
-            concept: '【同型變換】利用成本不變求定價',
-            stem: `某款運動鞋按定價打八折出售可獲利 120 元；若按定價打六折出售則會賠本 ${lossAtSix} 元。請問這雙運動鞋的「定價」為多少元？`,
-            options: [
-              `A. ${price - 100} 元`,
-              `B. ${price} 元`,
-              `C. ${price + 100} 元`,
-              `D. ${price + 200} 元`
-            ],
-            answer: 1,
-            hint: `設定價為 x 元，八折售價 0.8x 減去獲利 120 等於成本；六折售價 0.6x 加上賠本 ${lossAtSix} 也等於成本！`,
-            explanation: `設定價為 x 元。由成本相等列式：0.8x - 120 = 0.6x + ${lossAtSix} ⇒ 0.2x = ${120 + lossAtSix} ⇒ x = ${price} 元。`
-          },
-          {
-            id: 'alk-m-3',
-            subject: 'math',
-            grade: grade,
-            concept: '【進階反推】由定價反求商品價差',
-            stem: `承上題概念，若一件外套定價為 ${p2} 元，打八五折出售比打六五折出售多賺多少元？`,
-            options: [
-              `A. ${profit2 - 50} 元`,
-              `B. ${profit2} 元`,
-              `C. ${profit2 + 50} 元`,
-              `D. ${profit2 + 100} 元`
-            ],
-            answer: 1,
-            hint: '兩種折數相差 (0.85 - 0.65) = 0.2（即定價的 20%）。',
-            explanation: `八五折與六五折相差定價的 20%，因此差額為 ${p2} × (0.85 - 0.65) = ${p2} × 0.2 = ${profit2} 元。`
-          },
-          {
-            id: 'alk-m-4',
-            subject: 'math',
-            grade: grade,
-            concept: '【會考魔王陷阱】先加成的定價再打折',
-            stem: '商人將某商品依「成本加四成」作為定價，之後再依「定價打八折」賣出，請問最終商人每賣出一件是賺還是賠多少百分比？',
-            options: [
-              'A. 賺 20%',
-              'B. 賺 12%',
-              'C. 不賺不賠',
-              'D. 賠 8%'
-            ],
-            answer: 1,
-            hint: '設成本為 100 元，加四成後定價是 140 元，再將 140 元乘以 0.8 看看是多少！',
-            explanation: '設成本為 x，定價為 1.4x，打八折後售價為 1.4x × 0.8 = 1.12x，比成本 x 多出 0.12x，因此是獲利 12%！千萬別直接用 40% - 20% = 20%。'
-          }
-        ];
-      } else if (detectedSub === 'math') {
-        const h = randInt(2, 6);
-        const k = randInt(4, 12);
-        const a = -randInt(1, 3);
-        diagnosis.topicTitle = '代數函數與幾何推演核心特訓';
-        diagnosis.coreConcept = '針對你輸入的數學題目，關鍵在於將文字條件轉化為標準代數式（如二次函數頂點式 y = a(x - h)² + k 或直角三角形畢氏定理 a² + b² = c²）。';
-        diagnosis.commonTrap = '括號內正負號判讀錯誤（例如 (x - 3)² 的頂點 x 坐標是 +3 而非 -3），以及平移時「左加右減、上加下減」混淆。';
-        diagnosis.mnemonic = '🔮 破題口訣：「括號裡面令為零找對稱軸，括號外面直接看極值；開口看首項正負！」';
-        diagnosis.questions = [
-          {
-            id: 'alk-mq-1',
-            subject: 'math',
-            grade: grade,
-            concept: '【暖身拆解】頂點坐標與對稱軸判讀',
-            stem: `二次函數 y = ${a}(x - ${h})² + ${k} 的圖形頂點坐標與開口方向為何？`,
-            options: [
-              `A. 頂點 (${h}, ${k})，開口向下`,
-              `B. 頂點 (-${h}, ${k})，開口向下`,
-              `C. 頂點 (${h}, -${k})，開口向上`,
-              `D. 頂點 (-${h}, -${k})，開口向上`
-            ],
-            answer: 0,
-            hint: `令 (x - ${h}) = 0 得 x = ${h}；二次項係數 ${a} < 0 代表開口向下。`,
-            explanation: `標準式 y = a(x - h)² + k 中，頂點為 (${h}, ${k})，且 a = ${a} < 0，故圖形開口向下、有最大值 ${k}。`
-          },
-          {
-            id: 'alk-mq-2',
-            subject: 'math',
-            grade: grade,
-            concept: '【同型變換】函數圖形左右上下平移',
-            stem: `將二次函數 y = 2x² 的圖形「向右平移 ${h} 單位，再向上平移 ${k} 單位」，所得新函數方程式為何？`,
-            options: [
-              `A. y = 2(x + ${h})² + ${k}`,
-              `B. y = 2(x - ${h})² + ${k}`,
-              `C. y = 2(x - ${h})² - ${k}`,
-              `D. y = 2(x + ${h})² - ${k}`
-            ],
-            answer: 1,
-            hint: '頂點從 (0, 0) 移到 (h, k)，直接代回頂點式 y = a(x - h)² + k！',
-            explanation: `原頂點 (0,0) 向右移 ${h}、向上移 ${k} 後新頂點為 (${h}, ${k})，開口大小 a = 2 不變，故為 y = 2(x - ${h})² + ${k}。`
-          },
-          {
-            id: 'alk-mq-3',
-            subject: 'math',
-            grade: grade,
-            concept: '【情境應用】直角座標距離與畢氏定理',
-            stem: '在坐標平面上，點 A(1, 2) 與點 B(4, 6) 之間的直線距離為多少單位？',
-            options: ['A. 4 單位', 'B. 5 單位', 'C. 6 單位', 'D. 7 單位'],
-            answer: 1,
-            hint: '水平距離 Δx = 4 - 1 = 3，垂直距離 Δy = 6 - 2 = 4，套用畢氏定理 √(3² + 4²)！',
-            explanation: 'AB 距離 = √[(4 - 1)² + (6 - 2)²] = √(9 + 16) = √25 = 5 單位。'
-          },
-          {
-            id: 'alk-mq-4',
-            subject: 'math',
-            grade: grade,
-            concept: '【會考魔王陷阱】配方法求極值應用',
-            stem: '若用長 20 公尺的繩子圍成一個長方形花圃，設其中一邊長為 x 公尺，則當 x 為多少公尺時，花圃面積會有最大值？',
-            options: ['A. 4 公尺', 'B. 5 公尺', 'C. 8 公尺', 'D. 10 公尺'],
-            answer: 1,
-            hint: '周長 20 公尺代表「長＋寬 ＝ 10 公尺」，面積 y = x(10 - x) = -(x - 5)² + 25。',
-            explanation: '長＋寬 = 20 ÷ 2 = 10，設一邊為 x，另一邊為 10 - x。面積 y = x(10 - x) = -x² + 10x = -(x - 5)² + 25，當 x = 5 時有最大面積 25 平方公尺。'
-          }
-        ];
-      } else if (detectedSub === 'science') {
-        const isMole = /(莫耳|濃度|分子量|公克|水溶液|naoh|m)/.test(lower);
-        if (isMole) {
+          diagnosis.topicTitle = '一元一次方程式：定價、打折與成本利潤問題';
+          diagnosis.coreConcept = '掌握三大公式：① 售價 ＝ 定價 × 折數；② 利潤 ＝ 售價 － 成本；③ 無論打幾折，「成本」與「定價」本身是固定不變的常數。';
+          diagnosis.commonTrap = '最常把「打八折」寫成 8x（正確應為 0.8x），或把「賺 120 元」在列等式時加減號寫反！';
+          diagnosis.mnemonic = '🔮 破題口訣：「設定價為 x，八折就是 0.8x；賺錢減回去是成本，賠錢加回來也是成本！」';
+          diagnosis.questions = [
+            {
+              id: 'alk-m-1',
+              subject: 'math',
+              grade: grade,
+              concept: '【暖身拆解】折數與售價表示法',
+              stem: `若雙肩背包的「定價」為 x 元，周年慶全面「打七五折」出售，且結帳時再使用折價券折抵 50 元，則實際售價應如何以 x 表示？`,
+              options: ['A. (7.5x - 50) 元', 'B. (0.75x - 50) 元', 'C. 0.25(x - 50) 元', 'D. (0.75x + 50) 元'],
+              answer: 1,
+              hint: '打七五折代表乘以 75%（即 0.75），再折抵 50 元就是減 50。',
+              explanation: '正確答案為 B。打七五折即定價乘以 0.75，再折抵 50 元，故實際售價為 (0.75x - 50) 元。'
+            },
+            {
+              id: 'alk-m-2',
+              subject: 'math',
+              grade: grade,
+              concept: '【同型變換】利用成本不變求定價',
+              stem: `某款運動鞋按定價打八折出售可獲利 120 元；若按定價打六折出售則會賠本 ${lossAtSix} 元。請問這雙運動鞋的「定價」為多少元？`,
+              options: [`A. ${price - 100} 元`, `B. ${price} 元`, `C. ${price + 100} 元`, `D. ${price + 200} 元`],
+              answer: 1,
+              hint: `設定價為 x 元，八折售價 0.8x 減去獲利 120 等於成本；六折售價 0.6x 加上賠本 ${lossAtSix} 也等於成本！`,
+              explanation: `正確答案為 B。設定價為 x 元。由成本相等列式：0.8x - 120 = 0.6x + ${lossAtSix} ⇒ 0.2x = ${120 + lossAtSix} ⇒ x = ${price} 元。`
+            },
+            {
+              id: 'alk-m-3',
+              subject: 'math',
+              grade: grade,
+              concept: '【進階反推】由定價反求商品價差',
+              stem: `承上題概念，若一件外套定價為 ${p2} 元，打八五折出售比打六五折出售多賺多少元？`,
+              options: [`A. ${profit2 - 50} 元`, `B. ${profit2} 元`, `C. ${profit2 + 50} 元`, `D. ${profit2 + 100} 元`],
+              answer: 1,
+              hint: '兩種折數相差 (0.85 - 0.65) = 0.2（即定價的 20%）。',
+              explanation: `正確答案為 B。八五折與六五折相差定價的 20%，因此差額為 ${p2} × (0.85 - 0.65) = ${p2} × 0.2 = ${profit2} 元。`
+            },
+            {
+              id: 'alk-m-4',
+              subject: 'math',
+              grade: grade,
+              concept: '【會考魔王陷阱】先加成的定價再打折',
+              stem: '商人將某商品依「成本加四成」作為定價，之後再依「定價打八折」賣出，請問最終商人每賣出一件是賺還是賠多少百分比？',
+              options: ['A. 賺 20%', 'B. 賺 12%', 'C. 不賺不賠', 'D. 賠 8%'],
+              answer: 1,
+              hint: '設成本為 100 元，加四成後定價是 140 元，再將 140 元乘以 0.8 看看是多少！',
+              explanation: '正確答案為 B。設成本為 x，定價為 1.4x，打八折後售價為 1.4x × 0.8 = 1.12x，比成本 x 多出 0.12x，因此是獲利 12%！'
+            }
+          ];
+        } else if (branch === 'quadratic') {
+          const h = randInt(2, 6);
+          const k = randInt(4, 12);
+          const a = -randInt(1, 3);
+          diagnosis.topicTitle = '二次函數：配方法、頂點與極值極速判讀';
+          diagnosis.coreConcept = '標準頂點式 y = a(x - h)² + k 中，頂點坐標為 (h, k)，對稱軸為直線 x = h。當 a > 0 開口向上有最小值 k；當 a < 0 開口向下有最大值 k。';
+          diagnosis.commonTrap = '括號內正負號判讀錯誤（如 (x - 3)² 頂點為 +3 而非 -3），以及平移時左右相反。';
+          diagnosis.mnemonic = '🔮 破題口訣：「括號裡面令為零找對稱軸，括號外面直接看極值；左加右減、上加下減！」';
+          diagnosis.questions = [
+            {
+              id: 'alk-mq-1',
+              subject: 'math',
+              grade: grade,
+              concept: '【暖身拆解】頂點坐標與開口極值',
+              stem: `二次函數 y = ${a}(x - ${h})² + ${k} 的圖形頂點坐標與開口方向為何？`,
+              options: [
+                `A. 頂點 (${h}, ${k})，開口向下`,
+                `B. 頂點 (-${h}, ${k})，開口向下`,
+                `C. 頂點 (${h}, -${k})，開口向上`,
+                `D. 頂點 (-${h}, -${k})，開口向上`
+              ],
+              answer: 0,
+              hint: `令 (x - ${h}) = 0 得 x = ${h}；二次項係數 ${a} < 0 代表開口向下。`,
+              explanation: `正確答案為 A。標準式中頂點為 (${h}, ${k})，且 a = ${a} < 0 開口向下，當 x = ${h} 時有最大值 ${k}。`
+            },
+            {
+              id: 'alk-mq-2',
+              subject: 'math',
+              grade: grade,
+              concept: '【同型變換】圖形左右上下平移',
+              stem: `將二次函數 y = 2x² 的圖形「向右平移 ${h} 單位，再向上平移 ${k} 單位」，所得新函數方程式為何？`,
+              options: [
+                `A. y = 2(x + ${h})² + ${k}`,
+                `B. y = 2(x - ${h})² + ${k}`,
+                `C. y = 2(x - ${h})² - ${k}`,
+                `D. y = 2(x + ${h})² - ${k}`
+              ],
+              answer: 1,
+              hint: '向右平移 h 單位為 (x - h)，向上平移 k 單位為 +k。',
+              explanation: `正確答案為 B。原頂點 (0,0) 平移後為 (${h}, ${k})，開口 a=2 不變，故方程式為 y = 2(x - ${h})² + ${k}。`
+            },
+            {
+              id: 'alk-mq-3',
+              subject: 'math',
+              grade: grade,
+              concept: '【情境應用】圍籬花圃最大面積求極值',
+              stem: `用長 ${h * 4 + 8} 公尺的繩子圍成一個長方形，設其中一邊長為 x 公尺，當 x 為多少時面積有最大值？`,
+              options: [
+                `A. ${h + 1} 公尺`,
+                `B. ${h * 2 + 4} 公尺`,
+                `C. ${(h * 4 + 8) / 4} 公尺`,
+                `D. ${h * 4} 公尺`
+              ],
+              answer: 2,
+              hint: '周長固定時，圍成長方形以正方形（四邊等長）時面積最大！',
+              explanation: `正確答案為 C。周長固定圍成長方形，四邊均等（即正方形）時有最大面積，邊長為周長除以 4 = ${(h * 4 + 8) / 4} 公尺。`
+            },
+            {
+              id: 'alk-mq-4',
+              subject: 'math',
+              grade: grade,
+              concept: '【會考魔王陷阱】配方法求一般式頂點',
+              stem: '將二次函數 y = x² - 6x + 5 配方化為標準式 y = (x - h)² + k，則數對 (h, k) 為何？',
+              options: ['A. (3, -4)', 'B. (-3, -4)', 'C. (3, 4)', 'D. (-3, 14)'],
+              answer: 0,
+              hint: 'x² - 6x + 9 - 9 + 5 = (x - 3)² - 4。',
+              explanation: '正確答案為 A。y = (x² - 6x + 9) - 9 + 5 = (x - 3)² - 4，故頂點數對 (h, k) = (3, -4)。'
+            }
+          ];
+        } else if (branch === 'pythagoras') {
+          const mult = randInt(1, 3);
+          const a = 3 * mult;
+          const b = 4 * mult;
+          const c = 5 * mult;
+          diagnosis.topicTitle = '幾何與畢氏定理：勾股數與平面坐標距離';
+          diagnosis.coreConcept = '直角三角形中兩股平方和等於斜邊平方：a² + b² = c²。常用勾股數比例：3:4:5、5:12:13、7:24:25、8:15:17。坐標平面兩點距離為 √[(Δx)² + (Δy)²]。';
+          diagnosis.commonTrap = '看到 3 與 5 就衝動寫 4，必須先確認 5 是否為「斜邊」！若兩股為 3 和 5，斜邊應為 √(9+25) = √34。';
+          diagnosis.mnemonic = '🔮 破題口訣：「斜邊最長在對面，兩股平方相加開根號；斜邊求股用大減小！」';
+          diagnosis.questions = [
+            {
+              id: 'alk-mp-1',
+              subject: 'math',
+              grade: grade,
+              concept: '【暖身拆解】已知兩股長求斜邊長',
+              stem: `直角三角形兩股長分別為 ${a} 公分與 ${b} 公分，則其斜邊長度為多少公分？`,
+              options: [`A. ${c - 1} 公分`, `B. ${c} 公分`, `C. ${c + 2} 公分`, `D. ${c * 2} 公分`],
+              answer: 1,
+              hint: `斜邊 c = √(${a}² + ${b}²)！`,
+              explanation: `正確答案為 B。依畢氏定理 c = √(${a * a} + ${b * b}) = √${c * c} = ${c} 公分。`
+            },
+            {
+              id: 'alk-mp-2',
+              subject: 'math',
+              grade: grade,
+              concept: '【同型變換】已知斜邊與一股求另一股',
+              stem: `直角三角形斜邊為 13 公分，其中一股長為 5 公分，則另一股長為多少公分？`,
+              options: ['A. 8 公分', 'B. 10 公分', 'C. 12 公分', 'D. 14 公分'],
+              answer: 2,
+              hint: '利用 13² - 5² = 169 - 25 = 144 開根號！',
+              explanation: '正確答案為 C。另一股 = √(13² - 5²) = √(169 - 25) = √144 = 12 公分。'
+            },
+            {
+              id: 'alk-mp-3',
+              subject: 'math',
+              grade: grade,
+              concept: '【情境應用】坐標平面兩點直線距離',
+              stem: `在直角坐標平面上，點 P(1, 2) 與點 Q(${1 + a}, ${2 + b}) 的直線距離 PQ 為多少單位？`,
+              options: [`A. ${c} 單位`, `B. ${c + 1} 單位`, `C. ${a + b} 單位`, `D. ${c * 2} 單位`],
+              answer: 0,
+              hint: `水平差 Δx = ${a}，垂直差 Δy = ${b}，距離 = √[(${a})² + (${b})²]。`,
+              explanation: `正確答案為 A。PQ 距離 = √[(${1 + a} - 1)² + (${2 + b} - 2)²] = √(${a * a} + ${b * b}) = ${c} 單位。`
+            },
+            {
+              id: 'alk-mp-4',
+              subject: 'math',
+              grade: grade,
+              concept: '【會考魔王陷阱】梯子下滑的長度變化',
+              stem: '長 25 公尺的梯子靠在垂直牆上，梯腳距牆底 7 公尺（此時梯頂高 24 公尺）。若梯頂下滑 4 公尺變為 20 公尺高，則梯腳向外滑移了多少公尺？',
+              options: ['A. 4 公尺', 'B. 8 公尺', 'C. 15 公尺', 'D. 20 公尺'],
+              answer: 1,
+              hint: '梯長 25 不變！新底部距離牆 = √(25² - 20²) = 15 公尺，滑移量 = 15 - 7 = 8 公尺！',
+              explanation: '正確答案為 B。梯長固定為 25。當梯頂為 20 公尺時，新底距為 √(25² - 20²) = 15 公尺。原本底距為 7 公尺，故向外滑移了 15 - 7 = 8 公尺。'
+            }
+          ];
+        } else {
+          const chickens = randInt(10, 20);
+          const rabbits = randInt(5, 15);
+          const heads = chickens + rabbits;
+          const legs = chickens * 2 + rabbits * 4;
+          diagnosis.topicTitle = '二元一次聯立方程式：代入消去與應用題建模';
+          diagnosis.coreConcept = '二元一次方程式解法：代入消去法或加減消去法。在應用題中先設定雙未知數（設雞 x 隻、兔 y 隻），依題目條件列出兩道等式聯立求解。';
+          diagnosis.commonTrap = '列式時未知數係數配錯（雞有 2 隻腳、兔有 4 隻腳），或加減消去時符號沒有同時變號。';
+          diagnosis.mnemonic = '🔮 破題口訣：「假設兩隻腳與四隻腳，頭數列一式、腳數列二式，係數對齊加減消去！」';
+          diagnosis.questions = [
+            {
+              id: 'alk-ms-1',
+              subject: 'math',
+              grade: grade,
+              concept: '【暖身拆解】二元一次方程式列式',
+              stem: `農場裡雞有 x 隻，兔子有 y 隻。已知雞與兔子共 ${heads} 隻，腳共 ${legs} 隻，下列哪一組聯立方程式符合題意？`,
+              options: [
+                `A. x + y = ${heads} 且 2x + 4y = ${legs}`,
+                `B. x + y = ${heads} 且 4x + 2y = ${legs}`,
+                `C. x + y = ${legs} 且 2x + 4y = ${heads}`,
+                `D. 2x + 2y = ${heads} 且 x + y = ${legs}`
+              ],
+              answer: 0,
+              hint: '雞有 1 顆頭 2 隻腳，兔有 1 顆頭 4 隻腳。',
+              explanation: `正確答案為 A。頭數：x + y = ${heads}；腳數：雞腳 2x 加上兔腳 4y = ${legs}。`
+            },
+            {
+              id: 'alk-ms-2',
+              subject: 'math',
+              grade: grade,
+              concept: '【同型變換】聯立消去求解未知數',
+              stem: `承上題，請問農場裡的兔子有幾隻？`,
+              options: [`A. ${rabbits - 2} 隻`, `B. ${rabbits} 隻`, `C. ${rabbits + 2} 隻`, `D. ${chickens} 隻`],
+              answer: 1,
+              hint: `由第二式減去第一式的 2 倍：(2x + 4y) - (2x + 2y) = ${legs} - ${heads * 2} ⇒ 2y = ${legs - heads * 2}。`,
+              explanation: `正確答案為 B。2y = ${legs} - ${heads * 2} = ${legs - heads * 2} ⇒ y = ${rabbits} 隻兔子。`
+            },
+            {
+              id: 'alk-ms-3',
+              subject: 'math',
+              grade: grade,
+              concept: '【情境應用】門票購買生活情境計算',
+              stem: '某博物館成人票一張 150 元，學生票一張 100 元。老師帶隊共買了 30 張票花費 3600 元，請問成人票買了幾張？',
+              options: ['A. 10 張', 'B. 12 張', 'C. 15 張', 'D. 18 張'],
+              answer: 1,
+              hint: '設成人票 x 張，學生票 (30 - x) 張：150x + 100(30 - x) = 3600。',
+              explanation: '正確答案為 B。150x + 3000 - 100x = 3600 ⇒ 50x = 600 ⇒ x = 12 張成人票。'
+            },
+            {
+              id: 'alk-ms-4',
+              subject: 'math',
+              grade: grade,
+              concept: '【會考魔王陷阱】聯立方程式無限多解與無解判斷',
+              stem: '若聯立方程式 { 2x + 3y = 6, 4x + 6y = k } 有「無限多組解」，則常數 k 之值應為多少？',
+              options: ['A. 6', 'B. 12', 'C. 0', 'D. 任意數皆可'],
+              answer: 1,
+              hint: '無限多組解代表兩條直線完全重合，係數比等於常數比：2/4 = 3/6 = 6/k！',
+              explanation: '正確答案為 B。兩式完全重合時有無限多組解，第二式為第一式的 2 倍，故 k = 6 × 2 = 12。若 k ≠ 12 則為無解（平行線）。'
+            }
+          ];
+        }
+      }
+
+      // ==================== 自然科學領域 ====================
+      else if (detectedSub === 'science') {
+        let branch = 'mole';
+        if (/(莫耳|濃度|分子量|公克|水溶液|naoh|m)/.test(lower)) branch = 'mole';
+        else if (/(透鏡|焦距|凸透鏡|凹透鏡|成像|實像|虛像|放大鏡)/.test(lower)) branch = 'lens';
+        else if (/(浮力|密度|阿基米德|排開|沉體|浮體)/.test(lower)) branch = 'buoyancy';
+        else if (/(牛頓|運動定律|加速度|慣性|合力|f=ma)/.test(lower)) branch = 'motion';
+        else branch = pickRandom(['mole', 'lens', 'buoyancy', 'motion']);
+
+        if (branch === 'mole') {
           const grams = randInt(1, 4) * 20;
           const moles = grams / 40;
           const molarity = moles / 0.5;
           diagnosis.topicTitle = '理化計量：莫耳數換算與體積莫耳濃度 (M)';
           diagnosis.coreConcept = '① 莫耳數 (mol) ＝ 質量(g) ÷ 分子量；② 體積莫耳濃度 (M) ＝ 溶質莫耳數(mol) ÷ 溶液體積(公升 L)。';
-          diagnosis.commonTrap = '題目常給「毫升 (mL)」，同學忘了先除以 1000 換算成「公升 (L)」就直接除，導致答案差 1000 倍！';
+          diagnosis.commonTrap = '題目常給毫升 (mL)，同學忘了先除以 1000 換算成公升 (L) 就直接除，導致答案差 1000 倍！';
           diagnosis.mnemonic = '🔮 破題口訣：「公克先除分子量變莫耳，毫升記得變公升再相除！」';
           diagnosis.questions = [
             {
@@ -2212,15 +2404,10 @@ function setGradeFilter(grade) {
               grade: grade,
               concept: '【暖身拆解】質量與莫耳數換算',
               stem: `已知氫氧化鈉 (NaOH) 的分子量為 40，請問 ${grams} 公克的氫氧化鈉相當於多少莫耳 (mol)？`,
-              options: [
-                `A. ${moles * 0.5} 莫耳`,
-                `B. ${moles} 莫耳`,
-                `C. ${moles * 2} 莫耳`,
-                `D. ${moles * 10} 莫耳`
-              ],
+              options: [`A. ${moles * 0.5} 莫耳`, `B. ${moles} 莫耳`, `C. ${moles * 2} 莫耳`, `D. ${moles * 10} 莫耳`],
               answer: 1,
               hint: `莫耳數 ＝ 質量(${grams} g) ÷ 分子量(40)。`,
-              explanation: `${grams} ÷ 40 = ${moles} 莫耳 (mol)。`
+              explanation: `正確答案為 B。${grams} ÷ 40 = ${moles} 莫耳 (mol)。`
             },
             {
               id: 'alk-sc-m2',
@@ -2228,15 +2415,10 @@ function setGradeFilter(grade) {
               grade: grade,
               concept: '【同型變換】體積莫耳濃度計算',
               stem: `將 ${grams} 公克的 NaOH（分子量 40）完全溶於水，配製成 500 毫升 (mL) 的水溶液，其體積莫耳濃度為多少 M？`,
-              options: [
-                `A. ${molarity * 0.5} M`,
-                `B. ${molarity} M`,
-                `C. ${molarity * 2} M`,
-                `D. ${molarity * 0.1} M`
-              ],
+              options: [`A. ${molarity * 0.5} M`, `B. ${molarity} M`, `C. ${molarity * 2} M`, `D. ${molarity * 0.1} M`],
               answer: 1,
               hint: `500 毫升 ＝ 0.5 公升！用剛才算出的 ${moles} 莫耳除以 0.5 公升。`,
-              explanation: `溶質莫耳數 = ${grams} ÷ 40 = ${moles} mol；溶液體積 = 500 mL = 0.5 L；濃度 M = ${moles} ÷ 0.5 = ${molarity} M。`
+              explanation: `正確答案為 B。溶質莫耳數 = ${moles} mol；溶液體積 = 500 mL = 0.5 L；濃度 M = ${moles} ÷ 0.5 = ${molarity} M。`
             },
             {
               id: 'alk-sc-m3',
@@ -2247,7 +2429,7 @@ function setGradeFilter(grade) {
               options: ['A. 0.25 M', 'B. 0.5 M', 'C. 1.0 M', 'D. 1.5 M'],
               answer: 1,
               hint: '稀釋前後溶質莫耳數不變：M₁ × V₁ = M₂ × V₂（體積變 4 倍，濃度變 1/4）。',
-              explanation: '由 M₁V₁ = M₂V₂ ⇒ 2 × 100 = M₂ × 400 ⇒ M₂ = 0.5 M。'
+              explanation: '正確答案為 B。由 M₁V₁ = M₂V₂ ⇒ 2 × 100 = M₂ × 400 ⇒ M₂ = 0.5 M。'
             },
             {
               id: 'alk-sc-m4',
@@ -2258,14 +2440,14 @@ function setGradeFilter(grade) {
               options: ['A. 0.5 M', 'B. 1 M', 'C. 2 M', 'D. 3 M'],
               answer: 2,
               hint: '每 1 個 CaCl₂ 會解離出 2 個 Cl⁻ 離子！',
-              explanation: '因為 1 莫耳 CaCl₂ 可解離出 1 莫耳 Ca²⁺ 與 2 莫耳 Cl⁻，所以 [Cl⁻] = 1 M × 2 = 2 M。'
+              explanation: '正確答案為 C。因為 1 莫耳 CaCl₂ 可解離出 1 莫耳 Ca²⁺ 與 2 莫耳 Cl⁻，所以 [Cl⁻] = 1 M × 2 = 2 M。'
             }
           ];
-        } else {
+        } else if (branch === 'lens') {
           const focal = randInt(8, 15);
-          diagnosis.topicTitle = '光學與力學核心：透鏡成像規律與實驗判讀';
-          diagnosis.coreConcept = '凸透鏡成像以「焦點 (f)」與「兩倍焦距 (2f)」為分界：物在 2f 外成倒立縮小實像；物在 f～2f 間成倒立放大實像；物在 f 內成正立放大虛像。';
-          diagnosis.commonTrap = '常把「焦距 f」跟「兩倍焦距 2f」搞混，或忘記「實像必倒立（可投影在紙屏）、虛像必正立（無法在紙屏成像）」。';
+          diagnosis.topicTitle = '光學與透鏡：成像性質、焦距與實驗判讀';
+          diagnosis.coreConcept = '凸透鏡成像以焦點 (f) 與兩倍焦距 (2f) 為界：物在 2f 外成倒立縮小實像；物在 f～2f 成倒立放大實像；物在 f 內成正立放大虛像。實像可在紙屏顯現，虛像不行。';
+          diagnosis.commonTrap = '把「實像必倒立」與「虛像必正立」記反，或是忘記遮住透鏡上半部像仍完整只是變暗。';
           diagnosis.mnemonic = '🔮 破題口訣：「二倍焦外小實像，一二倍間大實像，焦點之內放大鏡（正立大虛像）！」';
           diagnosis.questions = [
             {
@@ -2274,244 +2456,842 @@ function setGradeFilter(grade) {
               grade: grade,
               concept: '【暖身拆解】實像與虛像的基本性質',
               stem: '在光學實驗中，若要讓蠟燭燭火透過單一透鏡在「白色紙屏」上清晰成像，必須使用哪一種透鏡且物體位置為何？',
-              options: [
-                'A. 凹透鏡，物體放在任意位置',
-                'B. 凸透鏡，物體放在焦點以外',
-                'C. 凸透鏡，物體放在焦點以內',
-                'D. 平面鏡，物體放在兩倍焦距外'
-              ],
+              options: ['A. 凹透鏡，物體放在任意位置', 'B. 凸透鏡，物體放在焦點以外', 'C. 凸透鏡，物體放在焦點以內', 'D. 平面鏡，物體放在兩倍焦距外'],
               answer: 1,
               hint: '能在紙屏上成像代表是「實像」，只有凸透鏡且物在焦點外才能形成實像！',
-              explanation: '紙屏能接收到的像為「實像」。凹透鏡與平面鏡皆只能形成虛像；凸透鏡需將物體置於焦點外（d > f）才能形成倒立實像。'
+              explanation: '正確答案為 B。紙屏能接收到的像為「實像」。凸透鏡需將物體置於焦點外才能形成倒立實像。'
             },
             {
               id: 'alk-sc-l2',
               subject: 'science',
               grade: grade,
               concept: '【同型變換】焦距數值與成像大小判斷',
-              stem: `已知某凸透鏡焦距為 ${focal} cm。若將物體放在透鏡前 ${focal + 4} cm 處（即 1 倍焦距與 2 倍焦距之間），會形成何種像？`,
-              options: [
-                'A. 倒立縮小實像',
-                'B. 倒立放大實像',
-                'C. 正立放大虛像',
-                'D. 正立縮小虛像'
-              ],
+              stem: `已知某凸透鏡焦距為 ${focal} cm。若將物體放在透鏡前 ${focal + 4} cm 處（介於 1 倍焦距與 2 倍焦距之間），會形成何種像？`,
+              options: ['A. 倒立縮小實像', 'B. 倒立放大實像', 'C. 正立放大虛像', 'D. 正立縮小虛像'],
               answer: 1,
-              hint: `焦距 f = ${focal} cm，2f = ${focal * 2} cm。物距 ${focal + 4} cm 介於 f 與 2f 之間！`,
-              explanation: `物距 ${focal + 4} cm 介於 f (${focal} cm) 與 2f (${focal * 2} cm) 之間，因此會在另一側兩倍焦距外形成「倒立放大實像」。`
+              hint: `物距 ${focal + 4} cm 介於 f (${focal} cm) 與 2f (${focal * 2} cm) 之間！`,
+              explanation: `正確答案為 B。物距介於 f 與 2f 之間，會在另一側兩倍焦距外形成「倒立放大實像」。`
             },
             {
               id: 'alk-sc-l3',
               subject: 'science',
               grade: grade,
-              concept: '【情境應用】放大鏡與老花眼鏡原理',
-              stem: `爺爺用焦距 ${focal} cm 的凸透鏡當作放大鏡看報紙上的小字，請問報紙與透鏡的距離應符合下列何者？`,
-              options: [
-                `A. 大於 ${focal * 2} cm`,
-                `B. 等於 ${focal * 2} cm`,
-                `C. 介於 ${focal} cm 與 ${focal * 2} cm 之間`,
-                `D. 小於 ${focal} cm（焦點以內）`
-              ],
+              concept: '【情境應用】放大鏡觀察原理',
+              stem: `用焦距 ${focal} cm 的凸透鏡當作放大鏡觀察郵票細部，請問郵票與透鏡的距離應符合下列何者？`,
+              options: [`A. 大於 ${focal * 2} cm`, `B. 等於 ${focal * 2} cm`, `C. 介於 ${focal} cm 與 ${focal * 2} cm 之間`, `D. 小於 ${focal} cm（焦點以內）`],
               answer: 3,
               hint: '放大鏡看到的是「正立放大虛像」，物體必須放在焦點以內！',
-              explanation: `欲形成正立放大虛像，物體必須置於凸透鏡的一倍焦距以內（小於 ${focal} cm）。`
+              explanation: `正確答案為 D。欲形成正立放大虛像，物體必須置於凸透鏡的一倍焦距以內（小於 ${focal} cm）。`
             },
             {
               id: 'alk-sc-l4',
               subject: 'science',
               grade: grade,
               concept: '【會考魔王陷阱】遮住一半透鏡的成像變化',
-              stem: '做凸透鏡成像實驗時，若紙屏上已出現清晰的燭火實像，此時用黑色厚紙板「遮住凸透鏡的上半部」，紙屏上的像會如何變化？',
-              options: [
-                'A. 像的上半部消失不見',
-                'B. 像的下半部消失不見',
-                'C. 像依然完整，但亮度變暗',
-                'D. 整個像完全消失'
-              ],
+              stem: '做凸透鏡成像實驗時，紙屏上已出現清楚的燭火實像，若用黑紙「遮住凸透鏡上半部」，紙屏上的像會如何？',
+              options: ['A. 像的上半部消失', 'B. 像的下半部消失', 'C. 像依然完整，但亮度變暗', 'D. 整個像完全消失'],
               answer: 2,
-              hint: '燭火每一點發出的光都會穿過整個透鏡，遮住一半只是通過的光線減半！',
-              explanation: '物體各點發出的光線仍可透過下半部透鏡折射匯聚成完整的像，只是通過的光線總量減少，因此「像依然完整，但亮度變暗」。這是段考與會考最經典的陷阱題！'
+              hint: '燭火各點光線仍可穿過下半部透鏡折射成像，遮住一半只是通過光量減半！',
+              explanation: '正確答案為 C。下半部透鏡依然能折射匯聚完整的光路，因此「像依然完整，但亮度變暗」。'
+            }
+          ];
+        } else if (branch === 'buoyancy') {
+          const vol = randInt(100, 300);
+          diagnosis.topicTitle = '力與運動：浮力原理、密度與阿基米德定律';
+          diagnosis.coreConcept = '阿基米德原理：物體在液體中所受浮力等於排開之液體重（B = V排 × D液）。浮體浮力等於自身物重（B = W）；沉體浮力小於自身物重（B = V物 × D液 < W）。';
+          diagnosis.commonTrap = '常以為物體越沉到底部浮力越大，其實一旦完全沒入水中（沉體），V排固定，深度再深浮力都保持不變！';
+          diagnosis.mnemonic = '🔮 破題口訣：「浮體看物重、沉體看體積；沉到底部浮力不變，鹽巴加多浮力增加！」';
+          diagnosis.questions = [
+            {
+              id: 'alk-sc-b1',
+              subject: 'science',
+              grade: grade,
+              concept: '【暖身拆解】浮體浮力與物重關係',
+              stem: '一塊質量 200 公克的木塊浮在水面上靜止不動，請問該木塊所受到的浮力大小為多少公克重 (gw)？',
+              options: ['A. 100 gw', 'B. 200 gw', 'C. 250 gw', 'D. 無法得知，缺少木塊體積'],
+              answer: 1,
+              hint: '物體漂浮在水面（浮體）代表垂直方向受力平衡：向上浮力 ＝ 向下重力！',
+              explanation: '正確答案為 B。浮體靜止於水面時，合力為零，向上浮力等於物體本身重量 = 200 gw。'
+            },
+            {
+              id: 'alk-sc-b2',
+              subject: 'science',
+              grade: grade,
+              concept: '【同型變換】沉體浮力阿基米德公式計算',
+              stem: `將體積 ${vol} cm³、質量 ${vol * 3} 公克的鋁塊完全沒入純水（密度 1.0 g/cm³）中，鋁塊在水中所受浮力為多少 gw？`,
+              options: [`A. ${vol} gw`, `B. ${vol * 2} gw`, `C. ${vol * 3} gw`, `D. ${vol / 2} gw`],
+              answer: 0,
+              hint: `鋁塊完全沒入水中，排開液體體積 V排 ＝ 鋁塊體積 (${vol} cm³)！B = V排 × D水。`,
+              explanation: `正確答案為 A。沉體浮力 B = V排 × D水 = ${vol} × 1.0 = ${vol} gw。`
+            },
+            {
+              id: 'alk-sc-b3',
+              subject: 'science',
+              grade: grade,
+              concept: '【情境應用】沉體沉入水中不同深度的浮力比較',
+              stem: '同一個鐵塊分別沉入水中 10 公分深處與 30 公分深處（皆未碰底），請問鐵塊在哪一個深度所受到的浮力較大？',
+              options: ['A. 10 公分深處較大', 'B. 30 公分深處較大', 'C. 兩者一樣大', 'D. 視水溫而定'],
+              answer: 2,
+              hint: '完全沒入後排開的水體積 V排 相同，液體密度也相同，浮力就完全一樣！',
+              explanation: '正確答案為 C。沉體完全沒入水中後，排開水的體積不隨深度改變，故浮力大小相同。'
+            },
+            {
+              id: 'alk-sc-b4',
+              subject: 'science',
+              grade: grade,
+              concept: '【會考魔王陷阱】水中加鹽對雞蛋浮力的影響',
+              stem: '原本沉在純水底部的生雞蛋，在水中不斷加入食鹽溶解後，雞蛋逐漸浮出水面。請問在雞蛋「由沉轉浮」的過程中，雞蛋所受的浮力如何變化？',
+              options: ['A. 一直變小', 'B. 先變大，浮出水面後固定等於蛋重', 'C. 一直保持不變', 'D. 先變小後變大'],
+              answer: 1,
+              hint: '加鹽提高液體密度，沉體時浮力隨液體密度增大；完全浮起後浮力就等於雞蛋重！',
+              explanation: '正確答案為 B。鹽水密度增加使浮力增大直至雞蛋浮起；浮起後成為浮體，浮力等於物重不再增加。'
+            }
+          ];
+        } else {
+          const mass = randInt(2, 6);
+          const force = mass * randInt(2, 5);
+          const acc = force / mass;
+          diagnosis.topicTitle = '力與運動：牛頓三大運動定律與合力計算';
+          diagnosis.coreConcept = '① 牛頓第一定律（慣性）：不受外力或合力為零時，靜者恆靜、動者恆作等速度直線運動；② 牛頓第二定律：合力 F = m × a；③ 牛頓第三定律：作用力與反作用力大小相等方向相反。';
+          diagnosis.commonTrap = '以為物體往前運動就一定有向前的推力，忽略「慣性運動時合力為零」！';
+          diagnosis.mnemonic = '🔮 破題口訣：「等速度合力必為零；有加速度才有合力，F = ma 代入算！」';
+          diagnosis.questions = [
+            {
+              id: 'alk-sc-mo1',
+              subject: 'science',
+              grade: grade,
+              concept: '【暖身拆解】慣性定律生活實例',
+              stem: '公車突然緊急煞車時，車上的乘客身體會不由自主地向前傾倒，這是因為哪一個物理原理？',
+              options: ['A. 萬有引力', 'B. 慣性定律（牛頓第一運動定律）', 'C. 作用力與反作用力', 'D. 摩擦力消失'],
+              answer: 1,
+              hint: '乘客下半身隨車停止，上半身因慣性維持原本向前運動的狀態！',
+              explanation: '正確答案為 B。物體具有維持原本運動狀態的性質稱為「慣性」，煞車時乘客上半身因慣性向前傾。'
+            },
+            {
+              id: 'alk-sc-mo2',
+              subject: 'science',
+              grade: grade,
+              concept: '【同型變換】牛頓第二定律 F = ma 計算',
+              stem: `在光滑水平面上，以 ${force} 牛頓 (N) 的水平定力推動質量 ${mass} 公斤 (kg) 的物體，物體的加速度大小為多少 m/s²？`,
+              options: [`A. ${acc} m/s²`, `B. ${acc + 2} m/s²`, `C. ${force * mass} m/s²`, `D. ${force} m/s²`],
+              answer: 0,
+              hint: `套用 F = m × a ⇒ a = F ÷ m = ${force} ÷ ${mass}。`,
+              explanation: `正確答案為 A。依牛頓第二運動定律 F = ma，加速度 a = ${force} ÷ ${mass} = ${acc} m/s²。`
+            },
+            {
+              id: 'alk-sc-mo3',
+              subject: 'science',
+              grade: grade,
+              concept: '【情境應用】作用力與反作用力大小判定',
+              stem: '大人與小孩穿溜冰鞋在溜冰場上互推，大人推小孩的力量為 50 牛頓，則小孩同時推大人的反作用力大小為何？',
+              options: ['A. 小於 50 牛頓，因為小孩力量小', 'B. 等於 50 牛頓', 'C. 大於 50 牛頓', 'D. 0 牛頓'],
+              answer: 1,
+              hint: '作用力與反作用力必大小相等、方向相反，且同時產生！',
+              explanation: '正確答案為 B。牛頓第三運動定律指出：作用力與反作用力必定「大小相等、方向相反」，故皆為 50 牛頓。'
+            },
+            {
+              id: 'alk-sc-mo4',
+              subject: 'science',
+              grade: grade,
+              concept: '【會考魔王陷阱】等速度運動時的受力狀態',
+              stem: '某火箭在太空無重力環境中正以 1000 m/s 的「等速度」向前飛行，請問此時火箭在飛行方向所受的合力大小為何？',
+              options: ['A. 1000 牛頓', 'B. 0 牛頓', 'C. 隨質量而定', 'D. 9.8 牛頓'],
+              answer: 1,
+              hint: '題目強調「等速度直線運動」，代表加速度 a = 0，因此合力 F = m × 0 = 0！',
+              explanation: '正確答案為 B。等速度直線運動代表加速度為零，根據 F = ma，合力必定為 0 牛頓。'
             }
           ];
         }
-      } else if (detectedSub === 'english') {
-        diagnosis.topicTitle = '英文核心文法：現在完成式與關係子句精準判讀';
-        diagnosis.coreConcept = '① 現在完成式 (have/has + p.p.) 搭配 since + 過去時間點 / for + 一段時間；② 關係代名詞依「先行詞是人或物」及「在子句中作主詞或受詞」決定。';
-        diagnosis.commonTrap = '看到過去明確時間（如 yesterday, two days ago, in 2020）卻誤選現在完成式，或搞混 has been to（曾去過已回來）與 has gone to（去了還沒回來）。';
-        diagnosis.mnemonic = '🔮 破題口訣：「since 接起點、for 接長短；been 去過已回、gone 走遠不在場！」';
-        diagnosis.questions = [
-          {
-            id: 'alk-en-1',
-            subject: 'english',
-            grade: grade,
-            concept: '【暖身拆解】since 與 for 的時間片語搭配',
-            stem: 'My family and I have lived in this town ________ more than twelve years.',
-            options: ['A. since', 'B. for', 'C. from', 'D. ago'],
-            answer: 1,
-            hint: 'more than twelve years 是「持續一段時間的長短」，要用 for！',
-            explanation: 'for + 一段時間（more than twelve years）；since 則接過去時間起點（如 since 2014）。'
-          },
-          {
-            id: 'alk-en-2',
-            subject: 'english',
-            grade: grade,
-            concept: '【同型變換】has been to vs. has gone to 語境分辨',
-            stem: 'A: Where is Kevin? I need to talk to him.\nB: He isn’t here right now. He ________ the library to return some books.',
-            options: [
-              'A. has been to',
-              'B. has gone to',
-              'C. has been in',
-              'D. goes'
-            ],
-            answer: 1,
-            hint: '題目說「He isn’t here right now（他現在不在這裡）」，代表已經去圖書館還沒回來！',
-            explanation: 'has gone to 表示「已經前往某地（人目前不在說話現場）」；has been to 則表示「曾經去過某地（人已回來）」。'
-          },
-          {
-            id: 'alk-en-3',
-            subject: 'english',
-            grade: grade,
-            concept: '【情境應用】關係代名詞主格與受格',
-            stem: 'The backpack ________ my mom bought for me on my birthday is very light and durable.',
-            options: ['A. who', 'B. whom', 'C. which', 'D. what'],
-            answer: 2,
-            hint: '先行詞是 The backpack（物），關係子句需要指物的關係代名詞 which 或 that。',
-            explanation: '先行詞 The backpack 為物品，故使用關係代名詞 which（或 that）引導形容詞子句修飾。'
-          },
-          {
-            id: 'alk-en-4',
-            subject: 'english',
-            grade: grade,
-            concept: '【會考魔王陷阱】先行詞含「人＋動物」的特殊關代',
-            stem: 'Look at the boy and his dog ________ are running happily across the park!',
-            options: ['A. who', 'B. which', 'C. that', 'D. whom'],
-            answer: 2,
-            hint: '當先行詞同時包含「人 (the boy)」與「動物/事物 (his dog)」時，只能用哪一個關係代名詞？',
-            explanation: '當先行詞同時包含「人與動物／事物」時，不可單用 who 或 which，必須使用關係代名詞 that！'
-          }
-        ];
-      } else if (detectedSub === 'chinese') {
-        diagnosis.topicTitle = '國文閱讀與語文常識：文言虛詞判讀與修辭剖析';
-        diagnosis.coreConcept = '文言文一字多義（之、其、以、為、乃）必須「先看前後詞性位置」：夾在名詞間多為助詞「的」，跟在及物動詞後多為代詞「他／它」。';
-        diagnosis.commonTrap = '只靠字面直覺猜測，忽略「之」在地點名詞前（如「送孟浩然之廣陵」、「吾欲之南海」）其實是動詞「往、到」！';
-        diagnosis.mnemonic = '🔮 破題口訣：「名＋之＋名＝的；動＋之＝代詞他；之＋地名＝去哪裡！」';
-        diagnosis.questions = [
-          {
-            id: 'alk-ch-1',
-            subject: 'chinese',
-            grade: grade,
-            concept: '【暖身拆解】「之」字作動詞「往、到」的判讀',
-            stem: '下列哪一個選項中的「之」字，字義為「往、到（去某地）」？',
-            options: [
-              'A. 蜀「之」鄙有二僧',
-              'B. 吾欲「之」南海，何如',
-              'C. 擇其善者而從「之」',
-              'D. 物外「之」趣'
-            ],
-            answer: 1,
-            hint: '找看看哪一個「之」後面直接接「地名（南海）」！',
-            explanation: 'B「吾欲之南海」的「之」後接地點「南海」，為動詞「往、到」；A、D 為助詞「的」；C 為代詞。'
-          },
-          {
-            id: 'alk-ch-2',
-            subject: 'chinese',
-            grade: grade,
-            concept: '【同型變換】「以」字字義辨析（因為 vs. 用、拿）',
-            stem: '「不以物喜，不以己悲」中的「以」字意思為「因為」。下列何者中的「以」字也是「因為」的意思？',
-            options: [
-              'A. 「以」叢草為林，以蟲蟻為獸',
-              'B. 君子不「以」言舉人',
-              'C. 徐噴「以」煙',
-              'D. 仁「以」為己任'
-            ],
-            answer: 1,
-            hint: '「君子不因為一個人的言論好聽就推薦他」，試著用「因為」代入四個選項！',
-            explanation: 'B「君子不以言舉人」的「以」為連詞「因為」；A 為「把」；C 為「用」；D 為「把」。'
-          },
-          {
-            id: 'alk-ch-3',
-            subject: 'chinese',
-            grade: grade,
-            concept: '【情境應用】映襯與轉化修辭判讀',
-            stem: '「敗草裡的鮮花」與「蟬噪林逾靜，鳥鳴山更幽」兩句共同使用了哪一種修辭手法來強化視覺或聽覺印象？',
-            options: ['A. 映襯法', 'B. 頂真法', 'C. 層遞法', 'D. 借代法'],
-            answer: 0,
-            hint: '把「敗草 vs. 鮮花」、「蟬噪/鳥鳴 vs. 靜/幽」兩個相反或相對的觀念並列對比！',
-            explanation: '兩者皆將相反或相對的現象並置（以敗草襯托鮮花、以聲音襯托寧靜），屬於「映襯」修辭。'
-          },
-          {
-            id: 'alk-ch-4',
-            subject: 'chinese',
-            grade: grade,
-            concept: '【會考魔王陷阱】文言文主語省略判讀',
-            stem: '閱讀短文：「張丞相好草書而不工。當時流輩皆譏笑之，丞相自若也。一日得句，索筆疾書，滿紙龍蛇飛動。使姪錄之，當波險處，姪罔然而止。」請問「索筆疾書」的人是誰？',
-            options: ['A. 張丞相', 'B. 當時流輩', 'C. 張丞相的姪子', 'D. 書僮'],
-            answer: 0,
-            hint: '順著前文脈絡：「丞相自若也。（丞相）一日得句，索筆疾書…使姪錄之」。',
-            explanation: '「一日得句，索筆疾書」承接前句主語「張丞相」，之後才叫姪子抄錄（使姪錄之），故索筆疾書者為張丞相。'
-          }
-        ];
-      } else {
-        diagnosis.topicTitle = '社會領域整合：地理氣候判讀與公民法律實務';
-        diagnosis.coreConcept = '地理科氣候判讀先看「風向與山脈走向（迎風坡地形雨、背風坡焚風或乾燥）」；公民科民法行為能力先看「年齡分界（未滿7歲無行為能力、7~18歲限制行為能力、滿18歲完全行為能力）」。';
-        diagnosis.commonTrap = '常忘記我國《民法》成年年齡已下修為 18 歲，或把「行政罰鍰（政府機關開罰單）」與「刑事罰金（法院判決）」搞混！';
-        diagnosis.mnemonic = '🔮 破題口訣：「迎風下雨背風乾；未滿18限制行為，簽約買車爸媽點頭才算數；罰鍰歸行政、罰金歸刑法！」';
-        diagnosis.questions = [
-          {
-            id: 'alk-so-1',
-            subject: 'social',
-            grade: grade,
-            concept: '【暖身拆解】台灣季風風向與降雨區',
-            stem: '台灣夏季盛行哪一種方向的季風，使得中南部山區在夏季容易出現豐沛的地形雨？',
-            options: ['A. 東北季風', 'B. 西南季風', 'C. 東南信風', 'D. 西風帶'],
-            answer: 1,
-            hint: '口訣：「冬東北、夏西南」！',
-            explanation: '台灣夏季盛行溫暖潮濕的「西南季風」，水氣受中央山脈阻擋抬升，使中南部迎風面夏季降雨豐沛。'
-          },
-          {
-            id: 'alk-so-2',
-            subject: 'social',
-            grade: grade,
-            concept: '【同型變換】民法成年年齡與契約效力',
-            stem: '剛滿 18 歲的大一新鮮人小安，在未告知父母的情況下自己與房東簽訂為期一年的租屋契約。依我國現行《民法》，該租屋契約效力為何？',
-            options: [
-              'A. 完全有效，因為滿 18 歲已具完全行為能力',
-              'B. 效力未定，仍須滿 20 歲才有效',
-              'C. 自始無效',
-              'D. 必須經過里長公證才有效'
-            ],
-            answer: 0,
-            hint: '我國《民法》已將成年年齡調降為 18 歲！',
-            explanation: '我國《民法》規定滿 18 歲即為成年人，具備「完全行為能力」，可獨立簽訂有效之法律契約。'
-          },
-          {
-            id: 'alk-so-3',
-            subject: 'social',
-            grade: grade,
-            concept: '【情境應用】行政責任（罰鍰）與刑事責任（罰金）',
-            stem: '阿哲騎機車未戴安全帽，被警察依《道路交通管理處罰條例》開單處以新台幣 500 元的處分。請問這 500 元在法律上稱為什麼？',
-            options: [
-              'A. 損害賠償（民事責任）',
-              'B. 罰金（刑事責任）',
-              'C. 罰鍰（行政責任）',
-              'D. 違約金（民事責任）'
-            ],
-            answer: 2,
-            hint: '違反交通規則被警察開紅單屬於「行政處分」，金錢處罰稱為「罰鍰（ㄏㄨㄢˊ）」！',
-            explanation: '違反行政法規（如交通管理處罰條例）所受的金錢處罰稱為「罰鍰」，屬於行政責任；觸犯《刑法》由法院判處的才叫「罰金」。'
-          },
-          {
-            id: 'alk-so-4',
-            subject: 'social',
-            grade: grade,
-            concept: '【會考魔王陷阱】機會成本計算',
-            stem: '小華周日打工 4 小時有三個選擇：去書局時薪 180 元、去咖啡廳時薪 190 元、去展場發傳單時薪 210 元。若小華最終選擇「去展場發傳單」，則他每小時的「機會成本」是多少元？',
-            options: ['A. 180 元', 'B. 190 元', 'C. 210 元', 'D. 370 元'],
-            answer: 1,
-            hint: '機會成本 ＝ 在放棄的選項中，「價值最高」的那一個！',
-            explanation: '小華選擇了 210 元，放棄的選項有 180 元與 190 元，其中價值最高者為 190 元，因此機會成本為 190 元。'
-          }
-        ];
+      }
+
+      // ==================== 英語領域 ====================
+      else if (detectedSub === 'english') {
+        let branch = 'tense';
+        if (/(since|for|have|has|tense|完成式|時態|been|gone)/.test(lower)) branch = 'tense';
+        else if (/(who|which|that|whose|whom|關係代名詞|關代)/.test(lower)) branch = 'relative';
+        else if (/(被動|使役|let|make|have|感官|hear|see)/.test(lower)) branch = 'passive';
+        else if (/(比較級|最高級|as.*as|than|if|條件)/.test(lower)) branch = 'comparison';
+        else branch = pickRandom(['tense', 'relative', 'passive', 'comparison']);
+
+        if (branch === 'tense') {
+          const years = randInt(5, 12);
+          const startYear = 2026 - years;
+          diagnosis.topicTitle = '英文時態核心：現在完成式與時間副詞精準判定';
+          diagnosis.coreConcept = '① 現在完成式 (have/has + p.p.) 表從過去持續至今；② since + 過去時間起點；③ for + 一段時間長度；④ has been to 表示去過已回，has gone to 表示去了還沒回來。';
+          diagnosis.commonTrap = '看到明確過去時間詞（yesterday, last year, in 2020）卻誤用現在完成式（過去時間詞只能用過去式動詞）。';
+          diagnosis.mnemonic = '🔮 破題口訣：「since 接起點、for 接長短；been 去過已回、gone 走遠不在場！」';
+          diagnosis.questions = [
+            {
+              id: 'alk-en-t1',
+              subject: 'english',
+              grade: grade,
+              concept: '【暖身拆解】since 與 for 的時間介系詞搭配',
+              stem: `My family and I have lived in this city ________ more than ${years} years.`,
+              options: ['A. since', 'B. for', 'C. from', 'D. ago'],
+              answer: 1,
+              hint: `more than ${years} years 是「一段時間長度」，要用 for！`,
+              explanation: `正確答案為 B。for + 一段時間長度；since 則需接過去的時間起點（如 since ${startYear}）。`
+            },
+            {
+              id: 'alk-en-t2',
+              subject: 'english',
+              grade: grade,
+              concept: '【同型變換】has been to vs. has gone to 語境分辨',
+              stem: 'A: Where is Kevin? I need to give him this notebook.\nB: He isn’t here right now. He ________ the bookstore to buy some pens.',
+              options: ['A. has been to', 'B. has gone to', 'C. is being in', 'D. was to'],
+              answer: 1,
+              hint: '題目強調「He isn’t here right now（他現在不在這）」，代表去書店還沒回來！',
+              explanation: '正確答案為 B。has gone to 表示「已經前往某處（不在說話現場）」；has been to 則指「曾經去過（人已回來）」。'
+            },
+            {
+              id: 'alk-en-t3',
+              subject: 'english',
+              grade: grade,
+              concept: '【情境應用】過去時間點與過去式動詞',
+              stem: 'David ________ a new bicycle two days ago, and he loves it very much.',
+              options: ['A. buys', 'B. bought', 'C. has bought', 'D. is buying'],
+              answer: 1,
+              hint: '句尾有明確過去時間「two days ago（兩天前）」，必須使用單純過去式！',
+              explanation: '正確答案為 B。句中有明確過去時間副詞 two days ago，不可使用現在完成式，動詞應使用過去式 bought。'
+            },
+            {
+              id: 'alk-en-t4',
+              subject: 'english',
+              grade: grade,
+              concept: '【會考魔王陷阱】How long 問句與完成式搭配',
+              stem: 'A: ________ have you known your best friend?\nB: Since we were in elementary school.',
+              options: ['A. How often', 'B. How long', 'C. How soon', 'D. When'],
+              answer: 1,
+              hint: '答句回答「Since we were in elementary school（從國小開始）」，問句是在問持續時間長短！',
+              explanation: '正確答案為 B。問持續多久用 How long；How often 問頻率；When 則接過去式問明確時間點。'
+            }
+          ];
+        } else if (branch === 'relative') {
+          diagnosis.topicTitle = '關係子句：關係代名詞 who, which, that, whose';
+          diagnosis.coreConcept = '① 先行詞為人主格用 who/that，受格用 whom/who/that；② 先行詞為物主格受格用 which/that；③ 先行詞同時有人與動物、或有最高級/the only/all 時，限定用 that。';
+          diagnosis.commonTrap = '介系詞後面誤用 that（介系詞後指人只能用 whom，指物只能用 which）。';
+          diagnosis.mnemonic = '🔮 破題口訣：「人 who 物 which，最高級與人狗同框必選 that；介系詞後不留 that！」';
+          diagnosis.questions = [
+            {
+              id: 'alk-en-r1',
+              subject: 'english',
+              grade: grade,
+              concept: '【暖身拆解】先行詞是指物的關係代名詞',
+              stem: 'The novel ________ my sister recommended to me last night is really exciting.',
+              options: ['A. who', 'B. which', 'C. whom', 'D. whose'],
+              answer: 1,
+              hint: '先行詞 The novel（小說）為事物，關係代名詞使用 which 或 that。',
+              explanation: '正確答案為 B。先行詞為物，受格關係代名詞使用 which（或 that）。'
+            },
+            {
+              id: 'alk-en-r2',
+              subject: 'english',
+              grade: grade,
+              concept: '【同型變換】先行詞是指人的主格關代',
+              stem: 'The doctor ________ treated my grandmother in the hospital is very kind and patient.',
+              options: ['A. which', 'B. who', 'C. whose', 'D. where'],
+              answer: 1,
+              hint: '先行詞 The doctor 為人，且子句緊接動詞 treated，需要主格關代！',
+              explanation: '正確答案為 B。先行詞為人且作子句主詞，使用主格關係代名詞 who。'
+            },
+            {
+              id: 'alk-en-r3',
+              subject: 'english',
+              grade: grade,
+              concept: '【情境應用】人與動物並列時必選 that',
+              stem: 'Look at the old man and his white dog ________ are walking across the street!',
+              options: ['A. who', 'B. which', 'C. that', 'D. whom'],
+              answer: 2,
+              hint: '先行詞同時包含「人 (the old man)」與「動物 (his white dog)」！',
+              explanation: '正確答案為 C。當先行詞同時包含「人與動物」時，不可單獨用 who 或 which，必須使用 that。'
+            },
+            {
+              id: 'alk-en-r4',
+              subject: 'english',
+              grade: grade,
+              concept: '【會考魔王陷阱】介系詞後的關係代名詞',
+              stem: 'This is the tall girl about ________ everyone in our class was talking yesterday.',
+              options: ['A. that', 'B. whom', 'C. who', 'D. which'],
+              answer: 1,
+              hint: '介系詞 about 後面指人，只能使用受格 whom，絕不可使用 that 或 who！',
+              explanation: '正確答案為 B。介系詞之後指人只能使用受格關代 whom，不得使用 that 或 who。'
+            }
+          ];
+        } else if (branch === 'passive') {
+          diagnosis.topicTitle = '被動語態與使役動詞：文法結構與原形動詞搭配';
+          diagnosis.coreConcept = '① 被動語態結構：be 動詞 + 過去分詞 (p.p.) + by + 行為者；② 使役動詞 make / let / have + 受詞 + 原形動詞 (V)；③ 使役動詞被動態時需還原 to。';
+          diagnosis.commonTrap = '使役動詞主動句中受詞後面誤加 to（例如 made him to study 是錯誤的，應為 made him study）。';
+          diagnosis.mnemonic = '🔮 破題口訣：「被動態是 be+p.p.；使役三劍客 make/let/have 受詞後接原形動詞！」';
+          diagnosis.questions = [
+            {
+              id: 'alk-en-p1',
+              subject: 'english',
+              grade: grade,
+              concept: '【暖身拆解】基礎被動語態結構',
+              stem: 'This famous tower ________ by millions of tourists from all over the world every year.',
+              options: ['A. visits', 'B. is visited', 'C. was visited', 'D. has visited'],
+              answer: 1,
+              hint: '主詞是這座塔（物），由每年的旅客參觀，且是每年常態（現在式被動）！',
+              explanation: '正確答案為 B。主詞塔被參觀，且有 every year 表示現在習慣，用現在式被動 is visited。'
+            },
+            {
+              id: 'alk-en-p2',
+              subject: 'english',
+              grade: grade,
+              concept: '【同型變換】使役動詞接原形動詞',
+              stem: 'Mom made my younger brother ________ his messy bedroom before playing video games.',
+              options: ['A. clean', 'B. cleans', 'C. to clean', 'D. cleaned'],
+              answer: 0,
+              hint: 'made 是使役動詞，後面接受詞後必須接「原形動詞」！',
+              explanation: '正確答案為 A。使役動詞 make + 受詞 + 原形動詞，故選 clean。'
+            },
+            {
+              id: 'alk-en-p3',
+              subject: 'english',
+              grade: grade,
+              concept: '【情境應用】過去式被動語態',
+              stem: 'The beautiful song ________ by Jay Chou more than twenty years ago.',
+              options: ['A. wrote', 'B. was written', 'C. is writing', 'D. writes'],
+              answer: 1,
+              hint: '歌曲是「被寫出」，且時間是二十年前（過去式被動）！',
+              explanation: '正確答案為 B。過去式被動語態為 was/were + p.p.，故選 was written。'
+            },
+            {
+              id: 'alk-en-p4',
+              subject: 'english',
+              grade: grade,
+              concept: '【會考魔王陷阱】感官動詞受詞後的動詞型態',
+              stem: 'I heard someone ________ the piano upstairs when I walked into the hallway.',
+              options: ['A. played', 'B. playing', 'C. to play', 'D. was playing'],
+              answer: 1,
+              hint: '感官動詞 hear + 受詞 + V-ing（強調當下正在進行的動作）或原形 V！',
+              explanation: '正確答案為 B。感官動詞 heard 後接受詞，表示當下聽見正在彈琴用 V-ing（playing）。'
+            }
+          ];
+        } else {
+          diagnosis.topicTitle = '比較級與假設條件句：文法變化與時態規律';
+          diagnosis.coreConcept = '① 形容詞比較級 + than，最高級加 the ... of/in；② as + 原級形容詞 + as；③ If 條件子句用「現在式代替未來式」。';
+          diagnosis.commonTrap = '在 If 條件子句中加入 will（例如 If it will rain 是錯誤的，正確應為 If it rains）。';
+          diagnosis.mnemonic = '🔮 破題口訣：「as...as 放原級，比較加 than、最高加 the；If 條件句現在代替未來！」';
+          diagnosis.questions = [
+            {
+              id: 'alk-en-c1',
+              subject: 'english',
+              grade: grade,
+              concept: '【暖身拆解】原級比較 as...as 句型',
+              stem: 'Peter runs as ________ as his older brother; both of them are on the track team.',
+              options: ['A. fast', 'B. faster', 'C. fastest', 'D. more fast'],
+              answer: 0,
+              hint: 'as ... as 中間只能放「原級」形容詞或副詞！',
+              explanation: '正確答案為 A。as ... as 結構中必須使用原級形容詞或副詞，故選 fast。'
+            },
+            {
+              id: 'alk-en-c2',
+              subject: 'english',
+              grade: grade,
+              concept: '【同型變換】形容詞最高級與範圍介系詞',
+              stem: 'Mount Everest is ________ mountain in the entire world.',
+              options: ['A. higher', 'B. the highest', 'C. highest', 'D. more high'],
+              answer: 1,
+              hint: '全世界最高的一座山，最高級前面必須加上 the！',
+              explanation: '正確答案為 B。形容詞最高級前面須加冠詞 the，故為 the highest。'
+            },
+            {
+              id: 'alk-en-c3',
+              subject: 'english',
+              grade: grade,
+              concept: '【情境應用】If 條件子句現在式代替未來式',
+              stem: 'If it ________ tomorrow, we will cancel our barbecue plan and stay home.',
+              options: ['A. rains', 'B. will rain', 'C. rained', 'D. is raining'],
+              answer: 0,
+              hint: '在 If 引導的條件子句中，要用「現在式」代替未來式！',
+              explanation: '正確答案為 A。在 If 條件副詞子句中，即使表示未來的事情，也必須使用現在式 rains 代替未來式。'
+            },
+            {
+              id: 'alk-en-c4',
+              subject: 'english',
+              grade: grade,
+              concept: '【會考魔王陷阱】兩者中較…的一個特殊比較級',
+              stem: 'Of the two sisters, Emily is ________ one.',
+              options: ['A. taller', 'B. the taller', 'C. tallest', 'D. the tallest'],
+              answer: 1,
+              hint: '注意題目是「兩者之中（Of the two）」，要用「the + 比較級」！',
+              explanation: '正確答案為 B。當範圍指「兩者之中較…的一個」時，慣用「the + 比較級」，故選 the taller。'
+            }
+          ];
+        }
+      }
+
+      // ==================== 國語文領域 ====================
+      else if (detectedSub === 'chinese') {
+        let branch = 'particles';
+        if (/(之|以|其|為|乃|虛詞|詞性)/.test(lower)) branch = 'particles';
+        else if (/(修辭|譬喻|轉化|擬人|映襯|借代|誇飾)/.test(lower)) branch = 'rhetoric';
+        else if (/(成語|鞭辟入裡|汗牛充棟|成語錯字|詞義)/.test(lower)) branch = 'idioms';
+        else if (/(詩|唐詩|宋詞|季節|李白|杜甫|意象)/.test(lower)) branch = 'poetry';
+        else branch = pickRandom(['particles', 'rhetoric', 'idioms', 'poetry']);
+
+        if (branch === 'particles') {
+          diagnosis.topicTitle = '國文文言虛詞：一字多義（之、以、其、為）剖析';
+          diagnosis.coreConcept = '文言文虛詞依上下文詞性判讀：①「之」在動詞後多為代詞（他/牠），在名詞間為助詞（的），後接地名為動詞（往、到）；②「以」作連詞表因為，作介詞表用、拿、把。';
+          diagnosis.commonTrap = '看見「之廣陵」、「之南海」卻把「之」當成助詞「的」，忽略後面接地名是動詞「去、往」！';
+          diagnosis.mnemonic = '🔮 破題口訣：「名＋之＋名＝的；動＋之＝代詞他；之＋地名＝去哪裡！」';
+          diagnosis.questions = [
+            {
+              id: 'alk-ch-p1',
+              subject: 'chinese',
+              grade: grade,
+              concept: '【暖身拆解】「之」字作動詞「往、到」的判讀',
+              stem: '下列選項中的「之」字，何者的字義為動詞「往、到（去某地）」？',
+              options: ['A. 蜀「之」鄙有二僧', 'B. 吾欲「之」南海，何如', 'C. 擇其善者而從「之」', 'D. 物外「之」趣'],
+              answer: 1,
+              hint: '找看看哪一個「之」後面直接接地名！',
+              explanation: '正確答案為 B。「吾欲之南海」的「之」後接地名「南海」，為動詞「往、到」；A、D 為助詞「的」；C 為代詞。'
+            },
+            {
+              id: 'alk-ch-p2',
+              subject: 'chinese',
+              grade: grade,
+              concept: '【同型變換】「以」字字義辨析（因為 vs. 用、拿）',
+              stem: '「不以物喜，不以己悲」中的「以」字意思為「因為」。下列何者中的「以」字也是「因為」的意思？',
+              options: ['A. 「以」叢草為林', 'B. 君子不「以」言舉人', 'C. 徐噴「以」煙', 'D. 仁「以」為己任'],
+              answer: 1,
+              hint: '「君子不因為一個人的言論動聽就推薦他」，代入「因為」完全通順！',
+              explanation: '正確答案為 B。「君子不以言舉人」的「以」為連詞「因為」；A 為「把」；C 為「用」；D 為「把」。'
+            },
+            {
+              id: 'alk-ch-p3',
+              subject: 'chinese',
+              grade: grade,
+              concept: '【情境應用】「其」字代詞指稱判斷',
+              stem: '「擇其善者而從之，其不善者而改之。」句中的兩個「其」字意思為何？',
+              options: ['A. 大概（推測詞）', 'B. 他們的（代詞）', 'C. 難道（反詰詞）', 'D. 如果（假設詞）'],
+              answer: 1,
+              hint: '指的是「眾人之中那些優點／缺點」，是第三人稱所有格代詞！',
+              explanation: '正確答案為 B。「其」在此指稱「他們的、那些人的」，作為代名詞。'
+            },
+            {
+              id: 'alk-ch-p4',
+              subject: 'chinese',
+              grade: grade,
+              concept: '【會考魔王陷阱】主語省略與代詞指涉',
+              stem: '閱讀：「張丞相好草書而不工。當時流輩皆譏笑之，丞相自若也。一日得句，索筆疾書，使姪錄之。」請問「使姪錄之」的「之」指代何者？',
+              options: ['A. 當時流輩', 'B. 剛剛寫下的草書佳句', 'C. 張丞相的筆', 'D. 姪子本人'],
+              answer: 1,
+              hint: '姪子要謄錄的是丞相剛寫好的那篇草書作品佳句！',
+              explanation: '正確答案為 B。「使姪錄之」的「之」是代詞，代稱前文張丞相「索筆疾書」所寫下的詩文草書。'
+            }
+          ];
+        } else if (branch === 'rhetoric') {
+          diagnosis.topicTitle = '修辭藝術：擬人轉化、譬喻、映襯與借代辨析';
+          diagnosis.coreConcept = '① 轉化（擬人）：賦予非人事物人類動作情感；② 譬喻：以喻體、喻詞（如、像、若）、喻依比方說明；③ 映襯：將相反相對現象並列對比；④ 借代：借用特徵代稱本體。';
+          diagnosis.commonTrap = '分不清「借代」與「譬喻」（借代省略了喻詞與本體，直接用密切相關事物代替，如「朱門」借代富貴人家）。';
+          diagnosis.mnemonic = '🔮 破題口訣：「物當人寫是擬人，有如有像打比方；美醜黑白並置是對比，借特徵稱呼是借代！」';
+          diagnosis.questions = [
+            {
+              id: 'alk-ch-r1',
+              subject: 'chinese',
+              grade: grade,
+              concept: '【暖身拆解】轉化（擬人化）修辭判讀',
+              stem: '下列何者使用了「擬人化（轉化）」的修辭技巧？',
+              options: [
+                'A. 春天的腳步輕快地走過田野，喚醒了沉睡的小草',
+                'B. 他的脾氣像夏天的午後雷雨一樣暴躁',
+                'C. 教室裡安靜得連一根針掉在地上都聽得見',
+                'D. 讀書破萬卷，下筆如有神'
+              ],
+              answer: 0,
+              hint: '「春天的腳步走過」、「喚醒沉睡」賦予自然景物人的動作！',
+              explanation: '正確答案為 A。把春天和小草當作能走動、能沉睡的人來寫，屬於轉化修辭中的「擬人」。B 為譬喻，C 為誇飾。'
+            },
+            {
+              id: 'alk-ch-r2',
+              subject: 'chinese',
+              grade: grade,
+              concept: '【同型變換】映襯修辭的強烈對比',
+              stem: '「蟬噪林逾靜，鳥鳴山更幽」運用了哪一種修辭手法以聲襯靜？',
+              options: ['A. 映襯法', 'B. 頂真法', 'C. 借代法', 'D. 排比法'],
+              answer: 0,
+              hint: '用「蟬噪、鳥鳴」的聲音，對照襯托出山林的「逾靜、更幽」！',
+              explanation: '正確答案為 A。將相反或相對的現象並置（以聲音襯托寂靜），屬於「映襯」修辭。'
+            },
+            {
+              id: 'alk-ch-r3',
+              subject: 'chinese',
+              grade: grade,
+              concept: '【情境應用】常見會考借代詞彙辨識',
+              stem: '「朱門酒肉臭，路有凍死骨」中的「朱門」借代指稱什麼？',
+              options: ['A. 漆成紅色的皇宮大門', 'B. 富貴豪門人家', 'C. 廟宇寺院', 'D. 刑場重地'],
+              answer: 1,
+              hint: '古代只有豪門貴族的大門能漆成紅色！',
+              explanation: '正確答案為 B。「朱門」指紅漆大門，藉此借代富貴豪門人家。'
+            },
+            {
+              id: 'alk-ch-r4',
+              subject: 'chinese',
+              grade: grade,
+              concept: '【會考魔王陷阱】譬喻類型的微細判讀',
+              stem: '「你底心是小小的窗扉緊掩」屬於譬喻修辭中的哪一種形式？',
+              options: ['A. 明喻（喻體＋喻詞「像」＋喻依）', 'B. 隱喻／暗喻（喻體＋繫詞「是」＋喻依）', 'C. 略喻', 'D. 借喻'],
+              answer: 1,
+              hint: '觀察喻詞使用的是繫詞「是」，形式為「A 是 B」！',
+              explanation: '正確答案為 B。以「是、為」等繫詞代替「如、像」連接本體與喻體，屬於隱喻（暗喻）。'
+            }
+          ];
+        } else if (branch === 'idioms') {
+          diagnosis.topicTitle = '成語精華：會考高頻成語語境辨析與錯字辨正';
+          diagnosis.coreConcept = '會考成語測驗重在「精準語境」與「褒貶分際」：如「差強人意」指大致令人滿意非很糟糕；「鞭辟入裡」形容分析深刻；「拾人牙慧」指抄襲他人見解。';
+          diagnosis.commonTrap = '把「差強人意」當成「很不滿意」；把「首當其衝」當成「衝鋒陷陣搶得第一」。';
+          diagnosis.mnemonic = '🔮 破題口訣：「差強人意是勉強合格，首當其衝是最先受災；字字看清楚，褒貶不張冠李戴！」';
+          diagnosis.questions = [
+            {
+              id: 'alk-ch-i1',
+              subject: 'chinese',
+              grade: grade,
+              concept: '【暖身拆解】深刻剖析成語選填',
+              stem: '演講者對國際經濟局勢的分析「切中核心、剖析深刻透徹」，下列哪一個成語最適合形容？',
+              options: ['A. 鞭辟入裡', 'B. 汗牛充棟', 'C. 緣木求魚', 'D. 班門弄斧'],
+              answer: 0,
+              hint: '「鞭辟入裡」形容言論剖析深刻、透徹要害！',
+              explanation: '正確答案為 A。「鞭辟入裡」形容分析深入、切中要害；B 形容藏書極多；C 比喻方向錯誤徒勞無功；D 比喻在行家面前賣弄。'
+            },
+            {
+              id: 'alk-ch-i2',
+              subject: 'chinese',
+              grade: grade,
+              concept: '【同型變換】「差強人意」真正詞義判斷',
+              stem: '下列成語使用，何者完全正確且合乎語境？',
+              options: [
+                'A. 這次模考成績雖然未達滿分，但表現還算「差強人意」，尚能令人接受',
+                'B. 颱風來襲，第一線海堤「首當其衝」奪得了救災第一名大獎',
+                'C. 他上台致詞時講話「空穴來風」，句句都是鐵證如山',
+                'D. 看到大師精彩的書法作品，他在旁「班門弄斧」讓大家讚嘆不已'
+              ],
+              answer: 0,
+              hint: '「差強人意」的意思是「大致上還能令人滿意」！',
+              explanation: '正確答案為 A。「差強人意」指大致滿意；B「首當其衝」指最先遭殃；C「空穴來風」比喻傳言事出有因或無中生有；D「班門弄斧」是不自量力賣弄。'
+            },
+            {
+              id: 'alk-ch-i3',
+              subject: 'chinese',
+              grade: grade,
+              concept: '【情境應用】成語錯別字辨正',
+              stem: '下列文句中的成語，哪一個完全「沒有」錯別字？',
+              options: [
+                'A. 面對未知的風險，我們應當「未雨綢繆」提早防範',
+                'B. 只要持之以恆，「再接再勵」，一定能克服難關',
+                'C. 這部電影情節感人，令人「趨之若鶩」潸然淚下',
+                'D. 他說話做事向來「敷衍塞責」，深獲大家信任'
+              ],
+              answer: 0,
+              hint: '注意：再接再「厲」（砥礪之厲）；A 的未雨綢繆完全正確！',
+              explanation: '正確答案為 A。B 應為再接再「厲」；C 趨之若鶩指爭相前往，與潸然淚下不合；D 敷衍塞責是不負責任，不會獲大家信任。'
+            },
+            {
+              id: 'alk-ch-i4',
+              subject: 'chinese',
+              grade: grade,
+              concept: '【會考魔王陷阱】抄襲與模仿相關成語',
+              stem: '學術論文講求原創性，若一味抄襲他人陳腔濫調，在學界會被批評為下列何者？',
+              options: ['A. 拾人牙慧', 'B. 滄海一粟', 'C. 夙夜匪懈', 'D. 篳路藍縷'],
+              answer: 0,
+              hint: '「拾人牙慧」比喻蹈襲他人的言論或主張！',
+              explanation: '正確答案為 A。「拾人牙慧」比喻抄襲剽竊別人的言論；B 比喻渺小；C 形容日夜勤奮；D 形容創業維艱。'
+            }
+          ];
+        } else {
+          diagnosis.topicTitle = '古典詩詞：季節景物意象判讀與名家詩風';
+          diagnosis.coreConcept = '會考古典詩歌常考季節與名家風格：① 桃花、東風、楊柳表「春」；蓮花、黃梅雨、蟬鳴表「夏」；金風、楓葉、殘菊表「秋」；朔風、寒梅、殘雪表「冬」；② 李白豪放飄逸，杜甫沉鬱頓挫。';
+          diagnosis.commonTrap = '看到「梅」字就衝動選冬天，忽略「黃梅時節家家雨」是指初夏的梅雨季節！';
+          diagnosis.mnemonic = '🔮 破題口訣：「東風桃柳春風暖，黃梅蟬鳴夏荷香；金風楓菊秋蕭瑟，朔風寒雪冬梅傲！」';
+          diagnosis.questions = [
+            {
+              id: 'alk-ch-po1',
+              subject: 'chinese',
+              grade: grade,
+              concept: '【暖身拆解】詩詞季節景物意象判讀',
+              stem: '「月落烏啼霜滿天，江楓漁火對愁眠。」這首張繼的〈楓橋夜泊〉所描寫的季節為何？',
+              options: ['A. 春季', 'B. 夏季', 'C. 秋季', 'D. 冬季'],
+              answer: 2,
+              hint: '詩中有「霜滿天」與「江楓（紅楓葉）」，是秋天的典型代表景物！',
+              explanation: '正確答案為 C。詩中描寫「霜」與「楓」，皆為深秋之典型意象。'
+            },
+            {
+              id: 'alk-ch-po2',
+              subject: 'chinese',
+              grade: grade,
+              concept: '【同型變換】初夏梅雨意象陷阱判析',
+              stem: '「黃梅時節家家雨，青草池塘處處蛙。」這兩句詩所描繪的季節屬於何者？',
+              options: ['A. 初春', 'B. 初夏（夏初）', 'C. 深秋', 'D. 隆冬'],
+              answer: 1,
+              hint: '「黃梅時節」指梅子成熟時的「梅雨季」，加上池塘蛙鳴，是夏天！',
+              explanation: '正確答案為 B。黃梅成熟且伴隨連綿梅雨、池塘蛙聲陣陣，為初夏時節的景象。'
+            },
+            {
+              id: 'alk-ch-po3',
+              subject: 'chinese',
+              grade: grade,
+              concept: '【情境應用】李白與杜甫詩歌風格辨識',
+              stem: '「安得廣廈千萬間，大庇天下寒士俱歡顏，風雨不動安如山！」這首展現憂國憂民情懷的詩句出自哪一位詩人？',
+              options: ['A. 詩仙李白', 'B. 詩聖杜甫', 'C. 詩佛王維', 'D. 詩鬼李賀'],
+              answer: 1,
+              hint: '關心天下貧寒士人，風格沉鬱頓挫、憂國憂民的是「詩聖」！',
+              explanation: '正確答案為 B。此句出自杜甫〈茅屋為秋風所破歌〉，體現其悲天憫人、心懷天下的儒者情操。'
+            },
+            {
+              id: 'alk-ch-po4',
+              subject: 'chinese',
+              grade: grade,
+              concept: '【會考魔王陷阱】絕句與律詩格律規範',
+              stem: '關於近體詩（絕句與律詩）的格律規定，下列敘述何者完全正確？',
+              options: [
+                'A. 絕句每首四句，律詩每首八句',
+                'B. 絕句的第三、四句必定要對仗',
+                'C. 偶數句與奇數句皆必須押韻',
+                'D. 詞牌名必須與詞的內容嚴格相關'
+              ],
+              answer: 0,
+              hint: '絕句 4 句、律詩 8 句！律詩第三四句（頷聯）與第五六句（頸聯）才嚴格要求對仗。',
+              explanation: '正確答案為 A。近體詩中絕句為四句，律詩為八句；對仗是律詩頷聯與頸聯之硬性要求，絕句不強制對仗。'
+            }
+          ];
+        }
+      }
+
+      // ==================== 社會領域 ====================
+      else {
+        let branch = 'climate';
+        if (/(氣候|季風|迎風|等高線|地形雨|降雨)/.test(lower)) branch = 'climate';
+        else if (/(民法|成年|18歲|行為能力|契約|罰鍰|罰金|法律)/.test(lower)) branch = 'law';
+        else if (/(經濟|需求|供給|機會成本|外部|市場)/.test(lower)) branch = 'economics';
+        else if (/(歷史|荷蘭|鄭氏|清領|日治|台灣史)/.test(lower)) branch = 'history';
+        else branch = pickRandom(['climate', 'law', 'economics', 'history']);
+
+        if (branch === 'climate') {
+          diagnosis.topicTitle = '地理與氣候：季風風向、迎風背風雨量與地形判讀';
+          diagnosis.coreConcept = '① 台灣冬季東北季風，東北部（基隆、宜蘭）迎風坡多地形雨，中南部背風坡乾燥晴朗；② 夏季西南季風，中南部山區多地形雨；③ 等高線越密集坡度越陡，V字尖端朝高處為山谷有河川。';
+          diagnosis.commonTrap = '常誤以為台灣全島四季都多雨，忽視中南部有極為明顯的「乾季（冬季）」！';
+          diagnosis.mnemonic = '🔮 破題口訣：「冬東北、夏西南；迎風降雨背風乾，等高密集斜坡陡！」';
+          diagnosis.questions = [
+            {
+              id: 'alk-so-c1',
+              subject: 'social',
+              grade: grade,
+              concept: '【暖身拆解】台灣冬季東北季風迎風坡降雨',
+              stem: '台灣冬季時，東北部的基隆與宜蘭地區常常連日陰雨綿綿，主要受哪一種季風吹拂與地形抬升所致？',
+              options: ['A. 東北季風', 'B. 西南季風', 'C. 東南信風', 'D. 西風帶'],
+              answer: 0,
+              hint: '口訣：「冬東北，夏西南」！',
+              explanation: '正確答案為 A。冬季時蒙古冷高壓吹出東北季風，經太平洋水氣加濕，在台灣東北部迎風坡抬升形成地形雨。'
+            },
+            {
+              id: 'alk-so-c2',
+              subject: 'social',
+              grade: grade,
+              concept: '【同型變換】中南部氣候特色與水資源',
+              stem: '相較於北部，台灣中南部地區的降雨時間高度集中於哪一個季節，導致冬春季常面臨缺水問題？',
+              options: ['A. 春季', 'B. 夏季', 'C. 秋季', 'D. 冬季'],
+              answer: 1,
+              hint: '夏季西南季風與颱風帶來主要降雨，冬季處於中央山脈背風坡乾燥少雨！',
+              explanation: '正確答案為 B。中南部降雨高度集中在夏季（西南季風與颱風），冬半年背風乾季長達半年。'
+            },
+            {
+              id: 'alk-so-c3',
+              subject: 'social',
+              grade: grade,
+              concept: '【情境應用】等高線地形圖判讀山谷與河流',
+              stem: '在等高線地形圖上，若等高線呈現「V 字形」，且 V 字形的尖端指向「數值較高處（高地）」，此地形特徵代表什麼？',
+              options: ['A. 山脊（分水嶺）', 'B. 山谷（溪流河谷）', 'C. 鞍部', 'D. 盆地'],
+              answer: 1,
+              hint: '口訣：「尖端指高是山谷有河流，尖端指低是山脊分水嶺」！',
+              explanation: '正確答案為 B。等高線凸向高處代表地勢比兩側低，屬於山谷（溪流發源地）；凸向低處則為山脊。'
+            },
+            {
+              id: 'alk-so-c4',
+              subject: 'social',
+              grade: grade,
+              concept: '【會考魔王陷阱】世界特殊氣候特徵辨析',
+              stem: '歐洲地中海沿岸地區呈現「夏乾冬雨」的特殊降雨型態，這屬於下列哪一種氣候類型？',
+              options: ['A. 溫帶海洋性氣候', 'B. 地中海型氣候', 'C. 熱帶莽原氣候', 'D. 溫帶大陸性氣候'],
+              answer: 1,
+              hint: '「夏乾冬雨」是全世界最經典的地中海型氣候特徵！',
+              explanation: '正確答案為 B。地中海型氣候夏季受副熱帶高壓籠罩乾燥炎熱，冬季受西風帶影響溫和多雨。'
+            }
+          ];
+        } else if (branch === 'law') {
+          diagnosis.topicTitle = '現代公民法律：行為能力年齡、契約效力與行政刑罰區別';
+          diagnosis.coreConcept = '① 我國現行《民法》成年年齡為 18 歲，滿 18 歲具完全行為能力可獨立簽約；② 滿 7 歲未滿 18 歲為限制行為能力人，簽訂重大契約效力未定；③ 違反行政法規由政府裁處「罰鍰」，觸犯刑法由法院判處「罰金」。';
+          diagnosis.commonTrap = '把警察開交通紅單說成「罰金（錯誤，是行政罰鍰）」，或以為滿 20 歲才成年（民法已修法為 18 歲成年）！';
+          diagnosis.mnemonic = '🔮 破題口訣：「滿18成年完全行為能力；交通紅單是罰鍰，法院判刑是罰金！」';
+          diagnosis.questions = [
+            {
+              id: 'alk-so-l1',
+              subject: 'social',
+              grade: grade,
+              concept: '【暖身拆解】民法成年年齡與契約自主',
+              stem: '剛滿 18 歲的高三學生小安，未經父母陪同自己與房東簽訂了一年的租屋合約。依我國現行《民法》，該合約效力為何？',
+              options: ['A. 完全有效，因滿 18 歲已成年具完全行為能力', 'B. 效力未定，需滿 20 歲經父母承認', 'C. 自始無效', 'D. 須經里長認證才有效'],
+              answer: 0,
+              hint: '我國《民法》已下修成年年齡為 18 歲！',
+              explanation: '正確答案為 A。依現行民法規定，滿 18 歲為成年人，具備完全行為能力，可獨立簽訂有效契約。'
+            },
+            {
+              id: 'alk-so-l2',
+              subject: 'social',
+              grade: grade,
+              concept: '【同型變換】限制行為能力人的契約效力',
+              stem: '國二（年滿 14 歲）的小明瞞著父母用存款去通訊行簽約購買了一支價值 3 萬元的智慧型手機，這筆買賣契約效力為何？',
+              options: ['A. 完全有效', 'B. 效力未定，需法定代理人承認始生效力', 'C. 自始無效', 'D. 屬於刑事詐欺罪'],
+              answer: 1,
+              hint: '滿 7 歲未滿 18 歲為「限制行為能力人」，重大買賣需法定代理人（父母）事後承認！',
+              explanation: '正確答案為 B。高價手機購買並非日常必需或純獲利益，限制行為能力人所訂契約需經父母承認始生效力（效力未定）。'
+            },
+            {
+              id: 'alk-so-l3',
+              subject: 'social',
+              grade: grade,
+              concept: '【情境應用】行政罰鍰 vs. 刑事罰金的嚴格區分',
+              stem: '阿豪騎機車闖紅燈被交通警察當場攔停，開立了 1800 元的罰單。請問這 1800 元在法律上稱為什麼？',
+              options: ['A. 罰金（刑事責任）', 'B. 罰鍰（行政責任）', 'C. 賠償金（民事責任）', 'D. 滯納金'],
+              answer: 1,
+              hint: '違反交通法規受行政機關處分的金錢稱為「罰鍰（ㄏㄨㄢˊ）」！',
+              explanation: '正確答案為 B。違反行政法規（如道交條例）由行政機關處分的金錢為「罰鍰」；觸犯刑法由法院判處的才是「罰金」。'
+            },
+            {
+              id: 'alk-so-l4',
+              subject: 'social',
+              grade: grade,
+              concept: '【會考魔王陷阱】民事侵權賠償連帶責任',
+              stem: '15 歲的國中生小華騎腳踏車逆向撞壞路旁昂貴轎車的後照鏡，車主要求賠償修繕費用。依民法規定應由誰負賠償責任？',
+              options: ['A. 小華自己打工負擔，與父母無關', 'B. 小華與其法定代理人（父母）連帶負損害賠償責任', 'C. 國家賠償', 'D. 車主自認倒楣不能索賠'],
+              answer: 1,
+              hint: '限制行為能力人侵害他人權利，法定代理人（父母）原則上應負連帶賠償責任！',
+              explanation: '正確答案為 B。民法第 187 條規定，限制行為能力人不法侵害他人權利時，其法定代理人連帶負損害賠償責任。'
+            }
+          ];
+        } else if (branch === 'economics') {
+          diagnosis.topicTitle = '經濟學思維：需求法則、機會成本與外部效果';
+          diagnosis.coreConcept = '① 需求法則：價格與需求量呈反向變動；② 機會成本：做出一項選擇時，所放棄的其他選項中「價值最高者」；③ 外部成本（如工廠排廢氣）、外部效益（如打疫苗增強群體免疫）。';
+          diagnosis.commonTrap = '把放棄的所有選項價值加總當作機會成本（錯誤！機會成本只算「放棄中價值最高的那一個」）！';
+          diagnosis.mnemonic = '🔮 破題口訣：「價格跌需求量增；機會成本算最高放棄，不是通通加起來！」';
+          diagnosis.questions = [
+            {
+              id: 'alk-so-e1',
+              subject: 'social',
+              grade: grade,
+              concept: '【暖身拆解】需求法則的價量關係',
+              stem: '手搖飲店推出「指定奶茶每杯特價折扣 20 元」促銷活動，在其他條件不變下，顧客對該飲料的反應為何？',
+              options: ['A. 需求量增加', 'B. 需求量減少', 'C. 供給量減少', 'D. 生產成本上升'],
+              answer: 0,
+              hint: '需求法則：價格下降，消費者購買意願與能力提高，需求量增加！',
+              explanation: '正確答案為 A。依需求法則（Law of Demand），在其他條件不變下，商品價格下跌會促使需求量增加。'
+            },
+            {
+              id: 'alk-so-e2',
+              subject: 'social',
+              grade: grade,
+              concept: '【同型變換】機會成本精確計算',
+              stem: '小明週六下午有三個打工兼差機會：去速食店時薪 180 元、去補習班當助教時薪 200 元、去展場當工作人員時薪 220 元。若小明最終選擇去展場，他的機會成本是多少？',
+              options: ['A. 180 元', 'B. 200 元', 'C. 220 元', 'D. 380 元 (180+200)'],
+              answer: 1,
+              hint: '機會成本 ＝ 所放棄的選擇中「價值最高」的那一個！',
+              explanation: '正確答案為 B。小明選擇了 220 元，放棄的選項為 180 元與 200 元，其中價值最高者為 200 元，故機會成本為 200 元。'
+            },
+            {
+              id: 'alk-so-e3',
+              subject: 'social',
+              grade: grade,
+              concept: '【情境應用】外部成本生活實例辨析',
+              stem: '火力發電廠發電提供用電，但排放的廢氣造成鄰近居民健康受損與空氣污染。這種現象在經濟學上稱為什麼？',
+              options: ['A. 外部效益', 'B. 外部成本（負的外部性）', 'C. 機會成本增加', 'D. 比較利益'],
+              answer: 1,
+              hint: '經濟行為對未參與交易的第三者造成損害卻未給予補償，稱為外部成本！',
+              explanation: '正確答案為 B。經濟活動對無關的第三人造成負面損害與成本負擔，屬於「外部成本（負的外部效果）」。'
+            },
+            {
+              id: 'alk-so-e4',
+              subject: 'social',
+              grade: grade,
+              concept: '【會考魔王陷阱】需求變動 vs. 需求量變動',
+              stem: '下列何者會導致整條「需求曲線本身向右移動（需求增加）」，而非在原曲線上點的移動？',
+              options: [
+                'A. 該商品本身的售價打折降價',
+                'B. 消費者所得普遍大幅提升',
+                'C. 該商品的生產技術大幅進步',
+                'D. 該商品的原料成本上漲'
+              ],
+              answer: 1,
+              hint: '只有「商品本身價格以外的因素」（如所得、偏好、人口）才會使整條需求曲線移動！',
+              explanation: '正確答案為 B。商品本身價格變動是「需求量的變動（曲線上點的移動）」；所得增加屬於價格以外因素，會使「整條需求曲線向右移動（需求增加）」。'
+            }
+          ];
+        } else {
+          diagnosis.topicTitle = '台灣歷史軌跡：荷鄭開拓、清領轉折與日治現代化';
+          diagnosis.coreConcept = '① 荷西時期：以台灣為轉口貿易與傳教據點（熱蘭遮城、聖多明哥城）；② 鄭氏時期：軍屯開墾、陳永華建孔廟（全台首學）；③ 清領開港通商：淡水、安平開港，茶與樟腦興起經濟重心北移；④ 日治時期：戶口普查、鐵路與日月潭水電基礎建設。';
+          diagnosis.commonTrap = '把「開港通商（清領後期）」與「鄭氏治台」的經濟特產搞混，或忘記茶與樟腦帶動了台灣「經濟重心北移」！';
+          diagnosis.mnemonic = '🔮 破題口訣：「荷蘭轉口兼傳教，鄭氏軍屯建孔廟；開港茶樟北移重，日治現代建基業！」';
+          diagnosis.questions = [
+            {
+              id: 'alk-so-h1',
+              subject: 'social',
+              grade: grade,
+              concept: '【暖身拆解】荷蘭在台統治重心與據點',
+              stem: '十七世紀上半葉，荷蘭東印度公司在台灣南部建立熱蘭遮城，其在台統治的主要目的為何？',
+              options: [
+                'A. 發展重工業製造',
+                'B. 建立東亞轉口貿易據點與基督教傳教',
+                'C. 協助明朝抵抗清軍',
+                'D. 尋找黃金採礦'
+              ],
+              answer: 1,
+              hint: '荷蘭主要是為了與中國、日本進行鹿皮、絲綢與瓷器的「轉口貿易」！',
+              explanation: '正確答案為 B。荷蘭佔領南台灣的主要目的是建立遠東轉口貿易的中繼站，並藉宣教師向原住民傳播基督教。'
+            },
+            {
+              id: 'alk-so-h2',
+              subject: 'social',
+              grade: grade,
+              concept: '【同型變換】鄭氏文教發展全台首學',
+              stem: '鄭氏治台時期，在諮議參軍陳永華的建議下興建了全台灣第一座孔廟，被譽為「全台首學」，該孔廟座落於何處？',
+              options: ['A. 台北', 'B. 台南', 'C. 鹿港', 'D. 高雄'],
+              answer: 1,
+              hint: '鄭氏政權在承天府（今台南）建立全台首座孔廟推行儒學教育！',
+              explanation: '正確答案為 B。陳永華於承天府（今台南市）興建台灣第一座孔廟，開啟台灣官辦儒學教育之先河，故稱「全台首學」。'
+            },
+            {
+              id: 'alk-so-h3',
+              subject: 'social',
+              grade: grade,
+              concept: '【情境應用】清領後期開港通商與經濟重心北移',
+              stem: '清朝咸豐、同治年間台灣開港通商後，哪兩項主要出口特產的興起，直接促成了台灣「經濟重心由南向北轉移」？',
+              options: ['A. 稻米與甘蔗', 'B. 茶葉與樟腦', 'C. 鹿皮與硫磺', 'D. 紡織品與水泥'],
+              answer: 1,
+              hint: '茶葉與樟腦的產地主要分佈在北部丘陵與山區！',
+              explanation: '正確答案為 B。開港後茶葉與樟腦主要產於中北部山區丘陵，大量外銷帶動大稻埕繁榮，促使台灣經濟重心由南轉向北部。'
+            },
+            {
+              id: 'alk-so-h4',
+              subject: 'social',
+              grade: grade,
+              concept: '【會考魔王陷阱】日治時期重大現代化基礎建設',
+              stem: '日治時期台灣總督府為有效統治與掌握資源，推行了多項現代化基礎措施。下列何者「不屬於」日治時期的重大建設？',
+              options: [
+                'A. 縱貫鐵路全線通車',
+                'B. 全島嚴格實施土地調查與戶口普查',
+                'C. 興建日月潭水力發電所',
+                'D. 開闢基隆至新竹第一條官辦鐵路'
+              ],
+              answer: 3,
+              hint: '基隆到新竹的第一條鐵路是清領時期劉銘傳所修築開闢的！',
+              explanation: '正確答案為 D。基隆至新竹的台灣第一條鐵路是由清朝巡撫劉銘傳於 1891 年開通；縱貫鐵路全線貫通、日月潭水電所與戶口調查則為日治時期完成。'
+            }
+          ];
+        }
+      }
+
+      // 對所有生成的題目選項隨機洗牌，確保每次生成選項排列與正確答案位置均不同
+      if (Array.isArray(diagnosis.questions)) {
+        diagnosis.questions = diagnosis.questions.map(q => shuffleQuestion(q));
       }
 
       return diagnosis;
@@ -2535,6 +3315,8 @@ function setGradeFilter(grade) {
       const dq1 = appState.dailyQuests.find(q => q.id === 'dq-1');
       if (dq1 && dq1.progress < dq1.target) {
         dq1.progress += 1;
+        renderDailyQuests();
+        saveState();
       }
 
       renderAlchemyPackOutput(pack);
@@ -2542,7 +3324,9 @@ function setGradeFilter(grade) {
     }
 
     function randomizeGeneratedNumbers() {
+      playSoundEffect('click');
       runMistakeAlchemy();
+      showToast('🎲 已重新隨機置換題目數值與選項！', 'info');
     }
 
     function renderAlchemyPackOutput(pack) {
@@ -2676,7 +3460,7 @@ function setGradeFilter(grade) {
       launchBattleSession(
         `⚗️ 錯題心魔副本：${pack.topicTitle}`,
         '錯題心魔幻影・阿爾克',
-        pack.questions
+        pack.questions.map(q => shuffleQuestion(q))
       );
     }
 
@@ -2688,19 +3472,48 @@ function setGradeFilter(grade) {
         const filtered = pool.filter(q => q.grade === appState.gradeFilter);
         if (filtered.length > 0) pool = filtered;
       }
-      const extraPack = generatePracticePack(subMeta.topics[0], subjectId, appState.gradeFilter === 'all' ? '8' : appState.gradeFilter, 'progressive');
-      const combined = [...pool, ...extraPack.questions.slice(0, 2)];
-      launchBattleSession(`${subMeta.icon} ${subMeta.name}地下城`, subMeta.bossName, combined);
+
+      // 隨機抽選該科目的 2 個不同主題生成練習題，確保題庫豐富且每次進入皆不同
+      const topics = subMeta.topics || ['重點考題觀念特訓'];
+      const randomTopic1 = topics[Math.floor(Math.random() * topics.length)];
+      const randomTopic2 = topics[Math.floor(Math.random() * topics.length)];
+      const grade = appState.gradeFilter === 'all' ? '8' : appState.gradeFilter;
+      const extraPack1 = generatePracticePack(randomTopic1, subjectId, grade, 'progressive');
+      const extraPack2 = generatePracticePack(randomTopic2, subjectId, grade, 'progressive');
+
+      const allCandidates = [
+        ...pool,
+        ...extraPack1.questions,
+        ...extraPack2.questions
+      ];
+
+      // 隨機洗牌並選出 5 道題目，每題選項均隨機洗牌
+      const selected = allCandidates
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 5)
+        .map(q => shuffleQuestion(q));
+
+      launchBattleSession(`${subMeta.icon} ${subMeta.name}地下城`, subMeta.bossName, selected);
     }
 
     function startQuickMixedBattle() {
-      let pool = [...CORE_QUESTIONS];
-      if (appState.gradeFilter !== 'all') {
-        const filtered = pool.filter(q => q.grade === appState.gradeFilter);
-        if (filtered.length >= 3) pool = filtered;
-      }
-      const shuffled = pool.sort(() => Math.random() - 0.5).slice(0, 5);
-      launchBattleSession('⚡ 五科綜合試煉地下城', '星界試煉巨像・奧米加', shuffled);
+      const subjects = ['chinese', 'english', 'math', 'science', 'social'];
+      const mixedQuestions = [];
+      const grade = appState.gradeFilter === 'all' ? '8' : appState.gradeFilter;
+
+      subjects.forEach(subId => {
+        const subMeta = SUBJECT_META[subId];
+        const randomTopic = subMeta.topics[Math.floor(Math.random() * subMeta.topics.length)];
+        const pack = generatePracticePack(randomTopic, subId, grade, 'progressive');
+        const coreSub = CORE_QUESTIONS.filter(q => q.subject === subId);
+        const candidates = [...coreSub, ...pack.questions].sort(() => Math.random() - 0.5);
+        if (candidates.length > 0) {
+          mixedQuestions.push(shuffleQuestion(candidates[0]));
+        }
+      });
+
+      const finalShuffled = mixedQuestions.sort(() => Math.random() - 0.5);
+      launchBattleSession('⚡ 五科綜合試煉地下城', '星界試煉巨像・奧米加', finalShuffled);
     }
 
     function launchBattleSession(title, bossName, questionsList) {
@@ -3402,6 +4215,8 @@ function setGradeFilter(grade) {
         const dq1 = appState.dailyQuests.find(q => q.id === 'dq-1');
         if (dq1 && dq1.progress < dq1.target) {
           dq1.progress += 1;
+          renderDailyQuests();
+          saveState();
         }
       } catch (err) {
         console.error('Gemini 生題錯誤:', err);
@@ -3423,7 +4238,10 @@ function setGradeFilter(grade) {
         updateAdminUI(false);
         appState.player = getFreshPlayerState();
         appState.mistakes = [];
+        appState.dailyQuests = getFreshDailyQuests();
+        loadSavedState();
         updateHeaderUI();
+        renderDailyQuests();
         return;
       }
 
@@ -3449,11 +4267,27 @@ function setGradeFilter(grade) {
         try {
           const remoteProfile = await window.FirebaseService.loadUserProfile(user);
           if (remoteProfile && remoteProfile.player) {
-            appState.player = Object.assign(getFreshPlayerState(), remoteProfile.player);
+            // 比對本地快取與雲端，優先保留等級與經驗值較高者，防止離線或儲存非同步時被覆蓋
+            const localRaw = localStorage.getItem(getStorageKey());
+            let localPlayer = null;
+            if (localRaw) {
+              try { localPlayer = JSON.parse(localRaw).player; } catch (e) {}
+            }
+            if (localPlayer && (localPlayer.level > remoteProfile.player.level || (localPlayer.level === remoteProfile.player.level && localPlayer.exp > remoteProfile.player.exp))) {
+              appState.player = Object.assign(getFreshPlayerState(), localPlayer);
+            } else {
+              appState.player = Object.assign(getFreshPlayerState(), remoteProfile.player);
+            }
             appState.mistakes = remoteProfile.mistakes || [];
+            if (Array.isArray(remoteProfile.dailyQuests) && remoteProfile.dailyQuests.length > 0) {
+              const fresh = getFreshDailyQuests();
+              appState.dailyQuests = fresh.map(f => {
+                const saved = remoteProfile.dailyQuests.find(s => s.id === f.id);
+                return saved ? Object.assign({}, f, saved) : f;
+              });
+            }
           } else {
-            appState.player = getFreshPlayerState();
-            appState.mistakes = [];
+            loadSavedState();
             await window.FirebaseService.syncUserProfile(user, appState);
           }
         } catch (e) {
@@ -3461,6 +4295,7 @@ function setGradeFilter(grade) {
         }
       }
       updateHeaderUI();
+      renderDailyQuests();
       saveState();
     }
 

@@ -400,6 +400,7 @@ export class FirebaseService {
         photoURL: user.photoURL || "",
         player: playerState.player,
         mistakes: playerState.mistakes || [],
+        dailyQuests: playerState.dailyQuests || [],
         updatedAt: serverTimestamp()
       }, { merge: true });
     } catch (e) {
