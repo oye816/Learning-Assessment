@@ -109,6 +109,7 @@ function initFirebase() {
       onAuthStateChanged(auth, async (user) => {
         const admin = FirebaseService.isAdmin(user);
         if (user) {
+          FirebaseService.syncUnsyncedLocalRecords(user).catch(() => {});
           localStorage.setItem('jh_quest_cached_user', JSON.stringify({
             uid: user.uid,
             email: user.email,
@@ -399,6 +400,67 @@ export class FirebaseService {
   }
 
   /**
+   * 將尚未同步至雲端的本機紀錄批次補傳至 Firestore
+   */
+  static async syncUnsyncedLocalRecords(user) {
+    if (!this.isAvailable() || !user || !user.uid) return;
+    try {
+      let localRecords = JSON.parse(localStorage.getItem('jh_quest_local_history') || '[]');
+      if (!Array.isArray(localRecords) || localRecords.length === 0) return;
+
+      let hasUpdated = false;
+      for (const rec of localRecords) {
+        // 若該筆紀錄尚未上傳至 Firestore 雲端集合（無 cloudDocId 且非以 Firestore ID 開頭）
+        const isCloudDoc = rec.cloudDocId || (rec.id && !String(rec.id).startsWith('rec_'));
+        if (!isCloudDoc) {
+          try {
+            const clientRecordId = rec.clientRecordId || rec.recordId || rec.id || ('rec_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9));
+            rec.clientRecordId = clientRecordId;
+            rec.recordId = clientRecordId;
+            // 若為訪客時所作答，登入後將學員身分補錨定至當前登入者
+            if (!rec.userId || rec.userId === 'guest') {
+              rec.userId = user.uid;
+              rec.userEmail = user.email || 'guest';
+              rec.userName = user.displayName || user.email || '勇者學員';
+              rec.userPhoto = user.photoURL || '';
+            }
+
+            const docRef = await addDoc(collection(db, "assessment_records"), {
+              clientRecordId: clientRecordId,
+              recordId: clientRecordId,
+              userId: rec.userId || user.uid,
+              userEmail: rec.userEmail || user.email,
+              userName: rec.userName || user.displayName || user.email,
+              userPhoto: rec.userPhoto || user.photoURL || '',
+              title: rec.title || '一般試煉',
+              subject: rec.subject || 'all',
+              score: rec.score || 0,
+              total: rec.total || 0,
+              accuracy: rec.accuracy || 0,
+              rank: rec.rank || 'B',
+              expEarned: rec.expEarned || 0,
+              goldEarned: rec.goldEarned || 0,
+              details: rec.details || [],
+              createdAt: serverTimestamp()
+            });
+
+            rec.cloudDocId = docRef.id;
+            hasUpdated = true;
+          } catch (uploadErr) {
+            console.warn("補傳未同步紀錄至雲端失敗:", uploadErr);
+          }
+        }
+      }
+
+      if (hasUpdated) {
+        localStorage.setItem('jh_quest_local_history', JSON.stringify(localRecords));
+      }
+    } catch (e) {
+      console.warn("檢查本機未同步紀錄失敗:", e);
+    }
+  }
+
+  /**
    * 取得使用者的歷史評量紀錄 (整合雲端與本機雙重備份，並嚴格去重)
    */
   static async getMyRecords(user) {
@@ -418,6 +480,9 @@ export class FirebaseService {
     if (!user || !this.isAvailable()) {
       return localRecords;
     }
+
+    // 登入狀態下，先嘗試自動補傳本機未同步的紀錄
+    await this.syncUnsyncedLocalRecords(user);
 
     try {
       let snap;
@@ -467,7 +532,7 @@ export class FirebaseService {
   }
 
   /**
-   * 管理者取得所有學員的評量紀錄 (同步進行重複剔除)
+   * 管理者取得所有學員的評量紀錄 (同步進行重複剔除與本機雙軌備援)
    */
   static async getAllRecords(adminUser) {
     if (!this.isAvailable()) {
@@ -477,21 +542,51 @@ export class FirebaseService {
       throw new Error("權限拒絕：僅管理者 Google 帳號可存取全員學習紀錄！");
     }
 
-    const q = query(
-      collection(db, "assessment_records"),
-      orderBy("createdAt", "desc")
-    );
-    const snap = await getDocs(q);
-    const rawList = snap.docs.map(doc => {
-      const d = doc.data();
-      return {
-        id: doc.id,
-        cloudDocId: doc.id,
-        ...d,
-        createdAtDate: d.createdAt?.toDate ? d.createdAt.toDate().toISOString() : (d.createdAtDate || new Date().toISOString())
-      };
-    });
-    return this.deduplicateRecords(rawList);
+    // 1. 若有本機未同步至雲端的測驗紀錄，主動進行補傳
+    await this.syncUnsyncedLocalRecords(adminUser);
+
+    let localRecords = [];
+    try {
+      localRecords = JSON.parse(localStorage.getItem('jh_quest_local_history') || '[]');
+    } catch (e) {
+      localRecords = [];
+    }
+
+    let cloudList = [];
+    try {
+      let snap;
+      try {
+        const q = query(
+          collection(db, "assessment_records"),
+          orderBy("createdAt", "desc")
+        );
+        snap = await getDocs(q);
+      } catch (orderErr) {
+        console.warn("無法以 createdAt 排序讀取全體紀錄，改用無排序查詢:", orderErr.message);
+        const fallbackQ = collection(db, "assessment_records");
+        snap = await getDocs(fallbackQ);
+      }
+
+      if (snap && !snap.empty) {
+        cloudList = snap.docs.map(doc => {
+          const d = doc.data();
+          return {
+            id: doc.id,
+            cloudDocId: doc.id,
+            ...d,
+            createdAtDate: d.createdAt?.toDate ? d.createdAt.toDate().toISOString() : (d.createdAtDate || new Date().toISOString())
+          };
+        });
+      }
+    } catch (err) {
+      console.warn("雲端讀取全體紀錄失敗，降級使用本機紀錄:", err);
+      if (localRecords.length === 0) {
+        throw err;
+      }
+    }
+
+    // 2. 整合雲端全員資料與本機紀錄（雙軌去重融合，確保即時呈現在管理後台）
+    return this.deduplicateRecords([...cloudList, ...localRecords]);
   }
 
   /**
