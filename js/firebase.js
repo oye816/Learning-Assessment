@@ -2,10 +2,7 @@
 // 星耀國中冒險學院｜Firebase 認證與雲端評量儲存服務 (js/firebase.js)
 // 
 // 提供 Google OAuth 2.0 登入、個人學習歷程持久化儲存、以及管理者全員監控。
-// 支援 GitHub Pages 直接部署：
-// 1. 可讀取 repository 中的 config.js
-// 2. 或若未預設 config.js，允許使用者直接在網頁介面填入 Firebase 設定並存於 localStorage
-// 3. 若皆未設定，自動優雅降級為純本地模式 (localStorage) 確保開箱即用不噴錯
+// 支援 GitHub Pages 直接部署與彈性管理者授權機制。
 // ==============================================================================
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -46,7 +43,7 @@ try {
   console.warn("⚠️ 未找到 config.js，檢查瀏覽器本機自訂設定。");
 }
 
-// 檢查使用者是否在網頁「系統設定」中自訂了 Firebase 憑證 (適合 GitHub Pages 公開部署情境)
+// 載入 localStorage 中的自訂 Firebase 與管理者設定
 try {
   const customStr = localStorage.getItem('jh_quest_custom_firebase_config');
   if (customStr) {
@@ -54,7 +51,7 @@ try {
     if (customConfig.firebase && customConfig.firebase.apiKey) {
       APP_CONFIG.firebase = customConfig.firebase;
     }
-    if (customConfig.adminEmails && Array.isArray(customConfig.adminEmails) && customConfig.adminEmails.length > 0) {
+    if (customConfig.adminEmails && Array.isArray(customConfig.adminEmails)) {
       APP_CONFIG.adminEmails = Array.from(new Set([...(APP_CONFIG.adminEmails || []), ...customConfig.adminEmails]));
     }
     if (customConfig.defaultGeminiApiKey) {
@@ -63,6 +60,16 @@ try {
   }
 } catch (e) {
   console.warn("讀取本機自訂 Firebase 設定失敗:", e);
+}
+
+// 載入額外授權的管理者信箱
+try {
+  const localAdmins = JSON.parse(localStorage.getItem('jh_quest_admin_emails') || '[]');
+  if (Array.isArray(localAdmins) && localAdmins.length > 0) {
+    APP_CONFIG.adminEmails = Array.from(new Set([...(APP_CONFIG.adminEmails || []), ...localAdmins]));
+  }
+} catch (e) {
+  console.warn("讀取本機管理者名單失敗:", e);
 }
 
 window.APP_CONFIG = APP_CONFIG;
@@ -117,11 +124,37 @@ export class FirebaseService {
     initFirebase();
   }
 
+  /**
+   * 授權特定信箱為管理員
+   */
+  static grantAdmin(email) {
+    if (!email) return;
+    const cleaned = email.toLowerCase().trim();
+    const localAdmins = JSON.parse(localStorage.getItem('jh_quest_admin_emails') || '[]');
+    if (!localAdmins.includes(cleaned)) {
+      localAdmins.push(cleaned);
+      localStorage.setItem('jh_quest_admin_emails', JSON.stringify(localAdmins));
+    }
+    if (!APP_CONFIG.adminEmails.map(e => e.toLowerCase().trim()).includes(cleaned)) {
+      APP_CONFIG.adminEmails.push(cleaned);
+    }
+  }
+
   static isAdmin(user) {
     if (!user || !user.email) return false;
-    const email = user.email.toLowerCase();
-    const adminList = (APP_CONFIG.adminEmails || []).map(e => e.toLowerCase());
-    return adminList.includes(email);
+    const email = user.email.toLowerCase().trim();
+    
+    // 檢查 APP_CONFIG
+    const adminList = (APP_CONFIG.adminEmails || []).map(e => e.toLowerCase().trim());
+    if (adminList.includes(email)) return true;
+
+    // 檢查 localStorage
+    try {
+      const localAdmins = JSON.parse(localStorage.getItem('jh_quest_admin_emails') || '[]');
+      if (localAdmins.map(e => e.toLowerCase().trim()).includes(email)) return true;
+    } catch (e) {}
+
+    return false;
   }
 
   static async loginWithGoogle() {
@@ -159,10 +192,7 @@ export class FirebaseService {
    * 儲存測驗評量紀錄
    */
   static async saveAssessmentRecord(user, recordData) {
-    // 永遠在本機一份備份
-    const localHistory = JSON.parse(localStorage.getItem('jh_quest_local_history') || '[]');
-    const localRecord = {
-      id: 'rec-' + Date.now(),
+    const record = {
       userId: user ? user.uid : 'guest',
       userEmail: user ? user.email : '未登入勇者',
       userName: user ? (user.displayName || user.email) : '訪客勇者',
@@ -178,14 +208,20 @@ export class FirebaseService {
       createdAtDate: new Date().toISOString(),
       details: recordData.details || []
     };
-    localHistory.unshift(localRecord);
-    if (localHistory.length > 50) localHistory.pop();
-    localStorage.setItem('jh_quest_local_history', JSON.stringify(localHistory));
+
+    // 若未登入，只存於 guest local history
+    if (!user) {
+      const localHistory = JSON.parse(localStorage.getItem('jh_quest_local_history') || '[]');
+      localHistory.unshift(record);
+      if (localHistory.length > 50) localHistory.pop();
+      localStorage.setItem('jh_quest_local_history', JSON.stringify(localHistory));
+      return record;
+    }
 
     // 若有登入且 Firebase 正常，寫入雲端 Firestore
     if (this.isAvailable() && user) {
       try {
-        await addDoc(collection(db, "assessment_records"), {
+        const docRef = await addDoc(collection(db, "assessment_records"), {
           userId: user.uid,
           userEmail: user.email,
           userName: user.displayName || user.email,
@@ -201,19 +237,25 @@ export class FirebaseService {
           details: recordData.details || [],
           createdAt: serverTimestamp()
         });
+        record.id = docRef.id;
       } catch (err) {
         console.error("雲端存檔失敗:", err);
       }
     }
-    return localRecord;
+    return record;
   }
 
   /**
-   * 取得使用者的歷史評量紀錄
+   * 取得使用者的歷史評量紀錄 (嚴格資料隔離：新使用者為空陣列)
    */
   static async getMyRecords(user) {
-    if (!this.isAvailable() || !user) {
+    if (!user) {
+      // 訪客才讀取本地訪客歷史
       return JSON.parse(localStorage.getItem('jh_quest_local_history') || '[]');
+    }
+
+    if (!this.isAvailable()) {
+      return [];
     }
 
     try {
@@ -224,7 +266,8 @@ export class FirebaseService {
       );
       const snap = await getDocs(q);
       if (snap.empty) {
-        return JSON.parse(localStorage.getItem('jh_quest_local_history') || '[]');
+        // 新使用者沒有任何雲端紀錄，回傳空陣列！絕不顯示別人的本地紀錄！
+        return [];
       }
       return snap.docs.map(doc => {
         const d = doc.data();
@@ -235,8 +278,8 @@ export class FirebaseService {
         };
       });
     } catch (err) {
-      console.warn("無法從雲端讀取歷史紀錄，改從本地讀取:", err);
-      return JSON.parse(localStorage.getItem('jh_quest_local_history') || '[]');
+      console.warn("無法從雲端讀取歷史紀錄:", err);
+      return [];
     }
   }
 
@@ -277,7 +320,7 @@ export class FirebaseService {
         displayName: user.displayName || "",
         photoURL: user.photoURL || "",
         player: playerState.player,
-        mistakes: playerState.mistakes,
+        mistakes: playerState.mistakes || [],
         updatedAt: serverTimestamp()
       }, { merge: true });
     } catch (e) {

@@ -89,15 +89,15 @@
               星耀國中冒險學院
             </h1>
             <span id="playerTitleBadge" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30">
-              星芒見習魔導師
+              初心學徒
             </span>
           </div>
           <!-- EXP Bar -->
           <div class="flex items-center gap-2 mt-1">
             <div class="w-28 sm:w-36 h-2 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
-              <div id="expProgressBar" class="h-full bg-gradient-to-r from-violet-500 via-fuchsia-500 to-amber-400 transition-all duration-500" style="width: 45%;"></div>
+              <div id="expProgressBar" class="h-full bg-gradient-to-r from-violet-500 via-fuchsia-500 to-amber-400 transition-all duration-500" style="width: 0%;"></div>
             </div>
-            <span id="expTextDisplay" class="text-[11px] text-slate-400 font-mono">135 / 300 EXP</span>
+            <span id="expTextDisplay" class="text-[11px] text-slate-400 font-mono">0 / 100 EXP</span>
           </div>
         </div>
       </div>
@@ -115,7 +115,7 @@
         <!-- Gold Coins -->
         <div class="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 rounded-xl text-xs font-bold text-amber-300" title="星幣：可用於購買戰鬥秘藥">
           <span>🪙</span>
-          <span id="goldCountDisplay">280</span>
+          <span id="goldCountDisplay">0</span>
         </div>
 
         <!-- Combo Streak -->
@@ -143,10 +143,20 @@
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.9c2.27-2.09 3.64-5.18 3.64-9.15z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.9-3.05c-1.08.72-2.45 1.16-4.03 1.16-3.1 0-5.74-2.1-6.68-4.93H1.26v3.15C3.25 21.36 7.33 24 12 24z"/><path fill="#FBBC05" d="M5.32 14.27c-.24-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.26C.46 8.16 0 9.99 0 12s.46 3.84 1.26 5.42l4.06-3.15z"/><path fill="#EA4335" d="M12 4.77c1.76 0 3.35.61 4.6 1.79l3.44-3.44C17.94 1.19 15.24 0 12 0 7.33 0 3.25 2.64 1.26 6.58l4.06 3.15c.94-2.83 3.58-4.96 6.68-4.96z"/></svg>
             <span>Google 登入</span>
           </button>
-          <div id="userProfileArea" class="hidden flex items-center gap-2 bg-slate-900/90 border border-slate-800 rounded-xl px-2.5 py-0.5">
-            <img id="userAvatarImg" src="" class="w-5 h-5 rounded-full border border-violet-500/50 object-cover" />
-            <span id="userDisplayName" class="text-xs font-bold text-slate-200 max-w-[100px] truncate">勇者</span>
-            <span id="userRoleBadge" class="hidden text-[10px] font-black px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">管理員</span>
+          <div id="userProfileArea" class="hidden flex items-center gap-2 bg-slate-900/90 border border-slate-800 rounded-xl px-2.5 py-1">
+            <img id="userAvatarImg" src="" class="w-6 h-6 rounded-full border border-violet-500/50 object-cover" />
+            <div class="flex flex-col">
+              <span id="userDisplayName" class="text-xs font-bold text-slate-200 max-w-[110px] truncate leading-tight">勇者</span>
+              <span id="userEmailDisplay" class="text-[9px] text-slate-400 font-mono truncate max-w-[110px]"></span>
+            </div>
+            <!-- 管理員徽章 / 進入後台按鈕 -->
+            <button type="button" id="userRoleBadge" onclick="switchTab('admin')" class="hidden px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 text-[10px] font-black shadow hover:brightness-110 flex items-center gap-1" title="點擊進入導師管理後台">
+              <span>👑</span> <span>管理員</span>
+            </button>
+            <!-- 設為管理員按鈕 (當前帳號尚未授權為管理員時顯示) -->
+            <button type="button" id="btnClaimAdmin" onclick="claimAdminRole()" class="hidden px-2 py-0.5 rounded-md bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[10px] font-bold transition-all" title="將此 Google 帳號設為管理員">
+              👑 設為管理員
+            </button>
             <button type="button" onclick="handleGoogleLogout()" class="text-slate-400 hover:text-rose-400 text-xs ml-1" title="登出">✕</button>
           </div>
         </div>
@@ -172,7 +182,7 @@
       <button type="button" id="navTab-grimoire" onclick="switchTab('grimoire')" class="nav-tab-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap text-slate-300 hover:bg-slate-800/80">
         <span>📓</span>
         <span>錯題封印書</span>
-        <span id="mistakeBadgeCount" class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] px-1.5 py-0.2 rounded-full">3</span>
+        <span id="mistakeBadgeCount" class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] px-1.5 py-0.2 rounded-full">0</span>
       </button>
       <button type="button" id="navTab-stats" onclick="switchTab('stats')" class="nav-tab-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap text-slate-300 hover:bg-slate-800/80">
         <span>📊</span>
@@ -925,6 +935,21 @@
           <p class="text-xs text-slate-300 leading-relaxed">
             若您在 GitHub Pages 部署時不想將 <code class="text-amber-300 font-mono">config.js</code> commit 進公開倉庫，您可以在此貼上 Firebase 憑證，系統將保存在此瀏覽器本機：
           </p>
+          <div class="p-3 rounded-2xl bg-slate-900 border border-slate-800 space-y-2 mb-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-300">目前登入的 Google 帳號：</span>
+              <span id="settingsCurrentEmailText" class="text-xs font-mono font-bold text-cyan-300">尚未登入</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-300">目前管理員狀態：</span>
+              <span id="settingsAdminStatusText" class="text-xs font-bold text-slate-400">一般學員</span>
+            </div>
+            <div class="pt-1">
+              <button type="button" onclick="claimAdminRole(); closeGeminiKeyModal();" class="w-full py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black text-xs shadow-md transition-all active:scale-95">
+                👑 一鍵將【目前登入帳號】設為管理員
+              </button>
+            </div>
+          </div>
           <div>
             <label class="block text-xs font-bold text-slate-300 mb-1">Firebase Config (JSON 或物件)：</label>
             <textarea id="inputCustomFirebaseJson" rows="5" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono placeholder-slate-600 focus:outline-none focus:border-violet-400" placeholder='{\n  "apiKey": "AIzaSy...",\n  "authDomain": "your-app.firebaseapp.com",\n  "projectId": "your-app",\n  "storageBucket": "your-app.appspot.com",\n  "messagingSenderId": "...",\n  "appId": "..."\n}'></textarea>
@@ -1486,75 +1511,46 @@
     ];
 
     // ==================== 5. PLAYER & APP STATE ====================
-    let appState = {
-      activeTab: 'hub',
-      gradeFilter: 'all',
-      player: {
-        level: 3,
-        exp: 135,
-        expToNext: 300,
-        gold: 280,
+        function getFreshPlayerState() {
+      return {
+        level: 1,
+        exp: 0,
+        expToNext: 100,
+        gold: 0,
         streak: 0,
-        bestStreak: 4,
-        totalAnswered: 12,
-        totalCorrect: 10,
+        bestStreak: 0,
+        totalAnswered: 0,
+        totalCorrect: 0,
         items: {
-          fifty: 2,
-          hint: 2,
+          fifty: 1,
+          hint: 1,
           shield: 1
         },
         subjectStats: {
-          chinese: { answered: 3, correct: 2, mastery: 78 },
-          english: { answered: 3, correct: 3, mastery: 85 },
-          math: { answered: 3, correct: 2, mastery: 72 },
-          science: { answered: 2, correct: 2, mastery: 80 },
-          social: { answered: 1, correct: 1, mastery: 76 }
+          chinese: { answered: 0, correct: 0, mastery: 0 },
+          english: { answered: 0, correct: 0, mastery: 0 },
+          math: { answered: 0, correct: 0, mastery: 0 },
+          science: { answered: 0, correct: 0, mastery: 0 },
+          social: { answered: 0, correct: 0, mastery: 0 }
         }
-      },
+      };
+    }
+
+    let appState = {
+      activeTab: 'hub',
+      gradeFilter: 'all',
+      player: getFreshPlayerState(),
       dailyQuests: [
         { id: 'dq-1', title: '完成 1 次錯題煉金生成', desc: '在錯題煉金工坊生成專屬練習題', progress: 0, target: 1, rewardGold: 60, rewardExp: 80, claimed: false },
-        { id: 'dq-2', title: '在魔王試煉答對 3 題', desc: '於任一科目競技場累計答對 3 題', progress: 1, target: 3, rewardGold: 80, rewardExp: 100, claimed: false },
+        { id: 'dq-2', title: '在魔王試煉答對 3 題', desc: '於任一科目競技場累計答對 3 題', progress: 0, target: 3, rewardGold: 80, rewardExp: 100, claimed: false },
         { id: 'dq-3', title: '達成 3 連擊 Combo', desc: '在單場試煉中連續答對 3 題不中斷', progress: 0, target: 3, rewardGold: 100, rewardExp: 120, claimed: false }
       ],
-      mistakes: [
-        {
-          id: 'm-init-1',
-          subject: 'math',
-          grade: '7',
-          concept: '一元一次方程式：定價與打折利潤問題',
-          stem: '一件連帽外套按定價打八折出售，仍可獲利 100 元；若按定價打六折出售，則會賠本 60 元。請問這件外套的「定價」是多少元？',
-          options: ['A. 700 元', 'B. 800 元', 'C. 900 元', 'D. 1000 元'],
-          answer: 1,
-          hint: '設定價為 x 元。不論怎麼賣，「成本」都是固定的：0.8x - 100 = 0.6x + 60。',
-          explanation: '設定價為 x 元，由「成本不變」列式：0.8x - 100 = 0.6x + 60 ⇒ 0.2x = 160 ⇒ x = 800（元）。',
-          wrongCount: 2
-        },
-        {
-          id: 'm-init-2',
-          subject: 'science',
-          grade: '8',
-          concept: '凸透鏡成像規律與焦距判斷',
-          stem: '將一支點燃的蠟燭放在焦距為 10 cm 的凸透鏡前方 25 cm 處，則在透鏡另一側的紙屏上會形成何種性質的像？',
-          options: ['A. 倒立縮小實像', 'B. 倒立放大實像', 'C. 正立放大虛像', 'D. 倒立相等實像'],
-          answer: 0,
-          hint: '焦距 f = 10 cm，兩倍焦距 2f = 20 cm。物距 25 cm 位於「兩倍焦距外（d > 2f）」！',
-          explanation: '蠟燭在 25 cm 處（兩倍焦距外），會在另一側一倍至兩倍焦距間形成「倒立縮小實像」。',
-          wrongCount: 1
-        },
-        {
-          id: 'm-init-3',
-          subject: 'english',
-          grade: '8',
-          concept: '現在完成式 since 與 for 的區別',
-          stem: 'Mr. Lin ________ in Taipei since he graduated from college ten years ago.',
-          options: ['A. lives', 'B. lived', 'C. has lived', 'D. will live'],
-          answer: 2,
-          hint: '看到「since + 過去時間點（或過去式子句）」，主句要用現在完成式 have/has + p.p.！',
-          explanation: 'since 引導過去時間起點，主句必須使用現在完成式 has lived。',
-          wrongCount: 1
-        }
-      ],
+      mistakes: [], // 新使用者錯題庫預設完全為空
       alchemyCurrentPack: null,
+      currentUser: null,
+      isAdmin: false,
+      personalRecords: [],
+      adminRecords: [],
       battle: {
         active: false,
         title: '五科綜合試煉',
@@ -1572,26 +1568,38 @@
       }
     };
 
+    function getStorageKey() {
+      return appState.currentUser ? ('jh_quest_state_' + appState.currentUser.uid) : 'jh_quest_state_guest';
+    }
+
     function loadSavedState() {
       try {
-        const raw = localStorage.getItem('jh_quest_state_v1');
+        const raw = localStorage.getItem(getStorageKey());
         if (raw) {
           const parsed = JSON.parse(raw);
           if (parsed && parsed.player) {
-            appState.player = Object.assign(appState.player, parsed.player);
+            appState.player = Object.assign(getFreshPlayerState(), parsed.player);
+          } else {
+            appState.player = getFreshPlayerState();
           }
-          if (parsed && Array.isArray(parsed.mistakes) && parsed.mistakes.length > 0) {
+          if (parsed && Array.isArray(parsed.mistakes)) {
             appState.mistakes = parsed.mistakes;
+          } else {
+            appState.mistakes = [];
           }
+        } else {
+          appState.player = getFreshPlayerState();
+          appState.mistakes = [];
         }
       } catch (e) {
-        // Ignore storage restrictions in sandbox
+        appState.player = getFreshPlayerState();
+        appState.mistakes = [];
       }
     }
 
     function saveState() {
       try {
-        localStorage.setItem('jh_quest_state_v1', JSON.stringify({
+        localStorage.setItem(getStorageKey(), JSON.stringify({
           player: appState.player,
           mistakes: appState.mistakes
         }));
@@ -1599,8 +1607,7 @@
         // Ignore storage restrictions
       }
     }
-
-    // ==================== 6. UI HEADER & TAB NAVIGATION ====================
+// ==================== 6. UI HEADER & TAB NAVIGATION ====================
     const LEVEL_TITLES = [
       '初心學徒',
       '星塵見習生',
@@ -1654,6 +1661,7 @@
       } else if (tabId === 'admin') {
         loadAdminDashboard();
       }
+
       tabs.forEach(t => {
         const viewEl = document.getElementById('view-' + t);
         const btnEl = document.getElementById('navTab-' + t);
@@ -1662,10 +1670,23 @@
           else viewEl.classList.add('hidden');
         }
         if (btnEl) {
-          if (t === tabId) {
-            btnEl.className = 'nav-tab-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-600/25';
+          if (t === 'admin') {
+            if (!appState.isAdmin) {
+              btnEl.classList.add('hidden');
+            } else {
+              btnEl.classList.remove('hidden');
+              if (t === tabId) {
+                btnEl.className = 'nav-tab-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 shadow-lg shadow-amber-500/30';
+              } else {
+                btnEl.className = 'nav-tab-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap bg-amber-500/10 text-amber-300 border border-amber-500/40 hover:bg-amber-500/20';
+              }
+            }
           } else {
-            btnEl.className = 'nav-tab-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap text-slate-300 hover:bg-slate-800/80';
+            if (t === tabId) {
+              btnEl.className = 'nav-tab-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-600/25';
+            } else {
+              btnEl.className = 'nav-tab-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap text-slate-300 hover:bg-slate-800/80';
+            }
           }
         }
       });
@@ -1684,8 +1705,7 @@
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-
-    function setGradeFilter(grade) {
+function setGradeFilter(grade) {
       playSoundEffect('click');
       appState.gradeFilter = grade;
       ['all', '7', '8', '9'].forEach(g => {
@@ -3101,6 +3121,13 @@
       const statusEl = document.getElementById('geminiKeyModalStatus');
       if (modal && input) {
         input.value = window.GeminiService ? window.GeminiService.getApiKey() : '';
+        const curEmailEl = document.getElementById('settingsCurrentEmailText');
+        const adminStatEl = document.getElementById('settingsAdminStatusText');
+        if (curEmailEl) curEmailEl.textContent = appState.currentUser ? appState.currentUser.email : '尚未登入 (請先點選右上角 Google 登入)';
+        if (adminStatEl) {
+          adminStatEl.textContent = appState.isAdmin ? '👑 管理員 (已獲授權)' : '一般學員 (可點下方按鈕授權)';
+          adminStatEl.className = appState.isAdmin ? 'text-xs font-bold text-amber-300' : 'text-xs font-bold text-slate-400';
+        }
         const fbJsonArea = document.getElementById('inputCustomFirebaseJson');
         const adminInput = document.getElementById('inputCustomAdminEmails');
         if (fbJsonArea && window.APP_CONFIG && window.APP_CONFIG.firebase && window.APP_CONFIG.firebase.apiKey) {
@@ -3268,40 +3295,81 @@
         const userProfile = document.getElementById('userProfileArea');
         const userAvatar = document.getElementById('userAvatarImg');
         const userName = document.getElementById('userDisplayName');
-        const adminBadge = document.getElementById('userRoleBadge');
-        const adminNavTab = document.getElementById('navTab-admin');
+        const userEmail = document.getElementById('userEmailDisplay');
 
         if (user) {
           if (loginBtn) loginBtn.classList.add('hidden');
           if (userProfile) userProfile.classList.remove('hidden');
           if (userAvatar) userAvatar.src = user.photoURL || '';
           if (userName) userName.textContent = user.displayName || user.email.split('@')[0];
+          if (userEmail) userEmail.textContent = user.email;
 
-          if (isAdmin) {
-            if (adminBadge) adminBadge.classList.remove('hidden');
-            if (adminNavTab) adminNavTab.classList.remove('hidden');
-          } else {
-            if (adminBadge) adminBadge.classList.add('hidden');
-            if (adminNavTab) adminNavTab.classList.add('hidden');
-          }
+          updateAdminUI(isAdmin);
 
           // 嘗試自雲端載入學員資料
           const remoteProfile = await window.FirebaseService.loadUserProfile(user);
           if (remoteProfile && remoteProfile.player) {
-            appState.player = Object.assign(appState.player, remoteProfile.player);
-            if (remoteProfile.mistakes) appState.mistakes = remoteProfile.mistakes;
-            updateHeaderUI();
+            // 既有舊學員：恢復歷史進度
+            appState.player = Object.assign(getFreshPlayerState(), remoteProfile.player);
+            appState.mistakes = remoteProfile.mistakes || [];
+          } else {
+            // 新學員：強制由 Lv.1、0 EXP、0 金幣、0 錯題開始！
+            appState.player = getFreshPlayerState();
+            appState.mistakes = [];
+            // 同步初始乾淨狀態至雲端 Firestore
+            await window.FirebaseService.syncUserProfile(user, appState);
           }
+          updateHeaderUI();
+          saveState();
         } else {
           if (loginBtn) loginBtn.classList.remove('hidden');
           if (userProfile) userProfile.classList.add('hidden');
-          if (adminBadge) adminBadge.classList.add('hidden');
-          if (adminNavTab) adminNavTab.classList.add('hidden');
+          updateAdminUI(false);
+
+          // 訪客重置為乾淨 Lv.1
+          appState.player = getFreshPlayerState();
+          appState.mistakes = [];
+          updateHeaderUI();
         }
       });
     }
 
-    // --- Personal History View ---
+    function updateAdminUI(isAdmin) {
+      const adminBadge = document.getElementById('userRoleBadge');
+      const btnClaimAdmin = document.getElementById('btnClaimAdmin');
+      const adminNavTab = document.getElementById('navTab-admin');
+
+      if (appState.currentUser) {
+        if (isAdmin) {
+          if (adminBadge) adminBadge.classList.remove('hidden');
+          if (btnClaimAdmin) btnClaimAdmin.classList.add('hidden');
+          if (adminNavTab) adminNavTab.classList.remove('hidden');
+        } else {
+          if (adminBadge) adminBadge.classList.add('hidden');
+          if (btnClaimAdmin) btnClaimAdmin.classList.remove('hidden');
+          if (adminNavTab) adminNavTab.classList.add('hidden');
+        }
+      } else {
+        if (adminBadge) adminBadge.classList.add('hidden');
+        if (btnClaimAdmin) btnClaimAdmin.classList.add('hidden');
+        if (adminNavTab) adminNavTab.classList.add('hidden');
+      }
+    }
+
+    function claimAdminRole() {
+      if (!appState.currentUser || !appState.currentUser.email) {
+        showToast('請先於右上角點擊 Google 登入！', 'warning');
+        return;
+      }
+      if (window.FirebaseService) {
+        window.FirebaseService.grantAdmin(appState.currentUser.email);
+        appState.isAdmin = true;
+        updateAdminUI(true);
+        showToast(`👑 已將 ${appState.currentUser.email} 成功設為管理者！`, 'success');
+        switchTab('admin');
+      }
+    }
+// --- Personal History View ---
     async function loadMyHistory() {
       const tbody = document.getElementById('historyTableBody');
       if (!tbody) return;
@@ -3575,6 +3643,7 @@
       }
     }
 
+    window.claimAdminRole = claimAdminRole;
     window.openGeminiKeyModal = openGeminiKeyModal;
     window.switchSettingModalTab = switchSettingModalTab;
     window.saveCustomFirebaseFromModal = saveCustomFirebaseFromModal;
