@@ -8,3 +8,5 @@ Thumbs.db
 .vscode/
 .idea/
 *.log
+.venv/
+__pycache__/
