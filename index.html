@@ -4152,7 +4152,8 @@ function setGradeFilter(grade) {
         answeredCurrent: false,
         correctCount: 0,
         disabledOptions: [],
-        userAnswers: []
+        userAnswers: [],
+        hasSavedToHistory: false
       };
 
       document.getElementById('battleStatusPill').classList.remove('hidden');
@@ -4407,6 +4408,8 @@ function setGradeFilter(grade) {
 
     function finishBattleSession() {
       const b = appState.battle;
+      if (!b || b.hasSavedToHistory) return;
+      b.hasSavedToHistory = true;
       b.active = false;
       document.getElementById('battleStatusPill').classList.add('hidden');
       document.getElementById('battleActiveQuestionBox').classList.add('hidden');

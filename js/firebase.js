@@ -256,12 +256,85 @@ export class FirebaseService {
   }
 
   /**
+   * 精準去重演算法：多層級檢查 ID、雲端 DocID 與內容特徵指紋
+   */
+  static deduplicateRecords(records) {
+    if (!Array.isArray(records) || records.length === 0) return [];
+    
+    const result = [];
+    for (const record of records) {
+      if (!record) continue;
+      
+      const recTime = record.createdAtDate ? new Date(record.createdAtDate).getTime() : 0;
+      const recId = record.clientRecordId || record.recordId || record.id;
+      const recCloudId = record.cloudDocId || (!String(record.id || '').startsWith('rec_') ? record.id : null);
+      
+      const existingIndex = result.findIndex(existing => {
+        const exId = existing.clientRecordId || existing.recordId || existing.id;
+        const exCloudId = existing.cloudDocId || (!String(existing.id || '').startsWith('rec_') ? existing.id : null);
+
+        // 1. 直接 ID / clientRecordId 匹配
+        if (recId && exId && recId === exId) return true;
+
+        // 2. 雲端 Document ID 匹配
+        if (recCloudId && exCloudId && recCloudId === exCloudId) return true;
+        if (recCloudId && (recCloudId === exId || recCloudId === existing.cloudDocId)) return true;
+        if (exCloudId && (exCloudId === recId || exCloudId === record.cloudDocId)) return true;
+
+        // 3. 內容特徵指紋匹配 (同標題、同科目、同得分、同總題數，且作答時間誤差在 120 秒內)
+        if (
+          existing.title === record.title &&
+          existing.subject === record.subject &&
+          Number(existing.score) === Number(record.score) &&
+          Number(existing.total) === Number(record.total)
+        ) {
+          const exTime = existing.createdAtDate ? new Date(existing.createdAtDate).getTime() : 0;
+          if (recTime && exTime && Math.abs(recTime - exTime) <= 120000) {
+            return true;
+          }
+        }
+        return false;
+      });
+
+      if (existingIndex >= 0) {
+        // 合併並保留更完整（例如帶有雲端 docId 或題目細節）的資料
+        const existing = result[existingIndex];
+        result[existingIndex] = {
+          ...existing,
+          ...record,
+          id: existing.id || record.id,
+          cloudDocId: existing.cloudDocId || record.cloudDocId || recCloudId || exCloudId,
+          clientRecordId: existing.clientRecordId || record.clientRecordId || exId || recId,
+          details: (existing.details && existing.details.length > 0) ? existing.details : (record.details || [])
+        };
+      } else {
+        result.push({ ...record });
+      }
+    }
+
+    // 依建立時間由新到舊排序
+    result.sort((a, b) => {
+      const tA = a.createdAtDate ? new Date(a.createdAtDate).getTime() : 0;
+      const tB = b.createdAtDate ? new Date(b.createdAtDate).getTime() : 0;
+      return tB - tA;
+    });
+
+    return result;
+  }
+
+  /**
    * 儲存測驗評量紀錄
    */
   static async saveAssessmentRecord(user, recordData) {
+    const clientRecordId = recordData.clientRecordId || recordData.id || ('rec_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9));
+    const nowIso = new Date().toISOString();
+
     const record = {
+      id: clientRecordId,
+      recordId: clientRecordId,
+      clientRecordId: clientRecordId,
       userId: user ? user.uid : 'guest',
-      userEmail: user ? user.email : '未登入勇者',
+      userEmail: user ? user.email : '訪客勇者',
       userName: user ? (user.displayName || user.email) : '訪客勇者',
       userPhoto: user ? (user.photoURL || '') : '',
       title: recordData.title || '一般試煉',
@@ -272,17 +345,15 @@ export class FirebaseService {
       rank: recordData.rank || 'B',
       expEarned: recordData.expEarned || 0,
       goldEarned: recordData.goldEarned || 0,
-      createdAtDate: new Date().toISOString(),
-      details: recordData.details || [],
-      userId: user ? user.uid : 'guest',
-      userEmail: user ? user.email : 'guest'
+      createdAtDate: recordData.createdAtDate || nowIso,
+      details: recordData.details || []
     };
 
-    // 1. 本機一律保存一份，確保離線、網路延遲或雲端權限異常時紀錄絕不遺失
+    // 1. 本機一律保存一份，並進行去重
     try {
-      const localHistory = JSON.parse(localStorage.getItem('jh_quest_local_history') || '[]');
-      localHistory.unshift(record);
-      if (localHistory.length > 50) localHistory.pop();
+      let localHistory = JSON.parse(localStorage.getItem('jh_quest_local_history') || '[]');
+      localHistory = this.deduplicateRecords([record, ...localHistory]);
+      if (localHistory.length > 50) localHistory = localHistory.slice(0, 50);
       localStorage.setItem('jh_quest_local_history', JSON.stringify(localHistory));
     } catch (e) {
       console.warn("本機存檔警告:", e);
@@ -292,22 +363,34 @@ export class FirebaseService {
     if (this.isAvailable() && user) {
       try {
         const docRef = await addDoc(collection(db, "assessment_records"), {
+          clientRecordId: clientRecordId,
+          recordId: clientRecordId,
           userId: user.uid,
           userEmail: user.email,
           userName: user.displayName || user.email,
           userPhoto: user.photoURL || "",
-          title: recordData.title,
-          subject: recordData.subject,
-          score: recordData.score,
-          total: recordData.total,
-          accuracy: recordData.accuracy,
-          rank: recordData.rank,
-          expEarned: recordData.expEarned,
-          goldEarned: recordData.goldEarned,
-          details: recordData.details || [],
+          title: record.title,
+          subject: record.subject,
+          score: record.score,
+          total: record.total,
+          accuracy: record.accuracy,
+          rank: record.rank,
+          expEarned: record.expEarned,
+          goldEarned: record.goldEarned,
+          details: record.details || [],
           createdAt: serverTimestamp()
         });
-        record.id = docRef.id;
+        record.cloudDocId = docRef.id;
+
+        // 同步回寫 cloudDocId 到本機暫存，確保雲端與本機身分完美錨定
+        try {
+          let currentLocal = JSON.parse(localStorage.getItem('jh_quest_local_history') || '[]');
+          const target = currentLocal.find(r => (r.clientRecordId === clientRecordId || r.id === clientRecordId));
+          if (target) {
+            target.cloudDocId = docRef.id;
+            localStorage.setItem('jh_quest_local_history', JSON.stringify(currentLocal));
+          }
+        } catch (syncErr) {}
       } catch (err) {
         console.error("雲端存檔失敗 (已保存在本機快取):", err);
       }
@@ -316,7 +399,7 @@ export class FirebaseService {
   }
 
   /**
-   * 取得使用者的歷史評量紀錄 (整合雲端與本機雙重備份，確保隨時可列出)
+   * 取得使用者的歷史評量紀錄 (整合雲端與本機雙重備份，並嚴格去重)
    */
   static async getMyRecords(user) {
     let localRecords = [];
@@ -326,11 +409,13 @@ export class FirebaseService {
       localRecords = [];
     }
 
-    if (!user) {
-      return localRecords;
-    }
+    // 先清洗去重本機舊有資料
+    localRecords = this.deduplicateRecords(localRecords);
+    try {
+      localStorage.setItem('jh_quest_local_history', JSON.stringify(localRecords));
+    } catch (e) {}
 
-    if (!this.isAvailable()) {
+    if (!user || !this.isAvailable()) {
       return localRecords;
     }
 
@@ -360,24 +445,21 @@ export class FirebaseService {
         const d = doc.data();
         return {
           id: doc.id,
+          cloudDocId: doc.id,
           ...d,
-          createdAtDate: d.createdAt?.toDate ? d.createdAt.toDate().toISOString() : new Date().toISOString()
+          createdAtDate: d.createdAt?.toDate ? d.createdAt.toDate().toISOString() : (d.createdAtDate || new Date().toISOString())
         };
       });
 
-      // 聚合雲端與本機紀錄（以 id 或建立時間去重，保障離線/登入前作答紀錄不遺失）
-      const map = new Map();
-      cloudList.forEach(r => map.set(r.id || r.createdAtDate, r));
-      localRecords.forEach(r => {
-        const key = r.id || r.createdAtDate;
-        if (!map.has(key)) {
-          map.set(key, r);
-        }
-      });
+      // 整合雲端與本機紀錄，進行全面性去重
+      const merged = this.deduplicateRecords([...cloudList, ...localRecords]);
 
-      const list = Array.from(map.values());
-      list.sort((a, b) => new Date(b.createdAtDate).getTime() - new Date(a.createdAtDate).getTime());
-      return list;
+      // 更新本機快取為去重整合後的完整紀錄
+      try {
+        localStorage.setItem('jh_quest_local_history', JSON.stringify(merged.slice(0, 50)));
+      } catch (e) {}
+
+      return merged;
     } catch (err) {
       console.warn("無法從雲端讀取歷史紀錄，無縫降級使用本機紀錄:", err);
       return localRecords;
@@ -385,7 +467,7 @@ export class FirebaseService {
   }
 
   /**
-   * 管理者取得所有學員的評量紀錄
+   * 管理者取得所有學員的評量紀錄 (同步進行重複剔除)
    */
   static async getAllRecords(adminUser) {
     if (!this.isAvailable()) {
@@ -400,14 +482,16 @@ export class FirebaseService {
       orderBy("createdAt", "desc")
     );
     const snap = await getDocs(q);
-    return snap.docs.map(doc => {
+    const rawList = snap.docs.map(doc => {
       const d = doc.data();
       return {
         id: doc.id,
+        cloudDocId: doc.id,
         ...d,
-        createdAtDate: d.createdAt?.toDate ? d.createdAt.toDate().toISOString() : new Date().toISOString()
+        createdAtDate: d.createdAt?.toDate ? d.createdAt.toDate().toISOString() : (d.createdAtDate || new Date().toISOString())
       };
     });
+    return this.deduplicateRecords(rawList);
   }
 
   /**
