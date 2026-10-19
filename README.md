@@ -1,5 +1,5 @@
 # 📚 星耀國中冒險學院｜遊戲化複習評量 ＆ 錯題煉金工坊
-> **Learning-Assessment**：結合 Google Gemini 1.5 智慧出題、Google 帳號認證與全員學習進度監控的開源純前端評量系統。
+> **Learning-Assessment**：結合 Google Gemini 3.8 Flash 智慧出題、Google 帳號認證與全員學習進度監控的開源純前端評量系統。
 
 [![Deploy to GitHub Pages](https://github.com/oye816/Learning-Assessment/actions/workflows/deploy.yml/badge.svg)](https://github.com/oye816/Learning-Assessment/actions/workflows/deploy.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -59,7 +59,7 @@
 
 1. **🤖 Gemini AI 智慧出題（BYOK 模式）**：
    - 使用者在右上角輸入個人的 [Google AI Studio API Key](https://aistudio.google.com/)。
-   - 在「錯題煉金工坊」點擊「**🤖 啟動 Gemini AI 魔法生題**」，調用 Gemini 1.5 Flash 即時分析弱點並出題。
+   - 在「錯題煉金工坊」點擊「**🤖 啟動 Gemini AI 魔法生題**」，調用 Gemini 3.8 Flash 即時分析弱點並出題。
 2. **🔐 個人學習歷程**：
    - 點擊「Google 登入」後，所有地下城評量與 Boss 戰績自動存入雲端 Firestore。
    - 於「📜 我的學習歷程」分頁查閱歷史答題曲線、得分與等級。

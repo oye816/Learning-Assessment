@@ -1,13 +1,41 @@
 // ==============================================================================
 // 星耀國中冒險學院｜Gemini AI 智慧生題服務 (js/gemini.js)
 // 
-// 支援 BYOK (Bring Your Own Key) 模式：
-// 使用者於網頁輸入個人的 Google AI Studio API Key，保存在瀏覽器端 localStorage，
-// 不會上傳至任何後端伺服器，安全且符合開源零伺服器成本需求。
+// 支援 BYOK (Bring Your Own Key) 模式與多模型切換：
+// 預設採用最新「Gemini 3.8 Flash」高敏捷架構模型，使用者於網頁輸入個人的
+// Google AI Studio API Key，保存在瀏覽器端 localStorage，安全且開源零成本。
 // ==============================================================================
 
 export class GeminiService {
   static STORAGE_KEY = 'jh_quest_gemini_api_key';
+  static MODEL_STORAGE_KEY = 'jh_quest_gemini_model';
+  static DEFAULT_MODEL = 'gemini-3.8-flash';
+
+  /**
+   * 取得當前使用的 Gemini 模型名稱 (預設: gemini-3.8-flash)
+   */
+  static getModel() {
+    return localStorage.getItem(this.MODEL_STORAGE_KEY) || this.DEFAULT_MODEL;
+  }
+
+  /**
+   * 設定使用者偏好的 Gemini 模型名稱
+   */
+  static setModel(modelName) {
+    if (modelName && modelName.trim()) {
+      localStorage.setItem(this.MODEL_STORAGE_KEY, modelName.trim());
+    } else {
+      localStorage.removeItem(this.MODEL_STORAGE_KEY);
+    }
+  }
+
+  /**
+   * 取得 Gemini REST API Endpoint URL
+   */
+  static getApiEndpoint(apiKey) {
+    const model = this.getModel();
+    return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+  }
 
   /**
    * 取得儲存的 Gemini API Key (優先使用 localStorage，其次為全域預設值)
@@ -40,13 +68,13 @@ export class GeminiService {
   }
 
   /**
-   * 測試 API Key 連線狀態
+   * 測試 API Key 與所選模型連線狀態
    */
   static async testConnection(key) {
     const apiKey = key || this.getApiKey();
     if (!apiKey) throw new Error('請先輸入 API Key！');
 
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const endpoint = this.getApiEndpoint(apiKey);
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -101,8 +129,8 @@ export class GeminiService {
     const gradeName = gradeMap[grade] || '國中八年級';
     const styleDesc = styleMap[style] || styleMap.progressive;
 
-    const systemPrompt = `你是一位精通台灣國中教育會考與段考評量架構的頂尖魔導名師兼出題專家。
-請根據使用者提供的錯題文字或觀念考點，為學生打造客製化練習試題包。
+    const systemPrompt = `你是一位精通台灣國中教育會考與段考評量架構的頂尖名師兼出題專家。
+請根據學生提供的錯題文字或觀念考點，為學生打造客製化練習試題包。
 
 【基本設定】
 - 領域科目：${subjectName}
@@ -135,7 +163,7 @@ JSON 結構必須精確符合以下規格：
 
     const userPrompt = `【學生輸入的錯題或想複習的弱點觀念】\n${inputText}`;
 
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const endpoint = this.getApiEndpoint(apiKey);
 
     const response = await fetch(endpoint, {
       method: 'POST',
@@ -154,7 +182,7 @@ JSON 結構必須精確符合以下規格：
     if (!response.ok) {
       const err = await response.json().catch(() => ({}));
       const msg = err.error?.message || `HTTP ${response.status}`;
-      throw new Error(`Gemini AI 出題失敗：${msg}`);
+      throw new Error(`Gemini AI 出題失敗 (${this.getModel()})：${msg}`);
     }
 
     const data = await response.json();
@@ -165,10 +193,10 @@ JSON 結構必須精確符合以下規格：
 
     try {
       const parsed = JSON.parse(rawText);
-      // 確保結構完整
       parsed.subject = subject;
       parsed.grade = grade;
       parsed.isAIGenerated = true;
+      parsed.modelUsed = this.getModel();
       if (!Array.isArray(parsed.questions) || parsed.questions.length === 0) {
         throw new Error('回傳之題目列表為空。');
       }

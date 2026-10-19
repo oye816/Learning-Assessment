@@ -2,7 +2,7 @@
 // 星耀國中冒險學院｜Firebase 認證與雲端評量儲存服務 (js/firebase.js)
 // 
 // 提供 Google OAuth 2.0 登入、個人學習歷程持久化儲存、以及管理者全員監控。
-// 支援 GitHub Pages 直接部署與彈性管理者授權機制。
+// 具備極致可靠性：支援本機快取立即渲染、持久化 Session、主動廣播認證狀態。
 // ==============================================================================
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -11,7 +11,9 @@ import {
   GoogleAuthProvider, 
   signInWithPopup, 
   signOut, 
-  onAuthStateChanged 
+  onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { 
   getFirestore, 
@@ -27,13 +29,14 @@ import {
   serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// 動態載入 config.js (若不存在或未設定則嘗試讀取本機自訂設定)
+// 設定容器
 let APP_CONFIG = {
   firebase: { apiKey: "" },
   adminEmails: [],
   defaultGeminiApiKey: ""
 };
 
+// 1. 嘗試從 config.js 載入
 try {
   const configModule = await import("../config.js");
   if (configModule && configModule.CONFIG) {
@@ -43,7 +46,7 @@ try {
   console.warn("⚠️ 未找到 config.js，檢查瀏覽器本機自訂設定。");
 }
 
-// 載入 localStorage 中的自訂 Firebase 與管理者設定
+// 2. 檢查 localStorage 中的自訂 Firebase 與管理者設定
 try {
   const customStr = localStorage.getItem('jh_quest_custom_firebase_config');
   if (customStr) {
@@ -62,7 +65,7 @@ try {
   console.warn("讀取本機自訂 Firebase 設定失敗:", e);
 }
 
-// 載入額外授權的管理者信箱
+// 3. 載入本機額外授權的管理者名單
 try {
   const localAdmins = JSON.parse(localStorage.getItem('jh_quest_admin_emails') || '[]');
   if (Array.isArray(localAdmins) && localAdmins.length > 0) {
@@ -94,7 +97,34 @@ function initFirebase() {
       app = initializeApp(APP_CONFIG.firebase);
       auth = getAuth(app);
       db = getFirestore(app);
+
+      // 強制開啟本機持久化保持登入狀態
+      setPersistence(auth, browserLocalPersistence).catch(err => {
+        console.warn("Firebase setPersistence 警告:", err);
+      });
+
       console.log("✅ Firebase 雲端服務初始化成功！");
+
+      // 監聽 Auth 變化並主動更新快取與廣播
+      onAuthStateChanged(auth, async (user) => {
+        const admin = FirebaseService.isAdmin(user);
+        if (user) {
+          localStorage.setItem('jh_quest_cached_user', JSON.stringify({
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName || user.email.split('@')[0],
+            photoURL: user.photoURL || '',
+            isAdmin: admin
+          }));
+        } else {
+          localStorage.removeItem('jh_quest_cached_user');
+        }
+
+        if (window.onFirebaseUserChange) {
+          window.onFirebaseUserChange(user, admin);
+        }
+        window.dispatchEvent(new CustomEvent('firebase-auth-changed', { detail: { user, isAdmin: admin } }));
+      });
     } catch (err) {
       console.error("Firebase 初始化失敗:", err);
     }
@@ -157,13 +187,34 @@ export class FirebaseService {
     return false;
   }
 
+  /**
+   * 執行 Google 彈窗登入
+   */
   static async loginWithGoogle() {
     if (!this.isAvailable()) {
       throw new Error("尚未設定 Firebase 憑證！請於右上角「系統設定」中填入 Firebase Config，或於專案中設定 config.js。");
     }
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      return result.user;
+      const user = result.user;
+      const admin = this.isAdmin(user);
+
+      // 即時快取使用者，防止非同步監聽器延遲
+      localStorage.setItem('jh_quest_cached_user', JSON.stringify({
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || user.email.split('@')[0],
+        photoURL: user.photoURL || '',
+        isAdmin: admin
+      }));
+
+      // 即刻通知前端更新狀態
+      if (window.onFirebaseUserChange) {
+        window.onFirebaseUserChange(user, admin);
+      }
+      window.dispatchEvent(new CustomEvent('firebase-auth-changed', { detail: { user, isAdmin: admin } }));
+
+      return user;
     } catch (err) {
       if (err.code === 'auth/unauthorized-domain') {
         throw new Error(`Google 登入失敗：當前網域 (${window.location.hostname}) 尚未加入 Firebase 的「已授權網域」清單！請至 Firebase Console -> Authentication -> Settings -> Authorized domains 新增。`);
@@ -173,13 +224,29 @@ export class FirebaseService {
   }
 
   static async logout() {
-    if (!this.isAvailable()) return;
+    localStorage.removeItem('jh_quest_cached_user');
+    if (!this.isAvailable()) {
+      if (window.onFirebaseUserChange) window.onFirebaseUserChange(null, false);
+      return;
+    }
     await signOut(auth);
+    if (window.onFirebaseUserChange) window.onFirebaseUserChange(null, false);
   }
 
   static onUserChange(callback) {
     if (!this.isAvailable()) {
-      callback(null, false);
+      // 嘗試讀取本地快取
+      const cached = localStorage.getItem('jh_quest_cached_user');
+      if (cached) {
+        try {
+          const u = JSON.parse(cached);
+          callback(u, u.isAdmin);
+        } catch (e) {
+          callback(null, false);
+        }
+      } else {
+        callback(null, false);
+      }
       return () => {};
     }
     return onAuthStateChanged(auth, (user) => {
@@ -209,7 +276,6 @@ export class FirebaseService {
       details: recordData.details || []
     };
 
-    // 若未登入，只存於 guest local history
     if (!user) {
       const localHistory = JSON.parse(localStorage.getItem('jh_quest_local_history') || '[]');
       localHistory.unshift(record);
@@ -218,7 +284,6 @@ export class FirebaseService {
       return record;
     }
 
-    // 若有登入且 Firebase 正常，寫入雲端 Firestore
     if (this.isAvailable() && user) {
       try {
         const docRef = await addDoc(collection(db, "assessment_records"), {
@@ -250,7 +315,6 @@ export class FirebaseService {
    */
   static async getMyRecords(user) {
     if (!user) {
-      // 訪客才讀取本地訪客歷史
       return JSON.parse(localStorage.getItem('jh_quest_local_history') || '[]');
     }
 
@@ -266,7 +330,6 @@ export class FirebaseService {
       );
       const snap = await getDocs(q);
       if (snap.empty) {
-        // 新使用者沒有任何雲端紀錄，回傳空陣列！絕不顯示別人的本地紀錄！
         return [];
       }
       return snap.docs.map(doc => {
@@ -347,3 +410,6 @@ export class FirebaseService {
 
 // 掛載至 window
 window.FirebaseService = FirebaseService;
+
+// 觸發模組就緒事件
+window.dispatchEvent(new CustomEvent('firebase-service-ready'));

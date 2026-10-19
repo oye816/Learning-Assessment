@@ -369,7 +369,7 @@
                 <span id="alchemyAiKeyBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 cursor-pointer" onclick="openGeminiKeyModal()">檢查中...</span>
               </div>
               <p class="text-[10px] text-slate-300 leading-tight">
-                運用 Google Gemini 1.5 Flash 深度推理出題，自動解析卡關核心並生成 4 道素養單選題！
+                運用 Google Gemini 3.8 Flash 深度推理出題，自動解析卡關核心並生成 4 道素養單選題！
               </p>
               <button type="button" onclick="runGeminiAiAlchemy()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-violet-600 via-fuchsia-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-md shadow-violet-600/30 flex items-center justify-center gap-1.5 transition-all active:scale-95">
                 <span id="aiSpinIcon" class="hidden animate-spin">🌀</span>
@@ -905,10 +905,20 @@
         <!-- Panel 1: Gemini AI BYOK -->
         <div id="settingPanel-ai" class="space-y-3">
           <p class="text-xs text-slate-300 leading-relaxed">
-            設定您的 Google AI Studio API Key，出題由瀏覽器前端直接請求 Gemini 1.5 Flash，開源維護者與使用者互不干擾額度。
+            設定您的 Google AI Studio API Key，出題由瀏覽器前端直接請求 Gemini 3.8 Flash，開源維護者與使用者互不干擾額度。
           </p>
-          <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1.5">Gemini API Key：</label>
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Gemini AI 出題模型 (預設 Gemini 3.8 Flash)：</label>
+              <select id="selectGeminiModel" onchange="handleModelChange()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-violet-400 font-mono">
+                <option value="gemini-3.8-flash" selected>gemini-3.8-flash (最新推薦・超高敏捷思考)</option>
+                <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+                <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+                <option value="gemini-1.5-flash">gemini-1.5-flash</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1.5">Gemini API Key：</label>
             <div class="relative">
               <input type="password" id="inputGeminiApiKey" placeholder="AIzaSy..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-violet-400 font-mono pr-20" />
               <button type="button" onclick="toggleApiKeyVisibility()" class="absolute right-2 top-2 px-2 py-1 rounded bg-slate-800 text-[10px] text-slate-300 hover:text-white">顯示/隱藏</button>
@@ -3120,6 +3130,10 @@ function setGradeFilter(grade) {
       const input = document.getElementById('inputGeminiApiKey');
       const statusEl = document.getElementById('geminiKeyModalStatus');
       if (modal && input) {
+        const modelSel = document.getElementById('selectGeminiModel');
+        if (modelSel && window.GeminiService) {
+          modelSel.value = window.GeminiService.getModel();
+        }
         input.value = window.GeminiService ? window.GeminiService.getApiKey() : '';
         const curEmailEl = document.getElementById('settingsCurrentEmailText');
         const adminStatEl = document.getElementById('settingsAdminStatusText');
@@ -3171,7 +3185,7 @@ function setGradeFilter(grade) {
       statusEl.className = 'font-bold text-amber-300';
       try {
         await window.GeminiService.testConnection(key);
-        statusEl.textContent = '✅ 連線成功！(Gemini 1.5 Flash)';
+        statusEl.textContent = '✅ 連線成功！(Gemini 3.8 Flash)';
         statusEl.className = 'font-bold text-emerald-400';
       } catch (e) {
         statusEl.textContent = '❌ 連線失敗: ' + (e.message || '無效金鑰');
@@ -3233,7 +3247,7 @@ function setGradeFilter(grade) {
       }
 
       if (spinIcon) spinIcon.classList.remove('hidden');
-      showToast('🤖 正在召喚 Gemini 1.5 魔法解析題意與出題中...', 'info');
+      showToast('🤖 正在召喚 Gemini 3.8 魔法解析題意與出題中...', 'info');
 
       try {
         const pack = await window.GeminiService.generateQuizPack({
@@ -3262,17 +3276,74 @@ function setGradeFilter(grade) {
     }
 
     // --- Google Authentication Handlers ---
+    async function applyUserLoggedIn(user, isAdmin) {
+      if (!user) {
+        appState.currentUser = null;
+        appState.isAdmin = false;
+        const loginBtn = document.getElementById('btnGoogleLogin');
+        const userProfile = document.getElementById('userProfileArea');
+        if (loginBtn) loginBtn.classList.remove('hidden');
+        if (userProfile) userProfile.classList.add('hidden');
+        updateAdminUI(false);
+        appState.player = getFreshPlayerState();
+        appState.mistakes = [];
+        updateHeaderUI();
+        return;
+      }
+
+      appState.currentUser = user;
+      appState.isAdmin = (typeof isAdmin === 'boolean') ? isAdmin : (window.FirebaseService ? window.FirebaseService.isAdmin(user) : false);
+
+      const loginBtn = document.getElementById('btnGoogleLogin');
+      const userProfile = document.getElementById('userProfileArea');
+      const userAvatar = document.getElementById('userAvatarImg');
+      const userName = document.getElementById('userDisplayName');
+      const userEmail = document.getElementById('userEmailDisplay');
+
+      if (loginBtn) loginBtn.classList.add('hidden');
+      if (userProfile) userProfile.classList.remove('hidden');
+      if (userAvatar) userAvatar.src = user.photoURL || ('https://api.dicebear.com/7.x/bottts/svg?seed=' + encodeURIComponent(user.displayName || user.email));
+      if (userName) userName.textContent = user.displayName || user.email.split('@')[0];
+      if (userEmail) userEmail.textContent = user.email;
+
+      updateAdminUI(appState.isAdmin);
+
+      // 載入學員雲端資料
+      if (window.FirebaseService) {
+        try {
+          const remoteProfile = await window.FirebaseService.loadUserProfile(user);
+          if (remoteProfile && remoteProfile.player) {
+            appState.player = Object.assign(getFreshPlayerState(), remoteProfile.player);
+            appState.mistakes = remoteProfile.mistakes || [];
+          } else {
+            appState.player = getFreshPlayerState();
+            appState.mistakes = [];
+            await window.FirebaseService.syncUserProfile(user, appState);
+          }
+        } catch (e) {
+          console.warn("載入雲端學員資料失敗:", e);
+        }
+      }
+      updateHeaderUI();
+      saveState();
+    }
+
     async function handleGoogleLogin() {
       playSoundEffect('click');
       if (!window.FirebaseService || !window.FirebaseService.isAvailable()) {
-        showToast('⚙️ 本地展示模式：請參考 config.example.js 設定 Firebase 憑證以啟用 Google 登入', 'warning');
+        showToast('⚙️ 請先於右上角設定輸入 Firebase 憑證以啟用 Google 登入', 'warning');
+        openGeminiKeyModal();
+        switchSettingModalTab('firebase');
         return;
       }
       try {
-        await window.FirebaseService.loginWithGoogle();
+        const user = await window.FirebaseService.loginWithGoogle();
+        const isAdmin = window.FirebaseService.isAdmin(user);
+        await applyUserLoggedIn(user, isAdmin);
         playSoundEffect('levelup');
-        showToast('🎉 Google 登入成功！已連線個人雲端學習存檔！', 'success');
+        showToast(`🎉 歡迎回來，${user.displayName || user.email}！已成功登入`, 'success');
       } catch (e) {
+        console.error('登入錯誤:', e);
         showToast('登入失敗: ' + (e.message || '無法完成 Google 授權'), 'danger');
       }
     }
@@ -3281,58 +3352,30 @@ function setGradeFilter(grade) {
       playSoundEffect('click');
       if (window.FirebaseService) {
         await window.FirebaseService.logout();
-        showToast('👋 已安全登出 Google 帳號', 'info');
       }
+      await applyUserLoggedIn(null, false);
+      showToast('👋 已安全登出 Google 帳號', 'info');
     }
 
     function initAuthListener() {
+      // 綁定全域回呼與監聽事件
+      window.onFirebaseUserChange = applyUserLoggedIn;
+
       if (!window.FirebaseService) return;
-      window.FirebaseService.onUserChange(async (user, isAdmin) => {
-        appState.currentUser = user;
-        appState.isAdmin = isAdmin;
-
-        const loginBtn = document.getElementById('btnGoogleLogin');
-        const userProfile = document.getElementById('userProfileArea');
-        const userAvatar = document.getElementById('userAvatarImg');
-        const userName = document.getElementById('userDisplayName');
-        const userEmail = document.getElementById('userEmailDisplay');
-
-        if (user) {
-          if (loginBtn) loginBtn.classList.add('hidden');
-          if (userProfile) userProfile.classList.remove('hidden');
-          if (userAvatar) userAvatar.src = user.photoURL || '';
-          if (userName) userName.textContent = user.displayName || user.email.split('@')[0];
-          if (userEmail) userEmail.textContent = user.email;
-
-          updateAdminUI(isAdmin);
-
-          // 嘗試自雲端載入學員資料
-          const remoteProfile = await window.FirebaseService.loadUserProfile(user);
-          if (remoteProfile && remoteProfile.player) {
-            // 既有舊學員：恢復歷史進度
-            appState.player = Object.assign(getFreshPlayerState(), remoteProfile.player);
-            appState.mistakes = remoteProfile.mistakes || [];
-          } else {
-            // 新學員：強制由 Lv.1、0 EXP、0 金幣、0 錯題開始！
-            appState.player = getFreshPlayerState();
-            appState.mistakes = [];
-            // 同步初始乾淨狀態至雲端 Firestore
-            await window.FirebaseService.syncUserProfile(user, appState);
-          }
-          updateHeaderUI();
-          saveState();
-        } else {
-          if (loginBtn) loginBtn.classList.remove('hidden');
-          if (userProfile) userProfile.classList.add('hidden');
-          updateAdminUI(false);
-
-          // 訪客重置為乾淨 Lv.1
-          appState.player = getFreshPlayerState();
-          appState.mistakes = [];
-          updateHeaderUI();
-        }
+      window.FirebaseService.onUserChange((user, isAdmin) => {
+        applyUserLoggedIn(user, isAdmin);
       });
     }
+
+    window.addEventListener('firebase-auth-changed', (e) => {
+      if (e.detail) {
+        applyUserLoggedIn(e.detail.user, e.detail.isAdmin);
+      }
+    });
+
+    window.addEventListener('firebase-service-ready', () => {
+      initAuthListener();
+    });
 
     function updateAdminUI(isAdmin) {
       const adminBadge = document.getElementById('userRoleBadge');
@@ -3643,6 +3686,16 @@ function setGradeFilter(grade) {
       }
     }
 
+    
+    function handleModelChange() {
+      const sel = document.getElementById('selectGeminiModel');
+      if (sel && window.GeminiService) {
+        window.GeminiService.setModel(sel.value);
+        showToast(`🤖 已切換出題模型為：${sel.value}`, 'info');
+      }
+    }
+
+    window.handleModelChange = handleModelChange;
     window.claimAdminRole = claimAdminRole;
     window.openGeminiKeyModal = openGeminiKeyModal;
     window.switchSettingModalTab = switchSettingModalTab;
@@ -3664,6 +3717,14 @@ function setGradeFilter(grade) {
 
         // ==================== 12. INITIALIZATION ====================
     window.onload = function () {
+      // 1. 立即讀取本機快取使用者，防止非同步認證造成的未登入閃爍
+      const cachedUserStr = localStorage.getItem('jh_quest_cached_user');
+      if (cachedUserStr) {
+        try {
+          const cachedUser = JSON.parse(cachedUserStr);
+          applyUserLoggedIn(cachedUser, cachedUser.isAdmin);
+        } catch (e) {}
+      }
       loadSavedState();
       updateHeaderUI();
       renderDailyQuests();
