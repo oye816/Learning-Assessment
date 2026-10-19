@@ -153,7 +153,10 @@ export class GeminiService {
 JSON 結構必須精確符合以下規格：
 {
   "concept": "精闢濃縮的考點核心名稱（例如：畢氏定理應用、現在完成式 since/for 判別、莫耳濃度計算）",
-  "coreAnalysis": "針對學生卡關原因的剖析與解題秒殺口訣心法（100字內，親切幽默帶有RPG冒險風格）",
+  "topicTitle": "本次試題包主題名稱（例如：畢氏定理進階實戰特訓、現在完成式易混淆對決）",
+  "coreConcept": "針對學生卡關核心觀念的清晰拆解剖析（100字內）",
+  "commonTrap": "學生在段考或會考此題型最常掉入的思維與計算陷阱（100字內）",
+  "mnemonic": "秒殺解題口訣或破題心法（親切幽默，帶有RPG冒險風格，50字內）",
   "questions": [
     {
       "concept": "本題測驗的小重點",
@@ -203,13 +206,32 @@ JSON 結構必須精確符合以下規格：
 
     try {
       const parsed = JSON.parse(rawText);
-      parsed.subject = subject;
-      parsed.grade = grade;
+      const cleanSubject = subject || 'math';
+      const cleanSubjectName = subjectMap[cleanSubject] || '各科綜合';
+
+      // 補齊與 index.html 渲染介面相容之主題與拆解欄位
+      parsed.subject = cleanSubject;
+      parsed.subjectName = cleanSubjectName;
+      parsed.grade = grade || '8';
+      parsed.topicTitle = parsed.topicTitle || parsed.concept || 'AI 客製化弱點突破試題包';
+      parsed.coreConcept = parsed.coreConcept || parsed.concept || '考點核心觀念聚焦';
+      parsed.commonTrap = parsed.commonTrap || '易混淆概念、計算盲點與審題陷阱';
+      parsed.mnemonic = parsed.mnemonic || parsed.coreAnalysis || '🔮 破題心法：掌握核心概念，逐一排除干擾選項！';
       parsed.isAIGenerated = true;
       parsed.modelUsed = this.getModel();
+
       if (!Array.isArray(parsed.questions) || parsed.questions.length === 0) {
         throw new Error('回傳之題目列表為空。');
       }
+
+      // 確保每道題皆具備所屬科目與年級，防止存入錯題本時被誤判為其他科目
+      parsed.questions.forEach((q, idx) => {
+        q.id = `gemini-${Date.now()}-${idx}`;
+        q.subject = cleanSubject;
+        q.grade = grade || '8';
+        if (!q.concept) q.concept = parsed.concept || '核心考點';
+      });
+
       return parsed;
     } catch (parseError) {
       console.error('JSON Parse Error, Raw:', rawText);

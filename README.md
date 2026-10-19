@@ -19,6 +19,38 @@
 
 ---
 
+## 💻 本機開發與測試指南 (Local Development & Testing)
+
+本專案採用現代原生 ES Modules (`type="module"`) 架構，因瀏覽器安全性（CORS）限制，不可直接雙擊以 `file://` 開啟，需透過本機 HTTP 靜態伺服器運行測試。
+
+### 1. 快速啟動本機伺服器（擇一即可）
+
+* **方法 A：使用 Node.js（推薦，零配置）**
+  ```bash
+  npx --yes serve -l 8000 .
+  ```
+* **方法 B：使用 Python 內建伺服器**
+  ```bash
+  # 建議建立或進入虛擬環境後執行
+  python3 -m venv venv && source venv/bin/activate
+  python3 -m http.server 8000
+  ```
+* **方法 C：VS Code / Cursor 編輯器**
+  安裝 `Live Server` 擴充套件後，在 `index.html` 按右鍵點選「**Open with Live Server**」即可。
+
+---
+
+### 2. 開啟測試與環境標題識別
+
+啟動後，請以瀏覽器開啟 [http://localhost:8000/](http://localhost:8000/) 或 [http://127.0.0.1:8000/](http://127.0.0.1:8000/)：
+
+* 🏷️ **環境動態標題**：
+  * **本機測試**：瀏覽器分頁標題會自動加上 **`(本機) `** 前綴（例：`(本機) 星耀國中冒險學院...`）。
+  * **線上運行**：發布至 GitHub Pages 後，標題會自動切換為 **`(Github) `** 前綴。
+* 🔐 **Google 登入測試**：Firebase Authentication 預設已授權 `localhost` 網域，本機即可完整進行 Google 登入、儲存評量紀錄與 AI 出題實測。
+
+---
+
 ## 🚀 GitHub Pages 3 分鐘直接部署教學 (Zero-Backend)
 
 本專案採用純前端靜態架構，已內建 `.github/workflows/deploy.yml` 自動化部屬工作流，**推上 GitHub 即可自動上線**！

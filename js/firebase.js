@@ -323,16 +323,28 @@ export class FirebaseService {
     }
 
     try {
-      const q = query(
-        collection(db, "assessment_records"),
-        where("userId", "==", user.uid),
-        orderBy("createdAt", "desc")
-      );
-      const snap = await getDocs(q);
+      let snap;
+      try {
+        const q = query(
+          collection(db, "assessment_records"),
+          where("userId", "==", user.uid),
+          orderBy("createdAt", "desc")
+        );
+        snap = await getDocs(q);
+      } catch (indexErr) {
+        // 若 Firestore 尚未建立 (userId + createdAt) 複合索引，降級為無 orderBy 查詢並在前端排序
+        console.warn("Firestore 複合索引尚未建立，啟動本機客戶端排序降級方案:", indexErr.message);
+        const fallbackQ = query(
+          collection(db, "assessment_records"),
+          where("userId", "==", user.uid)
+        );
+        snap = await getDocs(fallbackQ);
+      }
+
       if (snap.empty) {
         return [];
       }
-      return snap.docs.map(doc => {
+      const list = snap.docs.map(doc => {
         const d = doc.data();
         return {
           id: doc.id,
@@ -340,6 +352,10 @@ export class FirebaseService {
           createdAtDate: d.createdAt?.toDate ? d.createdAt.toDate().toISOString() : new Date().toISOString()
         };
       });
+
+      // 確保一律以建立時間降序排序（最新優先）
+      list.sort((a, b) => new Date(b.createdAtDate).getTime() - new Date(a.createdAtDate).getTime());
+      return list;
     } catch (err) {
       console.warn("無法從雲端讀取歷史紀錄:", err);
       return [];
