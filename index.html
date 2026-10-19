@@ -68,6 +68,9 @@
       background: #475569;
     }
   </style>
+  <!-- Gemini AI & Firebase Open Source Modules -->
+  <script type="module" src="js/gemini.js"></script>
+  <script type="module" src="js/firebase.js"></script>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-violet-500 selection:text-white">
 
@@ -126,6 +129,27 @@
           <span id="soundIcon">🔊</span>
           <span id="soundLabel" class="hidden sm:inline">音效開啟</span>
         </button>
+
+        <!-- Gemini AI Key Setting (BYOK) -->
+        <button type="button" onclick="openGeminiKeyModal()" class="flex items-center gap-1.5 bg-violet-950/80 hover:bg-violet-900 border border-violet-500/50 px-2.5 py-1 rounded-xl text-xs font-bold text-violet-200 transition-all shadow-sm" title="設定個人 Gemini API Key (BYOK 模式)">
+          <span>🤖</span>
+          <span id="geminiKeyStatusText">AI 金鑰</span>
+          <span id="geminiKeyDot" class="w-2 h-2 rounded-full bg-slate-500"></span>
+        </button>
+
+        <!-- Google OAuth 2.0 Login / User Profile -->
+        <div id="authContainer" class="flex items-center gap-2">
+          <button type="button" id="btnGoogleLogin" onclick="handleGoogleLogin()" class="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 px-3 py-1 rounded-xl text-xs font-bold text-white transition-all shadow-sm">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.9c2.27-2.09 3.64-5.18 3.64-9.15z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.9-3.05c-1.08.72-2.45 1.16-4.03 1.16-3.1 0-5.74-2.1-6.68-4.93H1.26v3.15C3.25 21.36 7.33 24 12 24z"/><path fill="#FBBC05" d="M5.32 14.27c-.24-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.26C.46 8.16 0 9.99 0 12s.46 3.84 1.26 5.42l4.06-3.15z"/><path fill="#EA4335" d="M12 4.77c1.76 0 3.35.61 4.6 1.79l3.44-3.44C17.94 1.19 15.24 0 12 0 7.33 0 3.25 2.64 1.26 6.58l4.06 3.15c.94-2.83 3.58-4.96 6.68-4.96z"/></svg>
+            <span>Google 登入</span>
+          </button>
+          <div id="userProfileArea" class="hidden flex items-center gap-2 bg-slate-900/90 border border-slate-800 rounded-xl px-2.5 py-0.5">
+            <img id="userAvatarImg" src="" class="w-5 h-5 rounded-full border border-violet-500/50 object-cover" />
+            <span id="userDisplayName" class="text-xs font-bold text-slate-200 max-w-[100px] truncate">勇者</span>
+            <span id="userRoleBadge" class="hidden text-[10px] font-black px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">管理員</span>
+            <button type="button" onclick="handleGoogleLogout()" class="text-slate-400 hover:text-rose-400 text-xs ml-1" title="登出">✕</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -153,6 +177,18 @@
       <button type="button" id="navTab-stats" onclick="switchTab('stats')" class="nav-tab-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap text-slate-300 hover:bg-slate-800/80">
         <span>📊</span>
         <span>能力雷達與道具屋</span>
+      </button>
+
+      <!-- 個人學習歷程 Tab -->
+      <button type="button" id="navTab-history" onclick="switchTab('history')" class="nav-tab-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap text-slate-300 hover:bg-slate-800/80">
+        <span>📜</span>
+        <span>我的學習歷程</span>
+      </button>
+
+      <!-- 管理者全員儀表板 Tab (僅在 Google 管理者登入時可見) -->
+      <button type="button" id="navTab-admin" onclick="switchTab('admin')" class="hidden nav-tab-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 shadow-lg shadow-amber-500/10">
+        <span>👑</span>
+        <span>導師管理後台</span>
       </button>
     </nav>
   </header>
@@ -314,8 +350,26 @@
               </select>
             </div>
 
-            <button type="button" onclick="runMistakeAlchemy()" class="w-full py-3 rounded-xl bg-gradient-to-r from-fuchsia-600 via-purple-600 to-indigo-600 hover:from-fuchsia-500 hover:to-indigo-500 text-white font-black text-sm shadow-lg shadow-fuchsia-600/30 flex items-center justify-center gap-2 transition-transform active:scale-95">
-              <span>✨ 啟動煉金陣：生成 4 道衍生練習題</span>
+            <!-- Gemini AI 出題專區 -->
+            <div class="p-3 rounded-xl bg-violet-950/40 border border-violet-500/40 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-violet-200 flex items-center gap-1">
+                  <span>🤖</span> <span>Gemini AI 智慧出題</span>
+                </span>
+                <span id="alchemyAiKeyBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 cursor-pointer" onclick="openGeminiKeyModal()">檢查中...</span>
+              </div>
+              <p class="text-[10px] text-slate-300 leading-tight">
+                運用 Google Gemini 1.5 Flash 深度推理出題，自動解析卡關核心並生成 4 道素養單選題！
+              </p>
+              <button type="button" onclick="runGeminiAiAlchemy()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-violet-600 via-fuchsia-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-md shadow-violet-600/30 flex items-center justify-center gap-1.5 transition-all active:scale-95">
+                <span id="aiSpinIcon" class="hidden animate-spin">🌀</span>
+                <span>🤖 啟動 Gemini AI 魔法生題</span>
+              </button>
+            </div>
+            <div class="text-center text-[10px] text-slate-500 font-semibold">- 或使用本地即時題庫 -</div>
+
+            <button type="button" onclick="runMistakeAlchemy()" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-600 flex items-center justify-center gap-2 transition-transform active:scale-95">
+              <span>✨ 快速本地題庫生成 (無須 API Key)</span>
             </button>
           </div>
         </div>
@@ -653,7 +707,276 @@
       </div>
     </section>
 
-  </main>
+      <!-- ==================== TAB 6: PERSONAL LEARNING HISTORY (個人學習歷程) ==================== -->
+    <section id="view-history" class="hidden space-y-6">
+      <div class="rpg-card rpg-glow-border rounded-3xl p-5 sm:p-7">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+          <div>
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 text-xs font-bold mb-2">
+              <span>📜 勇者冒險編年史</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-white">個人學習歷程與試煉戰果</h2>
+            <p class="text-xs sm:text-sm text-slate-300 mt-1">
+              紀錄您在星耀學院完成的所有地下城試煉、Boss 決戰與 AI 衍生題評量成績。登入 Google 帳號後將自動即時同步至雲端！
+            </p>
+          </div>
+          <button type="button" onclick="loadMyHistory()" class="self-start sm:self-center px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-200 flex items-center gap-1.5 transition-colors">
+            <span>🔄</span> <span>重新整理紀錄</span>
+          </button>
+        </div>
+
+        <!-- Personal Summary Metrics -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
+          <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 text-center">
+            <span class="text-xs text-slate-400 font-semibold">總試煉次數</span>
+            <h3 id="histTotalCount" class="text-2xl font-black text-white mt-1">0</h3>
+          </div>
+          <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 text-center">
+            <span class="text-xs text-slate-400 font-semibold">平均答對率</span>
+            <h3 id="histAvgAccuracy" class="text-2xl font-black text-emerald-400 mt-1">0%</h3>
+          </div>
+          <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 text-center">
+            <span class="text-xs text-slate-400 font-semibold">累積獲得 EXP</span>
+            <h3 id="histTotalExp" class="text-2xl font-black text-violet-400 mt-1">+0</h3>
+          </div>
+          <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 text-center">
+            <span class="text-xs text-slate-400 font-semibold">累積獲得星幣</span>
+            <h3 id="histTotalGold" class="text-2xl font-black text-amber-400 mt-1">0 🪙</h3>
+          </div>
+        </div>
+
+        <!-- History Records Table -->
+        <div class="mt-6 overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm">
+            <thead class="text-[11px] text-slate-400 uppercase bg-slate-900/90 border-b border-slate-800">
+              <tr>
+                <th class="px-4 py-3 rounded-l-xl">試煉項目 / 關卡</th>
+                <th class="px-4 py-3">科目領域</th>
+                <th class="px-4 py-3 text-center">得分 / 總題數</th>
+                <th class="px-4 py-3 text-center">正確率</th>
+                <th class="px-4 py-3 text-center">評級</th>
+                <th class="px-4 py-3">完成時間</th>
+                <th class="px-4 py-3 rounded-r-xl text-center">操作</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody" class="divide-y divide-slate-800/60">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 7: ADMIN DASHBOARD (導師管理後台) ==================== -->
+    <section id="view-admin" class="hidden space-y-6">
+      <div class="rpg-card rpg-gold-border rounded-3xl p-5 sm:p-7">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+          <div>
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold mb-2">
+              <span>👑 導師管理後台 (Admin Only)</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-white">全校學員學習歷程監控與大數據分析</h2>
+            <p class="text-xs sm:text-sm text-slate-300 mt-1">
+              此視圖僅對 <span class="text-amber-300 font-bold font-mono">config.js</span> 中授權的管理者 Google 帳號開放，可即時查看所有學員的評量成果與錯題弱點。
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" onclick="loadAdminDashboard()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-200 flex items-center gap-1.5 transition-colors">
+              <span>🔄</span> <span>重新整理全員數據</span>
+            </button>
+            <button type="button" onclick="exportAdminRecordsToCSV()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-xs font-black text-white shadow-lg shadow-emerald-600/20 flex items-center gap-1.5 transition-all">
+              <span>📥</span> <span>匯出成績報表 (CSV)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Admin Overview Metrics Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-5">
+          <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 text-center">
+            <span class="text-xs text-slate-400 font-semibold">總評量測驗人次</span>
+            <h3 id="adminStatTotalRecords" class="text-2xl font-black text-white mt-1">0</h3>
+            <span class="text-[10px] text-slate-500 mt-0.5 block">跨科目歷次試煉總計</span>
+          </div>
+          <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 text-center">
+            <span class="text-xs text-slate-400 font-semibold">已註冊學員人數</span>
+            <h3 id="adminStatTotalStudents" class="text-2xl font-black text-cyan-400 mt-1">0</h3>
+            <span class="text-[10px] text-slate-500 mt-0.5 block">不重複 Google 帳號</span>
+          </div>
+          <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 text-center">
+            <span class="text-xs text-slate-400 font-semibold">全員平均正確率</span>
+            <h3 id="adminStatAvgAccuracy" class="text-2xl font-black text-emerald-400 mt-1">0%</h3>
+            <span class="text-[10px] text-slate-500 mt-0.5 block">全校整體學習精熟度</span>
+          </div>
+          <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 text-center">
+            <span class="text-xs text-slate-400 font-semibold">累計核發經驗 / 星幣</span>
+            <h3 id="adminStatRewards" class="text-xl font-black text-amber-300 mt-1">0 EXP</h3>
+            <span class="text-[10px] text-slate-500 mt-0.5 block">學習遊戲化激勵總量</span>
+          </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6 p-4 rounded-2xl bg-slate-900/60 border border-slate-800">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-400 mb-1">搜尋學員姓名或信箱：</label>
+            <input type="text" id="adminSearchKeyword" oninput="filterAdminRecords()" placeholder="輸入關鍵字..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-violet-400" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-400 mb-1">科目篩選：</label>
+            <select id="adminSubjectFilter" onchange="filterAdminRecords()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-violet-400">
+              <option value="all">全部科目領域</option>
+              <option value="chinese">📜 國文領域</option>
+              <option value="english">🔤 英文領域</option>
+              <option value="math">📐 數學領域</option>
+              <option value="science">🔬 自然科學</option>
+              <option value="social">🌍 社會領域</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-400 mb-1">評級篩選：</label>
+            <select id="adminRankFilter" onchange="filterAdminRecords()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-violet-400">
+              <option value="all">全部評級 (S / A / B / C)</option>
+              <option value="S">🏆 S 級 (90% 以上)</option>
+              <option value="A">✨ A 級 (75% ~ 89%)</option>
+              <option value="B">🗡️ B 級 (50% ~ 74%)</option>
+              <option value="C">💪 C 級 (50% 以下)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Admin All Records Table -->
+        <div class="mt-4 overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm">
+            <thead class="text-[11px] text-slate-400 uppercase bg-slate-900/90 border-b border-slate-800">
+              <tr>
+                <th class="px-4 py-3 rounded-l-xl">學員姓名與信箱</th>
+                <th class="px-4 py-3">測驗關卡 / 主題</th>
+                <th class="px-4 py-3">科目</th>
+                <th class="px-4 py-3 text-center">得分 / 題數</th>
+                <th class="px-4 py-3 text-center">正確率</th>
+                <th class="px-4 py-3 text-center">評級</th>
+                <th class="px-4 py-3">測驗時間</th>
+                <th class="px-4 py-3 rounded-r-xl text-center">明細</th>
+              </tr>
+            </thead>
+            <tbody id="adminTableBody" class="divide-y divide-slate-800/60">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== MODAL: GEMINI API KEY CONFIG (BYOK) ==================== -->
+    <div id="geminiKeyModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+      <div class="rpg-card rounded-3xl p-5 sm:p-7 max-w-xl w-full max-h-[90vh] overflow-y-auto border border-violet-500/50 shadow-2xl relative space-y-4">
+        <button type="button" onclick="closeGeminiKeyModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg font-bold">✕</button>
+        
+        <div class="flex items-center gap-2 border-b border-slate-800 pb-3">
+          <span class="text-2xl">⚙️</span>
+          <div>
+            <h3 class="text-lg font-black text-white">系統設定與雲端金鑰 (BYOK)</h3>
+            <p class="text-[11px] text-slate-400">專為 GitHub 開源與 GitHub Pages 免費部署設計</p>
+          </div>
+        </div>
+
+        <!-- Setting Tabs -->
+        <div class="flex items-center gap-2 border-b border-slate-800 pb-2">
+          <button type="button" id="settingTabBtn-ai" onclick="switchSettingModalTab('ai')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-violet-600 text-white">
+            🤖 Gemini AI 出題
+          </button>
+          <button type="button" id="settingTabBtn-firebase" onclick="switchSettingModalTab('firebase')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white">
+            ☁️ Firebase 與 Google 登入
+          </button>
+          <button type="button" id="settingTabBtn-deploy" onclick="switchSettingModalTab('deploy')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white">
+            🚀 GitHub Pages 說明
+          </button>
+        </div>
+
+        <!-- Panel 1: Gemini AI BYOK -->
+        <div id="settingPanel-ai" class="space-y-3">
+          <p class="text-xs text-slate-300 leading-relaxed">
+            設定您的 Google AI Studio API Key，出題由瀏覽器前端直接請求 Gemini 1.5 Flash，開源維護者與使用者互不干擾額度。
+          </p>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1.5">Gemini API Key：</label>
+            <div class="relative">
+              <input type="password" id="inputGeminiApiKey" placeholder="AIzaSy..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-violet-400 font-mono pr-20" />
+              <button type="button" onclick="toggleApiKeyVisibility()" class="absolute right-2 top-2 px-2 py-1 rounded bg-slate-800 text-[10px] text-slate-300 hover:text-white">顯示/隱藏</button>
+            </div>
+            <div class="flex flex-wrap items-center justify-between gap-2 mt-2 text-[11px]">
+              <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="text-violet-400 hover:underline">
+                🔗 前往 Google AI Studio 免費領取 API Key
+              </a>
+              <span id="geminiKeyModalStatus" class="font-bold"></span>
+            </div>
+          </div>
+          <div class="flex items-center justify-end gap-2 pt-2">
+            <button type="button" onclick="testCurrentGeminiKey()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-cyan-300">
+              ⚡ 測試連線
+            </button>
+            <button type="button" onclick="saveGeminiKeyFromModal()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-xs font-black text-white shadow-lg shadow-violet-600/30">
+              💾 儲存 AI 金鑰
+            </button>
+          </div>
+        </div>
+
+        <!-- Panel 2: Firebase & Google Auth -->
+        <div id="settingPanel-firebase" class="hidden space-y-3">
+          <p class="text-xs text-slate-300 leading-relaxed">
+            若您在 GitHub Pages 部署時不想將 <code class="text-amber-300 font-mono">config.js</code> commit 進公開倉庫，您可以在此貼上 Firebase 憑證，系統將保存在此瀏覽器本機：
+          </p>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Firebase Config (JSON 或物件)：</label>
+            <textarea id="inputCustomFirebaseJson" rows="5" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-mono placeholder-slate-600 focus:outline-none focus:border-violet-400" placeholder='{\n  "apiKey": "AIzaSy...",\n  "authDomain": "your-app.firebaseapp.com",\n  "projectId": "your-app",\n  "storageBucket": "your-app.appspot.com",\n  "messagingSenderId": "...",\n  "appId": "..."\n}'></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">管理者 Google 帳號清單 (以逗號分隔)：</label>
+            <input type="text" id="inputCustomAdminEmails" placeholder="admin@gmail.com, teacher@example.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-violet-400" />
+            <small class="text-[10px] text-slate-400">登入符合信箱的使用者將自動解鎖「👑 導師管理後台」。</small>
+          </div>
+          <div class="flex items-center justify-end gap-2 pt-2">
+            <button type="button" onclick="saveCustomFirebaseFromModal()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-xs font-black text-white shadow-lg shadow-emerald-600/30">
+              💾 儲存 Firebase 與管理員設定
+            </button>
+          </div>
+        </div>
+
+        <!-- Panel 3: GitHub Pages Deployment Tips -->
+        <div id="settingPanel-deploy" class="hidden space-y-3 text-xs text-slate-300 leading-relaxed">
+          <div class="p-3 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
+            <div class="font-bold text-amber-300 flex items-center gap-1.5">
+              <span>⚠️</span> <span>GitHub Pages Google 登入關鍵步驟：</span>
+            </div>
+            <p>
+              當您部署到 GitHub Pages（例如：<code id="currentHostDisplay" class="text-cyan-300 font-mono font-bold"></code>）時，務必到 Firebase Console 加入授權網域，否則 Google 登入會出現 <span class="text-rose-400 font-mono">auth/unauthorized-domain</span> 錯誤！
+            </p>
+            <ol class="list-decimal list-inside space-y-1 text-[11px] text-slate-300 pl-1">
+              <li>前往 <a href="https://console.firebase.google.com/" target="_blank" class="text-violet-400 underline">Firebase 控制台</a> 進入您的專案。</li>
+              <li>點選左側選單「<strong>Authentication</strong>」>「<strong>設定 (Settings)</strong>」頁籤。</li>
+              <li>在「<strong>已授權網域 (Authorized domains)</strong>」點選「新增網域」。</li>
+              <li>貼上您的 GitHub Pages 網域：<strong id="copyHostSnippet" class="text-amber-300 font-mono"></strong></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ==================== MODAL: ASSESSMENT RECORD DETAIL ==================== -->
+    <div id="recordDetailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+      <div class="rpg-card rounded-3xl p-6 sm:p-7 max-w-2xl w-full max-h-[85vh] overflow-y-auto border border-slate-700 shadow-2xl relative space-y-4">
+        <button type="button" onclick="closeRecordDetailModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg font-bold">✕</button>
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">📋</span>
+          <div>
+            <h3 id="modalDetailTitle" class="text-lg font-black text-white">試煉答題明細</h3>
+            <span id="modalDetailSubtitle" class="text-xs text-slate-400"></span>
+          </div>
+        </div>
+        <div id="modalDetailQuestionsList" class="space-y-3 mt-4">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+</main>
 
   <!-- Toast Notification Container -->
   <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-xs sm:max-w-sm pointer-events-none"></div>
@@ -1325,7 +1648,12 @@
     function switchTab(tabId) {
       playSoundEffect('click');
       appState.activeTab = tabId;
-      const tabs = ['hub', 'alchemy', 'battle', 'grimoire', 'stats'];
+      const tabs = ['hub', 'alchemy', 'battle', 'grimoire', 'stats', 'history', 'admin'];
+      if (tabId === 'history') {
+        loadMyHistory();
+      } else if (tabId === 'admin') {
+        loadAdminDashboard();
+      }
       tabs.forEach(t => {
         const viewEl = document.getElementById('view-' + t);
         const btnEl = document.getElementById('navTab-' + t);
@@ -2476,6 +2804,38 @@
 
       playSoundEffect('levelup');
       addPlayerReward(bonusExp, bonusGold);
+
+      // 自動同步雲端學習評量紀錄
+      if (window.FirebaseService) {
+        const battleDetails = b.questions.map((q, idx) => ({
+          concept: q.concept,
+          stem: q.stem,
+          options: q.options,
+          correctAnswer: q.answer,
+          selectedAnswer: b.userAnswers ? b.userAnswers[idx] : null,
+          isCorrect: b.userAnswers ? (b.userAnswers[idx] === q.answer) : false,
+          explanation: q.explanation
+        }));
+
+        window.FirebaseService.saveAssessmentRecord(appState.currentUser, {
+          title: b.title,
+          subject: b.subject,
+          score: b.correctCount,
+          total: total,
+          accuracy: acc,
+          rank: rank,
+          expEarned: bonusExp,
+          goldEarned: bonusGold,
+          details: battleDetails
+        }).then(() => {
+          showToast('☁️ 評量成果已自動登錄至個人學習歷程！', 'success');
+        }).catch(err => {
+          console.warn('雲端記錄失敗:', err);
+        });
+
+        // 同步勇者數值
+        window.FirebaseService.syncUserProfile(appState.currentUser, appState);
+      }
     }
 
     function generateSimilarFromCurrentBattleQuestion() {
@@ -2731,7 +3091,509 @@
       showToast(`🛍️ 購買成功！獲得 1 個「${nameMap[itemKey]}」（目前持有 ${appState.player.items[itemKey]} 個）`, 'success');
     }
 
-    // ==================== 12. INITIALIZATION ====================
+
+    // ==================== 13. GEMINI AI & GOOGLE AUTH & ADMIN DASHBOARD ====================
+
+    // --- Gemini BYOK Handlers ---
+    function openGeminiKeyModal() {
+      const modal = document.getElementById('geminiKeyModal');
+      const input = document.getElementById('inputGeminiApiKey');
+      const statusEl = document.getElementById('geminiKeyModalStatus');
+      if (modal && input) {
+        input.value = window.GeminiService ? window.GeminiService.getApiKey() : '';
+        const fbJsonArea = document.getElementById('inputCustomFirebaseJson');
+        const adminInput = document.getElementById('inputCustomAdminEmails');
+        if (fbJsonArea && window.APP_CONFIG && window.APP_CONFIG.firebase && window.APP_CONFIG.firebase.apiKey) {
+          fbJsonArea.value = JSON.stringify(window.APP_CONFIG.firebase, null, 2);
+        }
+        if (adminInput && window.APP_CONFIG && window.APP_CONFIG.adminEmails) {
+          adminInput.value = window.APP_CONFIG.adminEmails.join(', ');
+        }
+        const host = window.location.hostname || 'localhost';
+        const ch = document.getElementById('currentHostDisplay');
+        const cs = document.getElementById('copyHostSnippet');
+        if (ch) ch.textContent = host;
+        if (cs) cs.textContent = host;
+        statusEl.textContent = '';
+        modal.classList.remove('hidden');
+      }
+    }
+
+    function closeGeminiKeyModal() {
+      const modal = document.getElementById('geminiKeyModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function toggleApiKeyVisibility() {
+      const input = document.getElementById('inputGeminiApiKey');
+      if (input) {
+        input.type = input.type === 'password' ? 'text' : 'password';
+      }
+    }
+
+    async function testCurrentGeminiKey() {
+      const input = document.getElementById('inputGeminiApiKey');
+      const statusEl = document.getElementById('geminiKeyModalStatus');
+      const key = input.value.trim();
+      if (!key) {
+        statusEl.textContent = '❌ 請先輸入 Key';
+        statusEl.className = 'font-bold text-rose-400';
+        return;
+      }
+      statusEl.textContent = '⏳ 連線測試中...';
+      statusEl.className = 'font-bold text-amber-300';
+      try {
+        await window.GeminiService.testConnection(key);
+        statusEl.textContent = '✅ 連線成功！(Gemini 1.5 Flash)';
+        statusEl.className = 'font-bold text-emerald-400';
+      } catch (e) {
+        statusEl.textContent = '❌ 連線失敗: ' + (e.message || '無效金鑰');
+        statusEl.className = 'font-bold text-rose-400';
+      }
+    }
+
+    function saveGeminiKeyFromModal() {
+      const input = document.getElementById('inputGeminiApiKey');
+      const key = input.value.trim();
+      if (window.GeminiService) {
+        window.GeminiService.setApiKey(key);
+        updateGeminiKeyUI();
+        closeGeminiKeyModal();
+        showToast(key ? '🤖 Gemini API Key 已儲存至本機！' : 'ℹ️ 已清除本機 Gemini API Key', 'success');
+      }
+    }
+
+    function updateGeminiKeyUI() {
+      const hasKey = window.GeminiService && window.GeminiService.hasApiKey();
+      const dot = document.getElementById('geminiKeyDot');
+      const statusText = document.getElementById('geminiKeyStatusText');
+      const badge = document.getElementById('alchemyAiKeyBadge');
+
+      if (dot) {
+        dot.className = hasKey ? 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse' : 'w-2 h-2 rounded-full bg-slate-500';
+      }
+      if (statusText) {
+        statusText.textContent = hasKey ? 'AI 金鑰已連線' : '設定 AI 金鑰';
+      }
+      if (badge) {
+        badge.textContent = hasKey ? '🟢 Gemini 連線中' : '⚪ 點此設定 Key';
+        badge.className = hasKey ? 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 cursor-pointer' : 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 cursor-pointer';
+      }
+    }
+
+    // --- Gemini AI Question Generation ---
+    async function runGeminiAiAlchemy() {
+      playSoundEffect('alchemy');
+      const inputEl = document.getElementById('alchemyQuestionInput');
+      const subjectEl = document.getElementById('alchemySubjectSelect');
+      const gradeEl = document.getElementById('alchemyGradeSelect');
+      const styleEl = document.getElementById('alchemyStyleSelect');
+      const spinIcon = document.getElementById('aiSpinIcon');
+
+      const rawText = inputEl.value.trim() || ALCHEMY_PRESETS[0].sampleInput;
+      if (!inputEl.value.trim()) inputEl.value = rawText;
+
+      let subject = subjectEl.value;
+      if (subject === 'auto') {
+        subject = detectSubjectFromText(rawText);
+        subjectEl.value = subject;
+      }
+
+      if (!window.GeminiService || !window.GeminiService.hasApiKey()) {
+        showToast('⚠️ 請先輸入您的 Gemini API Key！', 'warning');
+        openGeminiKeyModal();
+        return;
+      }
+
+      if (spinIcon) spinIcon.classList.remove('hidden');
+      showToast('🤖 正在召喚 Gemini 1.5 魔法解析題意與出題中...', 'info');
+
+      try {
+        const pack = await window.GeminiService.generateQuizPack({
+          inputText: rawText,
+          subject: subject,
+          grade: gradeEl.value,
+          style: styleEl.value,
+          count: 4
+        });
+
+        appState.alchemyCurrentPack = pack;
+        renderAlchemyPackOutput(pack);
+        playSoundEffect('levelup');
+        showToast('✨ Gemini AI 魔法出題成功！已生成 4 道高階練習題！', 'success');
+
+        const dq1 = appState.dailyQuests.find(q => q.id === 'dq-1');
+        if (dq1 && dq1.progress < dq1.target) {
+          dq1.progress += 1;
+        }
+      } catch (err) {
+        console.error('Gemini 生題錯誤:', err);
+        showToast('❌ ' + (err.message || '出題失敗，請檢查 API Key 或網路'), 'danger');
+      } finally {
+        if (spinIcon) spinIcon.classList.add('hidden');
+      }
+    }
+
+    // --- Google Authentication Handlers ---
+    async function handleGoogleLogin() {
+      playSoundEffect('click');
+      if (!window.FirebaseService || !window.FirebaseService.isAvailable()) {
+        showToast('⚙️ 本地展示模式：請參考 config.example.js 設定 Firebase 憑證以啟用 Google 登入', 'warning');
+        return;
+      }
+      try {
+        await window.FirebaseService.loginWithGoogle();
+        playSoundEffect('levelup');
+        showToast('🎉 Google 登入成功！已連線個人雲端學習存檔！', 'success');
+      } catch (e) {
+        showToast('登入失敗: ' + (e.message || '無法完成 Google 授權'), 'danger');
+      }
+    }
+
+    async function handleGoogleLogout() {
+      playSoundEffect('click');
+      if (window.FirebaseService) {
+        await window.FirebaseService.logout();
+        showToast('👋 已安全登出 Google 帳號', 'info');
+      }
+    }
+
+    function initAuthListener() {
+      if (!window.FirebaseService) return;
+      window.FirebaseService.onUserChange(async (user, isAdmin) => {
+        appState.currentUser = user;
+        appState.isAdmin = isAdmin;
+
+        const loginBtn = document.getElementById('btnGoogleLogin');
+        const userProfile = document.getElementById('userProfileArea');
+        const userAvatar = document.getElementById('userAvatarImg');
+        const userName = document.getElementById('userDisplayName');
+        const adminBadge = document.getElementById('userRoleBadge');
+        const adminNavTab = document.getElementById('navTab-admin');
+
+        if (user) {
+          if (loginBtn) loginBtn.classList.add('hidden');
+          if (userProfile) userProfile.classList.remove('hidden');
+          if (userAvatar) userAvatar.src = user.photoURL || '';
+          if (userName) userName.textContent = user.displayName || user.email.split('@')[0];
+
+          if (isAdmin) {
+            if (adminBadge) adminBadge.classList.remove('hidden');
+            if (adminNavTab) adminNavTab.classList.remove('hidden');
+          } else {
+            if (adminBadge) adminBadge.classList.add('hidden');
+            if (adminNavTab) adminNavTab.classList.add('hidden');
+          }
+
+          // 嘗試自雲端載入學員資料
+          const remoteProfile = await window.FirebaseService.loadUserProfile(user);
+          if (remoteProfile && remoteProfile.player) {
+            appState.player = Object.assign(appState.player, remoteProfile.player);
+            if (remoteProfile.mistakes) appState.mistakes = remoteProfile.mistakes;
+            updateHeaderUI();
+          }
+        } else {
+          if (loginBtn) loginBtn.classList.remove('hidden');
+          if (userProfile) userProfile.classList.add('hidden');
+          if (adminBadge) adminBadge.classList.add('hidden');
+          if (adminNavTab) adminNavTab.classList.add('hidden');
+        }
+      });
+    }
+
+    // --- Personal History View ---
+    async function loadMyHistory() {
+      const tbody = document.getElementById('historyTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '<tr><td colspan="7" class="text-center py-6 text-slate-400">⏳ 正在同步讀取您的歷程紀錄...</td></tr>';
+
+      let records = [];
+      if (window.FirebaseService) {
+        records = await window.FirebaseService.getMyRecords(appState.currentUser);
+      }
+      appState.personalRecords = records;
+
+      // Summary metrics
+      const totalCount = records.length;
+      const avgAcc = totalCount ? Math.round(records.reduce((sum, r) => sum + (r.accuracy || 0), 0) / totalCount) : 0;
+      const totalExp = records.reduce((sum, r) => sum + (r.expEarned || 0), 0);
+      const totalGold = records.reduce((sum, r) => sum + (r.goldEarned || 0), 0);
+
+      document.getElementById('histTotalCount').textContent = totalCount;
+      document.getElementById('histAvgAccuracy').textContent = `${avgAcc}%`;
+      document.getElementById('histTotalExp').textContent = `+${totalExp}`;
+      document.getElementById('histTotalGold').textContent = `${totalGold} 🪙`;
+
+      if (records.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-6 text-slate-500">尚無評量紀錄。快去挑戰地下城或使用錯題煉金進行測驗吧！</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = records.map((r, idx) => {
+        const dateStr = r.createdAtDate ? new Date(r.createdAtDate).toLocaleString('zh-TW', { hour12: false }) : '剛剛';
+        const subMeta = SUBJECT_META[r.subject] || { name: '綜合領域', icon: '⚔️' };
+        let rankColor = 'text-slate-300';
+        if (r.rank === 'S') rankColor = 'text-amber-400 font-black';
+        else if (r.rank === 'A') rankColor = 'text-violet-400 font-bold';
+        else if (r.rank === 'C') rankColor = 'text-rose-400';
+
+        return `
+          <tr class="hover:bg-slate-900/60 transition-colors">
+            <td class="px-4 py-3 font-semibold text-white flex items-center gap-1.5">
+              <span>${subMeta.icon}</span> <span>${r.title || '一般試煉'}</span>
+            </td>
+            <td class="px-4 py-3 text-slate-300">${subMeta.name}</td>
+            <td class="px-4 py-3 text-center font-mono font-bold">${r.score} / ${r.total}</td>
+            <td class="px-4 py-3 text-center font-bold ${r.accuracy >= 80 ? 'text-emerald-400' : 'text-amber-300'}">${r.accuracy}%</td>
+            <td class="px-4 py-3 text-center ${rankColor}">${r.rank || 'B'}</td>
+            <td class="px-4 py-3 text-xs text-slate-400 font-mono">${dateStr}</td>
+            <td class="px-4 py-3 text-center">
+              <button type="button" onclick="openRecordDetailModal('personal', ${idx})" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-cyan-300">
+                檢視明細
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // --- Admin Dashboard View ---
+    async function loadAdminDashboard() {
+      const tbody = document.getElementById('adminTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '<tr><td colspan="8" class="text-center py-6 text-slate-400">⏳ 正在同步全校學員學習數據中...</td></tr>';
+
+      if (!window.FirebaseService || !window.FirebaseService.isAdmin(appState.currentUser)) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center py-6 text-rose-400 font-bold">⚠️ 權限不足：您必須使用管理員 Google 帳號登入才能查閱此資料。</td></tr>';
+        return;
+      }
+
+      try {
+        const records = await window.FirebaseService.getAllRecords(appState.currentUser);
+        appState.adminRecords = records;
+
+        // Calculate aggregate statistics
+        const totalRecords = records.length;
+        const uniqueStudents = new Set(records.map(r => r.userId || r.userEmail)).size;
+        const avgAcc = totalRecords ? Math.round(records.reduce((sum, r) => sum + (r.accuracy || 0), 0) / totalRecords) : 0;
+        const totalExp = records.reduce((sum, r) => sum + (r.expEarned || 0), 0);
+
+        document.getElementById('adminStatTotalRecords').textContent = totalRecords;
+        document.getElementById('adminStatTotalStudents').textContent = uniqueStudents;
+        document.getElementById('adminStatAvgAccuracy').textContent = `${avgAcc}%`;
+        document.getElementById('adminStatRewards').textContent = `+${totalExp} EXP`;
+
+        renderFilteredAdminRecords(records);
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-rose-400">讀取失敗：${err.message}</td></tr>`;
+      }
+    }
+
+    function filterAdminRecords() {
+      const keyword = (document.getElementById('adminSearchKeyword').value || '').trim().toLowerCase();
+      const subject = document.getElementById('adminSubjectFilter').value;
+      const rank = document.getElementById('adminRankFilter').value;
+
+      let filtered = appState.adminRecords || [];
+      if (keyword) {
+        filtered = filtered.filter(r => 
+          (r.userName && r.userName.toLowerCase().includes(keyword)) ||
+          (r.userEmail && r.userEmail.toLowerCase().includes(keyword)) ||
+          (r.title && r.title.toLowerCase().includes(keyword))
+        );
+      }
+      if (subject !== 'all') {
+        filtered = filtered.filter(r => r.subject === subject);
+      }
+      if (rank !== 'all') {
+        filtered = filtered.filter(r => r.rank === rank);
+      }
+      renderFilteredAdminRecords(filtered);
+    }
+
+    function renderFilteredAdminRecords(records) {
+      const tbody = document.getElementById('adminTableBody');
+      if (!tbody) return;
+
+      if (!records || records.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center py-6 text-slate-500">無符合條件的學員紀錄。</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = records.map((r, idx) => {
+        const dateStr = r.createdAtDate ? new Date(r.createdAtDate).toLocaleString('zh-TW', { hour12: false }) : '未知';
+        const subMeta = SUBJECT_META[r.subject] || { name: '綜合領域', icon: '⚔️' };
+        const avatar = r.userPhoto || 'https://api.dicebear.com/7.x/bottts/svg?seed=' + encodeURIComponent(r.userName || 'user');
+
+        return `
+          <tr class="hover:bg-slate-900/60 transition-colors">
+            <td class="px-4 py-3">
+              <div class="flex items-center gap-2">
+                <img src="${avatar}" class="w-6 h-6 rounded-full border border-slate-700 object-cover" />
+                <div>
+                  <div class="font-bold text-white">${r.userName || '未知學員'}</div>
+                  <div class="text-[10px] text-slate-400 font-mono">${r.userEmail || ''}</div>
+                </div>
+              </div>
+            </td>
+            <td class="px-4 py-3 font-semibold text-slate-200">${r.title || '一般試煉'}</td>
+            <td class="px-4 py-3 text-slate-300">${subMeta.name}</td>
+            <td class="px-4 py-3 text-center font-mono font-bold">${r.score} / ${r.total}</td>
+            <td class="px-4 py-3 text-center font-bold ${r.accuracy >= 80 ? 'text-emerald-400' : 'text-amber-300'}">${r.accuracy}%</td>
+            <td class="px-4 py-3 text-center font-black ${r.rank === 'S' ? 'text-amber-400' : 'text-slate-300'}">${r.rank || 'B'}</td>
+            <td class="px-4 py-3 text-xs text-slate-400 font-mono">${dateStr}</td>
+            <td class="px-4 py-3 text-center">
+              <button type="button" onclick="openRecordDetailModal('admin', ${idx})" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-amber-300">
+                查看作答
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function exportAdminRecordsToCSV() {
+      const records = appState.adminRecords;
+      if (!records || records.length === 0) {
+        showToast('尚無資料可匯出！', 'warning');
+        return;
+      }
+      let csv = "\uFEFF學員姓名,Google信箱,測驗項目,科目領域,得分,總題數,正確率(%),評級,完成時間\n";
+      records.forEach(r => {
+        const name = (r.userName || '').replace(/,/g, ' ');
+        const email = (r.userEmail || '').replace(/,/g, ' ');
+        const title = (r.title || '').replace(/,/g, ' ');
+        const subject = r.subject || '';
+        const score = r.score || 0;
+        const total = r.total || 0;
+        const acc = r.accuracy || 0;
+        const rank = r.rank || 'B';
+        const time = r.createdAtDate ? new Date(r.createdAtDate).toLocaleString('zh-TW', { hour12: false }) : '';
+        csv += `"${name}","${email}","${title}","${subject}",${score},${total},${acc},"${rank}","${time}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `星耀國中_學員學習評量成績報表_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('📥 成績報表已成功匯出為 CSV 檔案！', 'success');
+    }
+
+    // --- Record Detail Modal Handlers ---
+    function openRecordDetailModal(type, index) {
+      const modal = document.getElementById('recordDetailModal');
+      const list = document.getElementById('modalDetailQuestionsList');
+      const titleEl = document.getElementById('modalDetailTitle');
+      const subtitleEl = document.getElementById('modalDetailSubtitle');
+      if (!modal || !list) return;
+
+      const records = (type === 'admin') ? (appState.adminRecords || []) : (appState.personalRecords || []);
+      const record = records[index];
+      if (!record) return;
+
+      titleEl.textContent = `📋 ${record.title}（得分：${record.score}/${record.total}，${record.accuracy}%）`;
+      subtitleEl.textContent = `學員：${record.userName} (${record.userEmail}) ｜ 時間：${record.createdAtDate ? new Date(record.createdAtDate).toLocaleString() : ''}`;
+
+      if (!record.details || record.details.length === 0) {
+        list.innerHTML = '<p class="text-sm text-slate-400 py-4 text-center">本筆紀錄未包含個別題目明細。</p>';
+      } else {
+        list.innerHTML = record.details.map((q, qIdx) => `
+          <div class="p-3.5 rounded-2xl bg-slate-900 border ${q.isCorrect ? 'border-emerald-500/30' : 'border-rose-500/30'} space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold ${q.isCorrect ? 'text-emerald-400' : 'text-rose-400'}">
+                第 ${qIdx + 1} 題：${q.isCorrect ? '✅ 答對' : '❌ 答錯'} (${q.concept || '核心觀念'})
+              </span>
+            </div>
+            <p class="text-xs sm:text-sm font-bold text-white">${q.stem || ''}</p>
+            <div class="text-xs text-slate-300 space-y-1">
+              ${q.options ? q.options.map((opt, oIdx) => {
+                let badge = '';
+                if (oIdx === q.selectedAnswer && oIdx === q.correctAnswer) badge = '<span class="text-emerald-400 font-bold ml-1">(您的選擇・正確)</span>';
+                else if (oIdx === q.selectedAnswer) badge = '<span class="text-rose-400 font-bold ml-1">(您的選擇・錯誤)</span>';
+                else if (oIdx === q.correctAnswer) badge = '<span class="text-emerald-400 font-bold ml-1">(正確解答)</span>';
+                return `<div class="p-1 rounded ${oIdx === q.correctAnswer ? 'bg-emerald-950/40 text-emerald-200' : ''}">${opt} ${badge}</div>`;
+              }).join('') : ''}
+            </div>
+            ${q.explanation ? `<div class="text-[11px] text-slate-400 bg-slate-950 p-2 rounded-xl border border-slate-800">💡 詳解：${q.explanation}</div>` : ''}
+          </div>
+        `).join('');
+      }
+      modal.classList.remove('hidden');
+    }
+
+    function closeRecordDetailModal() {
+      const modal = document.getElementById('recordDetailModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    // 掛載所有新增函數至 window 供 HTML inline 調用
+    
+    function switchSettingModalTab(tabKey) {
+      ['ai', 'firebase', 'deploy'].forEach(k => {
+        const btn = document.getElementById('settingTabBtn-' + k);
+        const panel = document.getElementById('settingPanel-' + k);
+        if (btn) {
+          btn.className = (k === tabKey) ? 'px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-violet-600 text-white' : 'px-3 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white';
+        }
+        if (panel) {
+          panel.classList.toggle('hidden', k !== tabKey);
+        }
+      });
+      if (tabKey === 'deploy') {
+        const host = window.location.hostname || 'localhost';
+        document.getElementById('currentHostDisplay').textContent = host;
+        document.getElementById('copyHostSnippet').textContent = host;
+      }
+    }
+
+    function saveCustomFirebaseFromModal() {
+      const jsonStr = document.getElementById('inputCustomFirebaseJson').value.trim();
+      const adminStr = document.getElementById('inputCustomAdminEmails').value.trim();
+      let firebaseObj = {};
+      if (jsonStr) {
+        try {
+          firebaseObj = JSON.parse(jsonStr);
+        } catch (e) {
+          try {
+            // Support JS object notation without strict double quotes
+            firebaseObj = new Function('return ' + jsonStr)();
+          } catch (e2) {
+            alert('Firebase Config JSON 格式錯誤，請檢查是否有遺漏括號或引號！');
+            return;
+          }
+        }
+      }
+      const adminEmails = adminStr ? adminStr.split(',').map(s => s.trim().toLowerCase()).filter(Boolean) : [];
+      if (window.FirebaseService) {
+        window.FirebaseService.saveCustomConfig(firebaseObj, adminEmails);
+        showToast('☁️ Firebase 雲端設定已儲存！請嘗試點選「Google 登入」', 'success');
+        closeGeminiKeyModal();
+        setTimeout(() => window.location.reload(), 800);
+      }
+    }
+
+    window.openGeminiKeyModal = openGeminiKeyModal;
+    window.switchSettingModalTab = switchSettingModalTab;
+    window.saveCustomFirebaseFromModal = saveCustomFirebaseFromModal;
+    window.closeGeminiKeyModal = closeGeminiKeyModal;
+    window.toggleApiKeyVisibility = toggleApiKeyVisibility;
+    window.testCurrentGeminiKey = testCurrentGeminiKey;
+    window.saveGeminiKeyFromModal = saveGeminiKeyFromModal;
+    window.updateGeminiKeyUI = updateGeminiKeyUI;
+    window.runGeminiAiAlchemy = runGeminiAiAlchemy;
+    window.handleGoogleLogin = handleGoogleLogin;
+    window.handleGoogleLogout = handleGoogleLogout;
+    window.loadMyHistory = loadMyHistory;
+    window.loadAdminDashboard = loadAdminDashboard;
+    window.filterAdminRecords = filterAdminRecords;
+    window.exportAdminRecordsToCSV = exportAdminRecordsToCSV;
+    window.openRecordDetailModal = openRecordDetailModal;
+    window.closeRecordDetailModal = closeRecordDetailModal;
+
+        // ==================== 12. INITIALIZATION ====================
     window.onload = function () {
       loadSavedState();
       updateHeaderUI();
@@ -2739,6 +3601,8 @@
       renderSubjectDungeons();
       renderAlchemyPresets();
 
+      updateGeminiKeyUI();
+      initAuthListener();
       document.getElementById('alchemyQuestionInput').value = ALCHEMY_PRESETS[0].sampleInput;
       const defaultPack = generatePracticePack(ALCHEMY_PRESETS[0].sampleInput, 'math', '7', 'progressive');
       appState.alchemyCurrentPack = defaultPack;

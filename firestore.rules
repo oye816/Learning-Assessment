@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 評量測驗歷史紀錄
+    match /assessment_records/{recordId} {
+      // 任何登入的 Google 使用者皆可建立自己的測驗成果
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+
+      // 使用者可讀取自己的學習紀錄；管理者信箱清單可查看全體學員紀錄
+      allow read: if request.auth != null && (
+        resource.data.userId == request.auth.uid ||
+        request.auth.token.email in [
+          "admin@gmail.com" // 請在此加入您的管理員 Google 信箱
+        ]
+      );
+
+      // 保持評量客觀歷史性，不允許竄改或刪除紀錄
+      allow update, delete: if false;
+    }
+
+    // 使用者個人資料 (同步角色等級、EXP、星幣與錯題書)
+    match /user_profiles/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      // 管理者可讀取學員角色資料
+      allow read: if request.auth != null && request.auth.token.email in [
+        "admin@gmail.com"
+      ];
+    }
+  }
+}

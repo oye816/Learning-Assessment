@@ -1,0 +1,9 @@
+# 開源隱私與設定檔保護
+config.js
+
+# 系統暫存與編輯器檔案
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
