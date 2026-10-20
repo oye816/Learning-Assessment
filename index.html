@@ -432,47 +432,46 @@
         </div>
       </div>
 
-      <!-- Grade Selector & Stats Pills -->
+      <!-- Grade Selector & Action Buttons -->
       <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-        <!-- Grade Switcher -->
+        <!-- Grade Switcher (年級篩選) -->
         <div class="flex items-center bg-slate-900 border border-slate-700/80 rounded-xl p-0.5 text-xs">
           <button type="button" id="gradeBtn-all" onclick="setGradeFilter('all')" class="px-2.5 py-1 rounded-lg font-semibold transition-all bg-violet-600 text-white">全學年</button>
-          <button type="button" id="gradeBtn-7" onclick="setGradeFilter('7')" class="px-2.5 py-1 rounded-lg font-semibold transition-all text-slate-400 hover:text-white">國一(7年級)</button>
-          <button type="button" id="gradeBtn-8" onclick="setGradeFilter('8')" class="px-2.5 py-1 rounded-lg font-semibold transition-all text-slate-400 hover:text-white">國二(8年級)</button>
-          <button type="button" id="gradeBtn-9" onclick="setGradeFilter('9')" class="px-2.5 py-1 rounded-lg font-semibold transition-all text-slate-400 hover:text-white">國三會考</button>
+          <button type="button" id="gradeBtn-7" onclick="setGradeFilter('7')" class="px-2.5 py-1 rounded-lg font-semibold transition-all text-slate-400 hover:text-white">七年級</button>
+          <button type="button" id="gradeBtn-8" onclick="setGradeFilter('8')" class="px-2.5 py-1 rounded-lg font-semibold transition-all text-slate-400 hover:text-white">八年級</button>
+          <button type="button" id="gradeBtn-9" onclick="setGradeFilter('9')" class="px-2.5 py-1 rounded-lg font-semibold transition-all text-slate-400 hover:text-white">九年級</button>
         </div>
 
-        <!-- 考試範圍切換 (名校段考特訓專區) -->
-        <div class="flex items-center bg-slate-900 border border-slate-700/80 rounded-xl p-0.5 text-xs">
-          <button type="button" id="examBtn-all" onclick="setExamFilter('all')" class="px-2.5 py-1 rounded-lg font-semibold transition-all text-slate-400 hover:text-white">全部題庫</button>
-          <button type="button" id="examBtn-stage" onclick="setExamFilter('stage')" class="px-2.5 py-1 rounded-lg font-black transition-all bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow flex items-center gap-1" title="進入名校段考分類出題中心（依學期、段考次數切換）">
-            <span>🎯</span>
-            <span id="topExamStageBtnText">名校段考特訓</span>
+        <!-- 考試範圍切換（隱藏保留DOM以確保相容） -->
+        <div class="hidden">
+          <button type="button" id="examBtn-all" onclick="setExamFilter('all')">全部</button>
+          <button type="button" id="examBtn-stage" onclick="setExamFilter('stage')">
+            <span id="topExamStageBtnText">段考</span>
           </button>
         </div>
 
         <!-- Gold Coins -->
-        <div class="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 rounded-xl text-xs font-bold text-amber-300" title="星幣：可用於購買戰鬥秘藥">
+        <div class="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 rounded-xl text-xs font-bold text-amber-300" title="星幣：可用於購買輔助秘藥">
           <span>🪙</span>
           <span id="goldCountDisplay">0</span>
         </div>
 
         <!-- Combo Streak -->
-        <div class="flex items-center gap-1.5 bg-orange-500/10 border border-orange-500/30 px-2.5 py-1 rounded-xl text-xs font-bold text-orange-300" title="目前最高連擊紀錄">
+        <div class="flex items-center gap-1.5 bg-orange-500/10 border border-orange-500/30 px-2.5 py-1 rounded-xl text-xs font-bold text-orange-300" title="目前最高連勝紀錄">
           <span>🔥</span>
           <span id="streakCountDisplay">連勝 0</span>
         </div>
 
         <!-- Sound Toggle -->
-        <button type="button" id="soundToggleBtn" onclick="toggleSound()" class="flex items-center gap-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 px-2.5 py-1.5 rounded-xl text-xs font-medium text-slate-200 transition-colors" title="切換遊戲合成音效">
+        <button type="button" id="soundToggleBtn" onclick="toggleSound()" class="flex items-center gap-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 px-2.5 py-1.5 rounded-xl text-xs font-medium text-slate-200 transition-colors" title="音效切換">
           <span id="soundIcon">🔊</span>
-          <span id="soundLabel" class="hidden sm:inline">音效開啟</span>
+          <span id="soundLabel" class="hidden sm:inline">音效</span>
         </button>
 
         <!-- Gemini AI Key Setting (BYOK) -->
         <button type="button" onclick="openGeminiKeyModal()" class="flex items-center gap-1.5 bg-violet-950/80 hover:bg-violet-900 border border-violet-500/50 px-2.5 py-1 rounded-xl text-xs font-bold text-violet-200 transition-all shadow-sm" title="設定個人 Gemini API Key (BYOK 模式)">
           <span>🤖</span>
-          <span id="geminiKeyStatusText">AI 金鑰</span>
+          <span id="geminiKeyStatusText">AI 設定</span>
           <span id="geminiKeyDot" class="w-2 h-2 rounded-full bg-slate-500"></span>
         </button>
 
@@ -480,21 +479,21 @@
         <div id="authContainer" class="flex items-center gap-2">
           <button type="button" id="btnGoogleLogin" onclick="handleGoogleLogin()" class="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 px-3 py-1 rounded-xl text-xs font-bold text-white transition-all shadow-sm">
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.9c2.27-2.09 3.64-5.18 3.64-9.15z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.9-3.05c-1.08.72-2.45 1.16-4.03 1.16-3.1 0-5.74-2.1-6.68-4.93H1.26v3.15C3.25 21.36 7.33 24 12 24z"/><path fill="#FBBC05" d="M5.32 14.27c-.24-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.26C.46 8.16 0 9.99 0 12s.46 3.84 1.26 5.42l4.06-3.15z"/><path fill="#EA4335" d="M12 4.77c1.76 0 3.35.61 4.6 1.79l3.44-3.44C17.94 1.19 15.24 0 12 0 7.33 0 3.25 2.64 1.26 6.58l4.06 3.15c.94-2.83 3.58-4.96 6.68-4.96z"/></svg>
-            <span>Google 登入</span>
+            <span>登入</span>
           </button>
           <div id="userProfileArea" class="hidden flex items-center gap-2 bg-slate-900/90 border border-slate-800 rounded-xl px-2.5 py-1">
             <img id="userAvatarImg" src="" class="w-6 h-6 rounded-full border border-violet-500/50 object-cover" />
             <div class="flex flex-col">
-              <span id="userDisplayName" class="text-xs font-bold text-slate-200 max-w-[110px] truncate leading-tight">勇者</span>
+              <span id="userDisplayName" class="text-xs font-bold text-slate-200 max-w-[110px] truncate leading-tight">使用者</span>
               <span id="userEmailDisplay" class="text-[9px] text-slate-400 font-mono truncate max-w-[110px]"></span>
             </div>
             <!-- 管理員徽章 / 進入後台按鈕 -->
             <button type="button" id="userRoleBadge" onclick="switchTab('admin')" class="hidden px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 text-[10px] font-black shadow hover:brightness-110 flex items-center gap-1" title="點擊進入導師管理後台">
-              <span>👑</span> <span>管理員</span>
+              <span>👑</span> <span>後台</span>
             </button>
-            <!-- 設為管理員按鈕 (當前帳號尚未授權為管理員時顯示) -->
+            <!-- 設為管理員按鈕 -->
             <button type="button" id="btnClaimAdmin" onclick="claimAdminRole()" class="hidden px-2 py-0.5 rounded-md bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[10px] font-bold transition-all" title="將此 Google 帳號設為管理員">
-              👑 設為管理員
+              👑 設管理員
             </button>
             <button type="button" onclick="handleGoogleLogout()" class="text-slate-400 hover:text-rose-400 text-xs ml-1" title="登出">✕</button>
           </div>
@@ -502,42 +501,42 @@
       </div>
     </div>
 
-    <!-- Navigation Tabs -->
-    <nav class="max-w-7xl mx-auto px-3 sm:px-6 flex items-center gap-1 sm:gap-2 overflow-x-auto py-1.5 border-t border-slate-900">
+    <!-- Navigation Tabs (簡潔直觀的功能分頁) -->
+    <nav class="max-w-7xl mx-auto px-3 sm:px-6 flex items-center gap-1.5 sm:gap-2 overflow-x-auto py-2 border-t border-slate-900">
       <button type="button" id="navTab-hub" onclick="switchTab('hub')" class="nav-tab-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-600/25">
-        <span>🏰</span>
-        <span>冒險大廳・五科地下城</span>
+        <span>🏠</span>
+        <span>測驗大廳</span>
       </button>
       <button type="button" id="navTab-alchemy" onclick="switchTab('alchemy')" class="nav-tab-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap text-slate-300 hover:bg-slate-800/80">
-        <span>⚗️</span>
-        <span>錯題煉金工坊</span>
-        <span class="bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/40 text-[10px] px-1.5 py-0.2 rounded-full">生成練習題</span>
+        <span>💡</span>
+        <span>AI 弱點出題</span>
+        <span class="bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/40 text-[10px] px-1.5 py-0.2 rounded-full">智慧變題</span>
       </button>
       <button type="button" id="navTab-battle" onclick="switchTab('battle')" class="nav-tab-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap text-slate-300 hover:bg-slate-800/80">
-        <span>⚔️</span>
-        <span>魔王試煉競技場</span>
-        <span id="battleStatusPill" class="hidden bg-rose-500 text-white text-[10px] px-1.5 py-0.2 rounded-full animate-pulse">戰鬥中</span>
+        <span>📝</span>
+        <span>測驗作答</span>
+        <span id="battleStatusPill" class="hidden bg-rose-500 text-white text-[10px] px-1.5 py-0.2 rounded-full animate-pulse">作答中</span>
       </button>
       <button type="button" id="navTab-grimoire" onclick="switchTab('grimoire')" class="nav-tab-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap text-slate-300 hover:bg-slate-800/80">
-        <span>📓</span>
-        <span>錯題封印書</span>
+        <span>📖</span>
+        <span>錯題本</span>
         <span id="mistakeBadgeCount" class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] px-1.5 py-0.2 rounded-full">0</span>
       </button>
       <button type="button" id="navTab-stats" onclick="switchTab('stats')" class="nav-tab-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap text-slate-300 hover:bg-slate-800/80">
         <span>📊</span>
-        <span>能力雷達與道具屋</span>
+        <span>學習分析</span>
       </button>
 
       <!-- 個人學習歷程 Tab -->
       <button type="button" id="navTab-history" onclick="switchTab('history')" class="nav-tab-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap text-slate-300 hover:bg-slate-800/80">
         <span>📜</span>
-        <span>我的學習歷程</span>
+        <span>測驗紀錄</span>
       </button>
 
       <!-- 管理者全員儀表板 Tab (僅在 Google 管理者登入時可見) -->
       <button type="button" id="navTab-admin" onclick="switchTab('admin')" class="hidden nav-tab-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 shadow-lg shadow-amber-500/10">
         <span>👑</span>
-        <span>導師管理後台</span>
+        <span>導師後台</span>
       </button>
     </nav>
   </header>
@@ -545,29 +544,29 @@
   <!-- Main Content Container -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-5 space-y-6">
 
-    <!-- ==================== TAB 1: ADVENTURE HUB (冒險大廳) ==================== -->
+    <!-- ==================== TAB 1: ADVENTURE HUB (測驗大廳) ==================== -->
     <section id="view-hub" class="space-y-6">
-      <!-- Hero Banner Card -->
+      <!-- Hero Banner Card (大廳精選橫幅) -->
       <div class="relative rounded-3xl overflow-hidden border border-violet-500/30 shadow-2xl">
-        <img src="images/banner.jpg" alt="星耀國中冒險學院橫幅" class="w-full h-56 sm:h-72 object-cover object-center brightness-75 max-w-full" />
+        <img src="images/banner.jpg" alt="星耀國中冒險學院橫幅" class="w-full h-48 sm:h-64 object-cover object-center brightness-75 max-w-full" />
         <div class="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/75 to-transparent flex flex-col justify-center p-5 sm:p-8 max-w-2xl">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/20 border border-violet-400/40 text-violet-200 text-xs font-bold w-fit mb-2.5">
-            <span>✨ 國中五科段考 ＆ 教育會考遊戲化特訓系統</span>
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-500/20 border border-violet-400/40 text-violet-200 text-xs font-bold w-fit mb-2">
+            <span>✨ 國中五科段考 ＆ 教育會考自主評量系統</span>
           </div>
-          <h2 class="text-2xl sm:text-3xl font-black text-white leading-tight">
-            把不會的考題，煉成你的升級經驗值！
+          <h2 class="text-xl sm:text-3xl font-black text-white leading-tight">
+            掌握段考名校真題，化卡關為實力！
           </h2>
           <p class="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
-            遇到段考或模擬考不會寫的題目嗎？前往「<span class="text-fuchsia-300 font-bold">⚗️ 錯題煉金工坊</span>」輸入題目或觀念，系統會立即剖析破題口訣並生成 4 道同型變體練習題，讓你化身魔導師在 RPG 戰鬥中擊破弱點！
+            收錄新北名校全科段考真題，結合 Gemini AI 智慧弱點出題，隨時進行分科測驗、考點加強與五科模擬考。
           </p>
           <div class="flex flex-wrap gap-2.5 mt-4">
-            <button type="button" onclick="switchTab('alchemy')" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-fuchsia-600 to-violet-600 hover:from-fuchsia-500 hover:to-violet-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-fuchsia-600/30 flex items-center gap-1.5 transition-transform active:scale-95">
-              <span>⚗️</span>
-              <span>立即輸入不會的題目生成練習</span>
-            </button>
-            <button type="button" onclick="startQuickMixedBattle()" class="px-4 py-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-amber-300 border border-amber-400/40 font-bold text-xs sm:text-sm flex items-center gap-1.5 transition-transform active:scale-95">
+            <button type="button" onclick="startQuickMixedBattle()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:brightness-110 text-slate-950 font-black text-xs sm:text-sm shadow-lg shadow-amber-500/25 flex items-center gap-1.5 transition-transform active:scale-95">
               <span>⚡</span>
-              <span>五科綜合隨機魔王戰 (5題)</span>
+              <span>五科綜合模擬考 (5題)</span>
+            </button>
+            <button type="button" onclick="switchTab('alchemy')" class="px-4 py-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-fuchsia-300 border border-fuchsia-400/40 font-bold text-xs sm:text-sm flex items-center gap-1.5 transition-transform active:scale-95">
+              <span>💡</span>
+              <span>AI 弱點出題</span>
             </button>
           </div>
         </div>
@@ -580,9 +579,9 @@
           <div class="flex items-center justify-between mb-3">
             <div class="flex items-center gap-2">
               <span class="text-lg">📜</span>
-              <h3 class="font-extrabold text-base text-white">今日學院懸賞任務</h3>
+              <h3 class="font-extrabold text-base text-white">今日練習任務</h3>
             </div>
-            <span class="text-xs text-slate-400">完成任務可領取星幣與經驗值</span>
+            <span class="text-xs text-slate-400">完成練習可領取星幣與升級經驗值</span>
           </div>
           <div id="dailyQuestsContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <!-- Populated by JS -->
@@ -593,22 +592,22 @@
         <div class="rpg-card rpg-glow-border rounded-2xl p-5 flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/30">🔥 弱點救星</span>
-              <span class="text-xs text-slate-400">支援自訂數理動態變題</span>
+              <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/30">💡 快速出題</span>
+              <span class="text-xs text-slate-400">AI 智慧分析</span>
             </div>
-            <h3 class="font-extrabold text-base text-white mt-2">考卷哪一題不會？馬上變出練習題！</h3>
-            <p class="text-xs text-slate-300 mt-1">輸入題目文字或選擇常錯觀念，1 秒生成「觀念診斷＋基礎暖身＋同型變換＋會考陷阱」4 連戰！</p>
+            <h3 class="font-extrabold text-base text-white mt-2">遇到不會的考題？</h3>
+            <p class="text-xs text-slate-300 mt-1">輸入題目或卡關觀念，1 秒生成解題關鍵與同型練習題！</p>
           </div>
           <div class="mt-3 flex gap-2">
             <input id="quickHubMistakeInput" type="text" placeholder="例：一元一次方程式打折問題、凸透鏡成像..." class="flex-1 bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-fuchsia-400" />
             <button type="button" onclick="quickJumpToAlchemy()" class="px-3.5 py-2 rounded-xl bg-fuchsia-600 hover:bg-fuchsia-500 text-white text-xs font-bold whitespace-nowrap transition-colors">
-              煉製題目 →
+              變題練習 →
             </button>
           </div>
         </div>
       </div>
 
-      <!-- ==================== 名校段考全真分類出題專區 ==================== -->
+      <!-- ==================== 名校段考全真題庫中心 ==================== -->
       <div id="section-exam-stage" class="rpg-card rounded-3xl p-5 sm:p-6 border border-amber-500/40 bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950/25 shadow-2xl space-y-5">
         <!-- Header & Exam Info -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
@@ -618,12 +617,12 @@
             </div>
             <div>
               <div class="flex flex-wrap items-center gap-2">
-                <h3 class="text-lg sm:text-xl font-black text-white">名校段考全真分類出題中心</h3>
-                <span id="examStageLabelBadge" class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[11px] font-extrabold">第一學期・第二次定期評量</span>
-                <span id="examStageCountBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold">新北名校 447 題真題收錄</span>
+                <h3 class="text-lg sm:text-xl font-black text-white">名校段考全真題庫</h3>
+                <span id="examStageLabelBadge" class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[11px] font-extrabold">第一學期・第二次段考</span>
+                <span id="examStageCountBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold">新北名校 368 題真題收錄</span>
               </div>
               <p class="text-xs text-slate-300 mt-1">
-                依<span class="text-amber-300 font-bold">第一／第二學期</span>與<span class="text-amber-300 font-bold">第 1／2／3 次段考</span>精確分類，精選新北升學名校（海山、永和、福和國中）全科真題，支援「分科全真模擬卷」、「單元考點靶向特訓」與「五科綜合大會考」！
+                依<span class="text-amber-300 font-bold">學期</span>與<span class="text-amber-300 font-bold">段考次數</span>精準分類，精選新北升學名校（海山、永和、福和國中）全科真題，支援分科測驗、章節考點特訓與五科綜合大考！
               </p>
             </div>
           </div>
@@ -631,7 +630,7 @@
             <!-- 快速五科大會考 -->
             <button type="button" onclick="startExamStageMixedBattle()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 hover:brightness-110 text-slate-950 font-black text-xs sm:text-sm shadow-lg shadow-amber-500/25 flex items-center gap-1.5 transition-transform active:scale-95">
               <span>⚡</span>
-              <span id="mixedBattleBtnText">【第一學期・二次段考】五科綜合大考 (5題)</span>
+              <span id="mixedBattleBtnText">五科綜合模擬考 (5題)</span>
             </button>
           </div>
         </div>
@@ -645,8 +644,8 @@
               <span>學期：</span>
             </span>
             <div class="inline-flex bg-slate-950 border border-slate-800 rounded-xl p-0.5">
-              <button type="button" id="btnExamSem-1" onclick="setExamSemesterFilter('1')" class="px-2.5 py-1 rounded-lg font-bold transition-all bg-amber-500 text-slate-950 shadow">📘 第一學期 (上學期)</button>
-              <button type="button" id="btnExamSem-2" onclick="setExamSemesterFilter('2')" class="px-2.5 py-1 rounded-lg font-semibold transition-all text-slate-400 hover:text-white">📙 第二學期 (下學期)</button>
+              <button type="button" id="btnExamSem-1" onclick="setExamSemesterFilter('1')" class="px-2.5 py-1 rounded-lg font-bold transition-all bg-amber-500 text-slate-950 shadow">📘 第一學期 (上)</button>
+              <button type="button" id="btnExamSem-2" onclick="setExamSemesterFilter('2')" class="px-2.5 py-1 rounded-lg font-semibold transition-all text-slate-400 hover:text-white">📙 第二學期 (下)</button>
             </div>
           </div>
 
@@ -682,7 +681,7 @@
         <div>
           <div class="text-xs font-bold text-slate-200 flex items-center gap-1.5 mb-3">
             <span>📚</span>
-            <span>【分科出題】選擇考科，一鍵生成 5 題名校段考真題卷：</span>
+            <span>分科段考真題卷（點選科目進行 5 題測驗）：</span>
           </div>
 
           <div id="examSubjectCardsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -695,7 +694,7 @@
           <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
             <div class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
               <span>🎯</span>
-              <span>【考點分類出題】點擊以下核心章節考點，立即展開專屬靶向特訓 (5題)：</span>
+              <span>核心章節考點特訓（點選考點進行 5 題靶向加強）：</span>
             </div>
             <!-- 科目切換 Tab -->
             <div id="examConceptSubjectTabs" class="flex items-center gap-1 overflow-x-auto text-xs">
@@ -709,15 +708,15 @@
         </div>
       </div>
 
-      <!-- 5 Junior High Subjects Dungeons -->
+      <!-- 課綱核心單元練習區 -->
       <div>
         <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
           <div>
             <h3 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
               <span>🗺️</span>
-              <span>五大考科試煉地下城</span>
+              <span>課綱核心單元重點練習</span>
             </h3>
-            <p class="text-xs text-slate-400">選擇任一科目與單元，立即進入 RPG 回合制魔王對決評量（目前篩選：<span id="currentGradeFilterText" class="text-amber-300 font-bold">全學年題庫</span>）</p>
+            <p class="text-xs text-slate-400">依各科課綱重點循序漸進自主練習（目前篩選：<span id="currentGradeFilterText" class="text-amber-300 font-bold">全學年題庫</span>）</p>
           </div>
         </div>
 
@@ -727,23 +726,23 @@
       </div>
     </section>
 
-    <!-- ==================== TAB 2: MISTAKE ALCHEMY WORKSHOP (錯題煉金工坊) ==================== -->
+    <!-- ==================== TAB 2: MISTAKE ALCHEMY (AI 弱點出題) ==================== -->
     <section id="view-alchemy" class="hidden space-y-6">
       <div class="rpg-card rpg-glow-border rounded-3xl p-5 sm:p-7">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-800 pb-5">
           <div>
             <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-fuchsia-500/20 border border-fuchsia-500/40 text-fuchsia-300 text-xs font-bold mb-2">
-              <span>⚗️ 智慧錯題變身引擎</span>
+              <span>💡 智慧弱點分析引擎</span>
             </div>
-            <h2 class="text-xl sm:text-2xl font-black text-white">錯題煉金工坊：針對不會的題目生成專屬練習</h2>
+            <h2 class="text-xl sm:text-2xl font-black text-white">AI 弱點出題：將卡關考題變身為專屬練習</h2>
             <p class="text-xs sm:text-sm text-slate-300 mt-1">
-              把你在學校小考、段考或模擬考不會的題目貼進來（或點選下方熱門魔王考點），煉金陣會幫你拆解「核心觀念與解題口訣」，並即時生成 <span class="text-amber-300 font-bold">4 道由淺入深的相似變體練習題</span>！
+              貼上平時小考、段考或作業中不會的題目或觀念，系統將剖析解題重點，並即時生成 <span class="text-amber-300 font-bold">4 道循序漸進的同型練習題</span>！
             </p>
           </div>
           <div class="flex items-center gap-2 self-start lg:self-center">
             <button type="button" onclick="randomizeGeneratedNumbers()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-bold text-cyan-300 flex items-center gap-1.5 transition-colors">
               <span>🎲</span>
-              <span>重新隨機換數字/換情境再生一組</span>
+              <span>重新換數再生</span>
             </button>
           </div>
         </div>
@@ -752,7 +751,7 @@
         <div class="mt-5">
           <div class="text-xs font-bold text-slate-300 mb-2 flex items-center gap-1.5">
             <span>🔥</span>
-            <span>快速載入國中段考／會考最常錯的「大魔王題型」範本（點擊自動填入）：</span>
+            <span>常考弱點範本（點擊自動帶入）：</span>
           </div>
           <div id="alchemyPresetChips" class="flex flex-wrap gap-2">
             <!-- Populated by JS -->
@@ -763,7 +762,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 mt-5">
           <div class="lg:col-span-8 space-y-3">
             <label for="alchemyQuestionInput" class="block text-xs font-bold text-slate-300">
-              📝 貼上或輸入你不會的考試題目、錯誤選項或卡關觀念：
+              📝 貼上題目、錯誤選項或卡關觀念：
             </label>
             <textarea id="alchemyQuestionInput" rows="4" class="w-full rounded-2xl bg-slate-950/90 border border-slate-700 focus:border-fuchsia-400 focus:outline-none p-3.5 text-sm text-white placeholder-slate-500 leading-relaxed" placeholder="例如：一件衣服按定價打八折出售，還比成本多賺 120 元；若按定價打六折出售則賠 80 元，請問這件衣服成本多少元？（或輸入：現在完成式 since 與 for 差別、凸透鏡成像位置、莫耳濃度計算、文言文『之』字代詞用法...）"></textarea>
           </div>
@@ -774,29 +773,29 @@
                 <label for="alchemySubjectSelect" class="block text-[11px] font-bold text-slate-400 mb-1">所屬科目</label>
                 <select id="alchemySubjectSelect" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none focus:border-violet-400">
                   <option value="auto">🔮 自動偵測科目</option>
-                  <option value="math">📐 數學領域</option>
-                  <option value="science">🔬 自然科學 (理化/生物/地科)</option>
-                  <option value="english">🔤 英文領域</option>
-                  <option value="chinese">📜 國文領域</option>
-                  <option value="social">🌍 社會領域 (歷史/地理/公民)</option>
+                  <option value="math">📐 數學科</option>
+                  <option value="science">🔬 自然科 (理化/生物/地科)</option>
+                  <option value="english">🔤 英文科</option>
+                  <option value="chinese">📜 國文科</option>
+                  <option value="social">🌍 社會科 (歷史/地理/公民)</option>
                 </select>
               </div>
               <div>
-                <label for="alchemyGradeSelect" class="block text-[11px] font-bold text-slate-400 mb-1">目標年級難度</label>
+                <label for="alchemyGradeSelect" class="block text-[11px] font-bold text-slate-400 mb-1">目標難度</label>
                 <select id="alchemyGradeSelect" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none focus:border-violet-400">
-                  <option value="7">七年級 (國一基礎)</option>
-                  <option value="8" selected>八年級 (國二進階)</option>
-                  <option value="9">九年級 (會考實戰)</option>
+                  <option value="7">七年級 (基礎)</option>
+                  <option value="8" selected>八年級 (進階)</option>
+                  <option value="9">九年級 (會考難度)</option>
                 </select>
               </div>
             </div>
 
             <div>
-              <label for="alchemyStyleSelect" class="block text-[11px] font-bold text-slate-400 mb-1">練習題生成策略</label>
+              <label for="alchemyStyleSelect" class="block text-[11px] font-bold text-slate-400 mb-1">出題策略</label>
               <select id="alchemyStyleSelect" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none focus:border-violet-400">
-                <option value="progressive">🪜 階梯式闖關（觀念拆解 → 同型換數 → 情境應用 → 會考陷阱）</option>
-                <option value="drill">⚡ 同型密集特訓（4 題不同數字/情境的同觀念變體題）</option>
-                <option value="boss">🐉 魔王陷阱突破（專攻易混淆選項與逆向思考題）</option>
+                <option value="progressive">🪜 循序漸進（觀念拆解 → 同型換數 → 情境應用 → 陷阱突破）</option>
+                <option value="drill">⚡ 同型特訓（4 題同觀念變體題）</option>
+                <option value="boss">🎯 易錯辨析（專攻易混淆選項與思考盲點）</option>
               </select>
             </div>
 
@@ -809,17 +808,17 @@
                 <span id="alchemyAiKeyBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 cursor-pointer" onclick="openGeminiKeyModal()">檢查中...</span>
               </div>
               <p class="text-[10px] text-slate-300 leading-tight">
-                運用 Google Gemini 3.5 Flash Lite 深度推理出題，自動解析卡關核心並生成 4 道素養單選題！
+                運用 Google Gemini 3.5 Flash Lite 深度推理，自動剖析觀念核心並生成 4 道單選題！
               </p>
               <button type="button" onclick="runGeminiAiAlchemy()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-violet-600 via-fuchsia-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-md shadow-violet-600/30 flex items-center justify-center gap-1.5 transition-all active:scale-95">
                 <span id="aiSpinIcon" class="hidden animate-spin">🌀</span>
-                <span>🤖 啟動 Gemini AI 魔法生題</span>
+                <span>🤖 啟動 Gemini AI 智慧出題</span>
               </button>
             </div>
             <div class="text-center text-[10px] text-slate-500 font-semibold">- 或使用本地即時題庫 -</div>
 
             <button type="button" onclick="runMistakeAlchemy()" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-600 flex items-center justify-center gap-2 transition-transform active:scale-95">
-              <span>✨ 快速本地題庫生成 (無須 API Key)</span>
+              <span>✨ 本地題庫即時出題 (免金鑰)</span>
             </button>
           </div>
         </div>
@@ -842,18 +841,18 @@
         <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-4 border-b border-slate-800/80">
           <div class="flex items-center gap-2">
             <span id="battleDungeonBadge" class="px-3 py-1 rounded-full bg-violet-500/20 border border-violet-400/40 text-violet-200 text-xs font-bold">
-              ⚔️ 數學領域試煉
+              📝 測驗作答室
             </span>
             <span id="battleQuestionCounter" class="text-xs font-mono text-slate-400">
-              第 1 / 5 回合
+              第 1 / 5 題
             </span>
           </div>
           <div class="flex items-center gap-2">
             <button type="button" onclick="switchTab('alchemy')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-fuchsia-300 border border-slate-700">
-              ⚗️ 切換至錯題煉金
+              💡 切換至 AI 出題
             </button>
             <button type="button" onclick="restartCurrentBattle()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 border border-slate-700">
-              🔄 重新挑戰本關
+              🔄 重新測驗本卷
             </button>
           </div>
         </div>
@@ -865,26 +864,26 @@
             <div class="flex items-center gap-3.5">
               <div class="relative">
                 <img src="images/hero-battle.jpg" alt="勇者立繪" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-cyan-400 shadow-lg max-w-full h-auto" />
-                <span id="shieldActiveBadge" class="hidden absolute -top-2 -right-2 bg-cyan-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full shadow">🛡️ 護盾守護中</span>
+                <span id="shieldActiveBadge" class="hidden absolute -top-2 -right-2 bg-cyan-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full shadow">🛡️ 護盾保護中</span>
               </div>
               <div class="flex-1">
                 <div class="flex items-center justify-between">
-                  <span class="font-extrabold text-sm sm:text-base text-white">星耀知識勇者</span>
+                  <span class="font-extrabold text-sm sm:text-base text-white">答題挑戰者</span>
                   <span id="heroHpText" class="text-xs font-mono font-bold text-emerald-400">100 / 100 HP</span>
                 </div>
                 <div class="w-full h-3 bg-slate-950 rounded-full overflow-hidden border border-slate-700 mt-1.5">
                   <div id="heroHpBar" class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-300" style="width: 100%;"></div>
                 </div>
                 <div class="flex items-center justify-between mt-2 text-xs">
-                  <span class="text-orange-300 font-bold" id="battleComboText">🔥 連擊 Combo x0</span>
-                  <span class="text-amber-300 font-bold" id="doubleDamageBadge">⚡ 一般蓄力</span>
+                  <span class="text-orange-300 font-bold" id="battleComboText">🔥 連勝 Combo x0</span>
+                  <span class="text-amber-300 font-bold" id="doubleDamageBadge">⚡ 一般狀態</span>
                 </div>
               </div>
             </div>
 
             <!-- Tactical Magic Items Bar -->
             <div class="mt-4 pt-3 border-t border-slate-800/80">
-              <div class="text-[11px] text-slate-400 font-semibold mb-2">🎒 戰鬥秘藥（點擊使用，可至道具屋補充）：</div>
+              <div class="text-[11px] text-slate-400 font-semibold mb-2">🎒 答題輔助道具（點擊使用）：</div>
               <div class="grid grid-cols-3 gap-2">
                 <button type="button" id="useItemFiftyBtn" onclick="useBattleItem('fifty')" class="flex flex-col items-center p-2 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-700 transition-all text-center">
                   <span class="text-base">🧪</span>
@@ -893,12 +892,12 @@
                 </button>
                 <button type="button" id="useItemHintBtn" onclick="useBattleItem('hint')" class="flex flex-col items-center p-2 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-700 transition-all text-center">
                   <span class="text-base">💡</span>
-                  <span class="text-[11px] font-bold text-slate-200 mt-0.5">導師破題咒</span>
+                  <span class="text-[11px] font-bold text-slate-200 mt-0.5">關鍵破題提示</span>
                   <span id="itemCount-hint" class="text-[10px] text-amber-400 font-mono">剩 2 卷</span>
                 </button>
                 <button type="button" id="useItemShieldBtn" onclick="useBattleItem('shield')" class="flex flex-col items-center p-2 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-700 transition-all text-center">
                   <span class="text-base">🛡️</span>
-                  <span class="text-[11px] font-bold text-slate-200 mt-0.5">免傷聖盾</span>
+                  <span class="text-[11px] font-bold text-slate-200 mt-0.5">免扣血護盾</span>
                   <span id="itemCount-shield" class="text-[10px] text-amber-400 font-mono">剩 1 面</span>
                 </button>
               </div>
@@ -908,7 +907,7 @@
           <!-- Center VS Badge (2 cols) -->
           <div class="md:col-span-2 flex flex-col items-center justify-center py-1">
             <div id="battleActionBanner" class="px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-xs font-bold text-amber-300 text-center mb-1">
-              請選擇正確咒語發動攻擊！
+              請點選正確答案作答！
             </div>
             <div class="text-2xl sm:text-3xl font-black italic bg-gradient-to-b from-amber-300 to-rose-500 bg-clip-text text-transparent">
               VS
@@ -1040,36 +1039,36 @@
             ⚗️ 前往錯題煉金工坊
           </button>
           <button type="button" onclick="switchTab('grimoire')" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/40 font-bold text-sm">
-            📓 檢視錯題封印書
+            📖 檢視錯題本
           </button>
         </div>
       </div>
     </section>
 
-    <!-- ==================== TAB 4: MISTAKE GRIMOIRE (錯題封印書) ==================== -->
+    <!-- ==================== TAB 4: MISTAKE GRIMOIRE (錯題本) ==================== -->
     <section id="view-grimoire" class="hidden space-y-6">
       <div class="rpg-card rounded-3xl p-5 sm:p-7">
         <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
           <div>
             <h2 class="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
-              <span>📓</span>
-              <span>錯題封印書（個人弱點題庫）</span>
+              <span>📖</span>
+              <span>我的錯題本（個人弱點庫）</span>
             </h2>
             <p class="text-xs sm:text-sm text-slate-300 mt-1">
-              所有在戰鬥中答錯或手動封印的題目都會收錄在此。你可以直接點擊「<span class="text-fuchsia-300 font-bold">⚗️ 生成同型延伸練習</span>」，讓系統針對該錯題衍生 4 道新題目幫你徹底搞懂！
+              所有在測驗中答錯的題目都會自動收錄在此。可直接點擊「<span class="text-fuchsia-300 font-bold">💡 生成延伸練習</span>」，讓 AI 針對該錯題衍生 4 道題目徹底搞懂！
             </p>
           </div>
           <div class="flex flex-wrap items-center gap-2">
             <select id="grimoireSubjectFilter" onchange="renderMistakeGrimoire()" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
               <option value="all">全部科目錯題</option>
-              <option value="chinese">📜 國文領域</option>
-              <option value="english">🔤 英文領域</option>
-              <option value="math">📐 數學領域</option>
-              <option value="science">🔬 自然科學</option>
-              <option value="social">🌍 社會領域</option>
+              <option value="chinese">📜 國文科</option>
+              <option value="english">🔤 英文科</option>
+              <option value="math">📐 數學科</option>
+              <option value="science">🔬 自然科</option>
+              <option value="social">🌍 社會科</option>
             </select>
             <button type="button" onclick="battleAllMistakes()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-orange-600 hover:from-rose-500 hover:to-orange-500 text-white text-xs font-bold shadow-lg">
-              ⚔️ 啟動錯題清剿戰
+              📝 開始錯題重測
             </button>
           </div>
         </div>
@@ -1080,7 +1079,7 @@
       </div>
     </section>
 
-    <!-- ==================== TAB 5: ABILITY RADAR & MAGIC SHOP (能力雷達與道具屋) ==================== -->
+    <!-- ==================== TAB 5: ABILITY RADAR & MAGIC SHOP (學習分析與道具屋) ==================== -->
     <section id="view-stats" class="hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <!-- 5-Subject Ability Radar Chart -->
@@ -1089,12 +1088,12 @@
             <div>
               <h2 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
                 <span>📊</span>
-                <span>勇者五科戰力雷達圖</span>
+                <span>五科學力分析雷達</span>
               </h2>
-              <p class="text-xs text-slate-400">根據你的答題正確率與錯題煉金次數即時更新</p>
+              <p class="text-xs text-slate-400">根據你的答題正確率與練習次數即時分析學力分佈</p>
             </div>
             <span id="totalSolvedStatBadge" class="px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 text-xs font-bold">
-              累積擊破 12 題
+              累積完成 12 題
             </span>
           </div>
 
@@ -1113,13 +1112,13 @@
             <div class="flex items-center justify-between mb-3">
               <h3 class="text-base sm:text-lg font-black text-white flex items-center gap-2">
                 <span>🏪</span>
-                <span>學院鍊金道具屋</span>
+                <span>答題輔助道具屋</span>
               </h3>
               <span class="text-xs font-bold text-amber-300 bg-amber-500/15 px-2.5 py-1 rounded-lg border border-amber-500/30">
                 持有星幣：<span id="shopGoldDisplay">280</span> 🪙
               </span>
             </div>
-            <p class="text-xs text-slate-300 mb-4">使用答題賺取的星幣購買輔助秘藥，在魔王戰中助你一臂之力！</p>
+            <p class="text-xs text-slate-300 mb-4">使用答題累積的星幣兌換輔助道具，在測驗中隨時助你一臂之力！</p>
 
             <div class="space-y-3">
               <div class="flex items-center justify-between bg-slate-900/90 border border-slate-800 rounded-2xl p-3">
@@ -2417,10 +2416,10 @@
       if (labelBadge) labelBadge.textContent = title;
 
       const topBtnText = document.getElementById('topExamStageBtnText');
-      if (topBtnText) topBtnText.textContent = `${title}特訓`;
+      if (topBtnText) topBtnText.textContent = `${title}`;
 
       const mixedBtn = document.getElementById('mixedBattleBtnText');
-      if (mixedBtn) mixedBtn.textContent = `【${title}】五科綜合大考 (5題)`;
+      if (mixedBtn) mixedBtn.textContent = `五科綜合模擬考 (5題)`;
 
       // 計算目前符合條件之總題數
       const real = (typeof REAL_EXAM_QUESTIONS !== 'undefined' && Array.isArray(REAL_EXAM_QUESTIONS)) ? REAL_EXAM_QUESTIONS : [];
@@ -2531,8 +2530,7 @@
               </p>
             </div>
             <button type="button" onclick="startExamStageSubjectExam('${sub.id}')" class="mt-3 w-full py-2 rounded-xl bg-slate-900/90 hover:bg-amber-500 hover:text-slate-950 text-white font-bold text-xs border border-slate-700 hover:border-amber-400 transition-all shadow flex items-center justify-center gap-1 active:scale-95">
-              <span>⚔️</span>
-              <span>出 5 題測驗 →</span>
+              <span>開始測驗 (5題) →</span>
             </button>
           </div>
         `;
@@ -2760,12 +2758,12 @@
                     ${sub.icon}
                   </div>
                   <div>
-                    <h4 class="font-black text-base text-white">${sub.name}地下城</h4>
-                    <div class="text-[11px] text-slate-400">守關魔王：${sub.bossName}</div>
+                    <h4 class="font-black text-base text-white">${sub.name}核心單元</h4>
+                    <div class="text-[11px] text-slate-400">課綱精華考點</div>
                   </div>
                 </div>
                 <span class="text-xs font-extrabold px-2.5 py-1 rounded-full ${sub.badgeClass} border">
-                  戰力 ${stat.mastery}%
+                  掌握度 ${stat.mastery}%
                 </span>
               </div>
 
@@ -2778,11 +2776,10 @@
 
             <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center gap-2">
               <button type="button" onclick="startSubjectDungeon('${sub.id}')" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r ${sub.colorFrom} ${sub.colorTo} hover:brightness-110 text-white font-bold text-xs shadow flex items-center justify-center gap-1.5 transition-transform active:scale-95">
-                <span>⚔️</span>
-                <span>進入魔王評量</span>
+                <span>開始單元測驗 (5題) →</span>
               </button>
               <button type="button" onclick="openAlchemyForSubject('${sub.id}')" class="px-3 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-fuchsia-300 border border-slate-700 font-bold text-xs transition-colors" title="針對此科目生成練習題">
-                ⚗️ 生成題目
+                💡 AI 出題
               </button>
             </div>
           </div>
