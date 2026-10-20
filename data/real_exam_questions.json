@@ -260,26 +260,6 @@
     "stage_name": "第1學期・第2次段考"
   },
   {
-    "id": "yh-11412-bio-25",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：酵素與人體消化循環",
-    "stem": "承上題，凱爾的室友提米，他的鞋子總是在夏天發出一股異 味，經過凱爾檢查，這股異味來自於細菌，於是凱爾買了 3 雙一樣的新鞋，使用以下殺菌方式處理鞋子： 殺菌方式 處理後，鞋子的狀態 第一雙： 穿一整天後， 有明顯臭味，細菌殘留多 噴溶菌酶噴液 第二雙： 穿一整天後， 無細菌殘留 噴 75%藥用酒精 第三雙： 直接用沐浴乳洗 無臭味，細菌殘留較少 腳後，穿一整天 於是凱爾對此提出了幾個假設，試問下列推測何者最不合 理？(已知:鞋子噴完溶菌酶噴液及藥用酒精後皆放於 20℃的 冷氣房內，該溶菌酶來源於人體。)",
-    "options": [
-      "A. 鞋子上殘留成分複雜(如:汗水或油脂)，影響酵素運作",
-      "B. 溶菌酶噴液原本就無殺菌效果",
-      "C. 洗腳後，腳上殘留的沐浴乳成分，有抗菌效果",
-      "D. 房間冷氣溫度過低，並非酵素的最佳活性溫度"
-    ],
-    "answer": 1,
-    "explanation": "新北市立永和國中 114-1-2 定期評量七年級生物科第 25 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
     "id": "yh-11412-bio-26",
     "school": "永和國中",
     "exam": "114學年度第1學期第2次段考",
@@ -295,26 +275,6 @@
     ],
     "answer": 2,
     "explanation": "新北市立永和國中 114-1-2 定期評量七年級生物科第 26 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "yh-11412-bio-27",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：酵素活性與專一性",
-    "stem": "如果伊森想要了解酵素的專一性。他要將本氏液加入哪兩根 試管後，隔水加熱，以做為實驗組與對照組？",
-    "options": [
-      "A. 甲乙",
-      "B. 甲丁",
-      "C. 乙丙",
-      "D. 乙丁"
-    ],
-    "answer": 3,
-    "explanation": "新北市立永和國中 114-1-2 定期評量七年級生物科第 27 題真題。",
     "semester": "1",
     "stage": "2",
     "stage_name": "第1學期・第2次段考"
@@ -435,86 +395,6 @@
     ],
     "answer": 2,
     "explanation": "新北市立永和國中 114-1-2 定期評量七年級生物科第 35 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "yh-11412-bio-36",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：酵素與人體消化循環",
-    "stem": "此植物將來形成的「木材」，是由哪個部位累積組成的？",
-    "options": [
-      "A. 甲",
-      "B. 乙",
-      "C. 丙",
-      "D. 丁"
-    ],
-    "answer": 2,
-    "explanation": "新北市立永和國中 114-1-2 定期評量七年級生物科第 36 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "yh-11412-bio-37",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：酵素與人體消化循環",
-    "stem": "水稻之所以不能像此植物，將來能形成「木材」，是因為缺 乏哪個部位的緣故？",
-    "options": [
-      "A. 甲",
-      "B. 乙",
-      "C. 丙",
-      "D. 丁"
-    ],
-    "answer": 1,
-    "explanation": "新北市立永和國中 114-1-2 定期評量七年級生物科第 37 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "yh-11412-bio-38",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：酵素與人體消化循環",
-    "stem": "請由數據判斷，是哪兩棵植株剝除所有葉片？",
-    "options": [
-      "A. 甲乙",
-      "B. 甲丙",
-      "C. 乙丁",
-      "D. 丙丁"
-    ],
-    "answer": 2,
-    "explanation": "新北市立永和國中 114-1-2 定期評量七年級生物科第 38 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "yh-11412-bio-39",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：酵素與人體消化循環",
-    "stem": "哪兩棵植株是放在通風晴朗的室外？",
-    "options": [
-      "A. 甲乙",
-      "B. 甲丙",
-      "C. 乙丁",
-      "D. 丙丁"
-    ],
-    "answer": 3,
-    "explanation": "新北市立永和國中 114-1-2 定期評量七年級生物科第 39 題真題。",
     "semester": "1",
     "stage": "2",
     "stage_name": "第1學期・第2次段考"
@@ -2100,86 +1980,6 @@
     "stage_name": "第1學期・第2次段考"
   },
   {
-    "id": "yh-11412-soc-11",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "7",
-    "concept": "地理：臺灣地形、氣候與水文環境",
-    "stem": "下列對於該報導內容的敘述何者有誤？",
-    "options": [
-      "A. 堰塞湖的位置研判應屬於中央山脈的範圍",
-      "B. 颱風強雨所形成土石坍塌應為外營力造成",
-      "C. 光復鄉地形主體應為河流堆積抬升的臺地 圖五",
-      "D. 花東的地震頻繁是因為其位於板塊交界處。"
-    ],
-    "answer": 2,
-    "explanation": "新北市立永和國中 114-1-2 定期評量七年級社會科第 11 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "yh-11412-soc-14",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "7",
-    "concept": "地理：臺灣地形、氣候與水文環境",
-    "stem": "國際珊瑚礁倡議組織 ICRI 日前提出了第 4 度的珊瑚白化報告，報告指出全球已有 84%的珊 圖六 瑚礁出現白化的現象，各方專家把矛頭指向暖化造成海水溫度升高，導致海藻死亡以及珊瑚 礁白化。請問：臺灣哪座島嶼將面臨相同危機？(L4)",
-    "options": [
-      "A. 琉球嶼",
-      "B. 馬祖列嶼",
-      "C. 釣魚臺列嶼",
-      "D. 龜山島。 ⚫"
-    ],
-    "answer": 0,
-    "explanation": "新北市立永和國中 114-1-2 定期評量七年級社會科第 14 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "yh-11412-soc-15",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "7",
-    "concept": "地理：臺灣地形、氣候與水文環境",
-    "stem": "觀光署在設計廣受歡迎的「跳島行程」時，希望規畫出一條包含不同成因類型島嶼的 路線。請問：下列的組合何者最為適合？",
-    "options": [
-      "A. 甲乙丙",
-      "B. 甲丙丁",
-      "C. 甲己戊",
-      "D. 乙庚辛。"
-    ],
-    "answer": 1,
-    "explanation": "新北市立永和國中 114-1-2 定期評量七年級社會科第 15 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "yh-11412-soc-17",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "7",
-    "concept": "地理：臺灣地形、氣候與水文環境",
-    "stem": "雅美族，又稱「達悟族」，是臺灣唯一主要居住在島上的原住民族。他們是海洋民族，傳統文化以捕魚（尤其 是飛魚）和農業為重，他們也以精湛的拼板舟製作工藝、穴居式的地下屋建築和金銀工 藝品而聞名。請問：文中的應該位於圖七中的何處？",
-    "options": [
-      "A. 丁",
-      "B. 己",
-      "C. 庚",
-      "D. 辛。"
-    ],
-    "answer": 3,
-    "explanation": "新北市立永和國中 114-1-2 定期評量七年級社會科第 17 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
     "id": "yh-11412-soc-19",
     "school": "永和國中",
     "exam": "114學年度第1學期第2次段考",
@@ -2415,46 +2215,6 @@
     ],
     "answer": 1,
     "explanation": "新北市立永和國中 114-1-2 定期評量七年級社會科第 32 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "yh-11412-soc-35",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "7",
-    "concept": "歷史：大航海時代與清領前期統治",
-    "stem": "關於清朝行政區域的演變，下列敘述何者正確？(L4)",
-    "options": [
-      "A. 代號戊所統計的行政區數量，與當時清朝派遣沈葆楨來臺加強臺灣建設有關",
-      "B. 代號甲時期所實施的統治政策主要有渡台禁令與劃界封山，採「為防臺而治臺」的消極態度",
-      "C. 清法戰爭結束之後，清朝派遣官員來臺灣建省，因此出現了代號丁所統計的行政區數量",
-      "D. 清朝在平定完林爽文事件之後，決定增設行政區域，因此出現了代號乙所統計的行政區數量。"
-    ],
-    "answer": 1,
-    "explanation": "新北市立永和國中 114-1-2 定期評量七年級社會科第 35 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "yh-11412-soc-36",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "7",
-    "concept": "歷史：大航海時代與清領前期統治",
-    "stem": "如果要將五個地圖分類，應該如何分類？請選出分類錯誤的選項。(L4)",
-    "options": [
-      "A. 以治臺方針積極與否，可以分成地圖 甲、乙、丙一類與地圖丁、戊 一類",
-      "B. 以台灣開港的前後，可以分成地圖甲、乙、丙一類與地圖丁、戊 一類",
-      "C. 以福建省、臺灣省分類，可以分成地圖 甲、乙、丙一類與地圖丁、戊 一類",
-      "D. 以鐵路的有無，可分成地圖甲、乙、丙、丁 一類與地圖戊 一類"
-    ],
-    "answer": 2,
-    "explanation": "新北市立永和國中 114-1-2 定期評量七年級社會科第 36 題真題。",
     "semester": "1",
     "stage": "2",
     "stage_name": "第1學期・第2次段考"
@@ -3851,7 +3611,7 @@
       "A. 觀察陷害對手",
       "B. 權衡形勢利害",
       "C. 衡量經濟實力",
-      "D. 數學計算能力 第四頁 四、閱讀題組： （每題 2 分，共 20 分） 這段時間最令我感動的國片，應該就是〈阿媽的夢中情人〉了。原本聽說它是以臺語片的輝煌時期 為故事背景，就覺得有趣，那是一個我沒能趕上的時代，許多的膠卷，許多的演員，許多悲歡離合的情 節。這確實是一部悲歡離合的電影，讓我們看見了北投像一個小型的好萊塢，夜以繼日拍攝著各種類型 的電影，一個編劇同時要寫好幾個劇本，陷入錯亂之中，而他與剛剛冒出頭來的年輕女演員撞出火花， 展開純情戀愛。這段戀愛伴隨著臺語片的由盛轉衰，也伴隨著編劇為了拍片簽下本票，違反票據法鋃鐺 入獄的坎坷命運，然而，純情女孩並沒有放棄守候與等待，她拚命賺錢買下一個戲院，播放著他們參與 過的臺語電影。豐沛堅持的愛情，足以和整個時代的潮流對抗。電影一開始，阿媽的記憶就失去了，她 只記得要尋找自己的初戀情人，卻連初戀情人是誰也弄不清。等到影片最後才揭曉，阿媽的初戀情人， 正是陪伴著她一輩子的阿公，這個一直在眼前的老伴，是她已經忘記的。在愛情與失憶之間，給了我一 則警醒與啟示，人們總是這麼容易忘記了身邊人，而遙想著某個並不屬於自己的美好幻影。太多戲劇或 小說，都謳歌著分離的情人，因為不能在一起，所以，許多情節與回憶都被過度美化了，成為一種脫離 現實的，完美的存在。在意念中再完美的人，若真在現實中日夜相處，可能都會是更大的失落與艱難。 在生活中不盡完美的另一半，陪伴我們走過人生許多陰晴圓缺，互相扶持安慰，不離不棄，才是真正貴 重的情愛，卻總是被我們遺忘了，遺忘了相濡以沫的價值。愛戀到後來，或許並不是情意變淡了，而是 我們失憶了。 〈阿媽的夢中情人〉打動了我的正是這件事，從生命中經過又離開的人固然值得懷念，而真 正值得投入一生熱愛的，其實是一直在我們身邊，與我們一同柴米油鹽的眼前人。 張曼娟〈憐取眼前人〉 （"
+      "D. 數學計算能力"
     ],
     "answer": 1,
     "explanation": "新北市立海山高中（國中部）114-1-2 定期評量8年級國文科第 25 題真題。",
@@ -3875,46 +3635,6 @@
     ],
     "answer": 1,
     "explanation": "新北市立海山高中（國中部）114-1-2 定期評量8年級國文科第 26 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g8-chinese-27",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "chinese",
-    "grade": "8",
-    "concept": "國文：語文素養與生活閱讀理解",
-    "stem": "根據上文，關於電影〈阿媽的夢中情人〉下列敘述何者正確？",
-    "options": [
-      "A. 阿媽即使失去記憶，卻仍記得初戀情人的模樣",
-      "B. 臺語片曾經盛極一時，北投產出各種類型的電影",
-      "C. 學生時期的作者看見了北投就像一個小型的好萊塢",
-      "D. 阿媽因為不能和編劇在一起，所以把許多情節都美化了 (二) 記得日本心理學家河合隼雄說過：「一味地『排除惡』，恐會引來更大的惡。」 (甲)這類建構出自戀視角的故事，使得我們對惡很容易呈現歇斯底里的反應，我們經年累月的受害者情 結也開始產生，以為那是自我純潔的象徵。 (乙)畢竟排除惡是方便的，因為幫助我們最早有社會化的常是童話，但也是誤導我們對善惡的標準。童 話中通常引導我們生來是一個主角，這幸運的本位讓我們看事情充滿盲點。 (丙)許多童話中「主角」的證明，是他對善惡一無所知，無論是《灰姑娘》或是《小紅帽》等，彷彿對 惡的無知是我們以為「好」的正統性。 善惡說穿了，在沒有好的教育基礎下，在當代無疑是各種自戀形式的裹腳布。當我們論述善惡時， 只要意識有人在觀看，我們就有種亟欲表態的衝動，像猴子當街表演一樣，沒有比對加害者丟石頭這件 事更能滿足自己的自戀感。這是〈我們與惡的距離〉劇本書裡的眾生相。 節錄自馬欣〈通往地獄之路，常由自命良善的人所鋪成〉"
-    ],
-    "answer": 1,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量8年級國文科第 27 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g8-chinese-28",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "chinese",
-    "grade": "8",
-    "concept": "國文：語文素養與生活閱讀理解",
-    "stem": "根據上文，下列敘述何者正確？",
-    "options": [
-      "A. 向加害者丟擲石頭，是懲惡的最佳表現",
-      "B. 效法童話故事情節，人們更能判斷善惡",
-      "C. 善惡判斷的前提，我們應該立足於教育",
-      "D. 如果不排除惡，人們終將會被惡所吞噬"
-    ],
-    "answer": 2,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量8年級國文科第 28 題真題。",
     "semester": "1",
     "stage": "2",
     "stage_name": "第1學期・第2次段考"
@@ -3955,26 +3675,6 @@
     ],
     "answer": 2,
     "explanation": "新北市立海山高中（國中部）114-1-2 定期評量8年級國文科第 30 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g8-chinese-31",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "chinese",
-    "grade": "8",
-    "concept": "國文：語文素養與生活閱讀理解",
-    "stem": "根據上文，下列哪一敘述是錯誤的？",
-    "options": [
-      "A. 釋之「免冠」，是因被文帝免職",
-      "B. 釋之判決前，文帝認為應判滅族",
-      "C. 釋之向文帝報告：判處盜高廟玉環者死刑",
-      "D. 釋之因判高廟盜案而為天下人所讚譽"
-    ],
-    "answer": 0,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量8年級國文科第 31 題真題。",
     "semester": "1",
     "stage": "2",
     "stage_name": "第1學期・第2次段考"
@@ -4540,126 +4240,6 @@
     "stage_name": "第1學期・第2次段考"
   },
   {
-    "id": "hs-11412-g8-english-32",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "8",
-    "concept": "英文：現在進行式與過去進行式",
-    "stem": "Why did the girls keep practicing?",
-    "options": [
-      "A. Because they loved music.",
-      "B. Because they wanted to be different.",
-      "C. Because their company wanted them to.",
-      "D. Because they were tired. （ ）33 What is the main idea of this reading?"
-    ],
-    "answer": 0,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量8年級英語科第 32 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g8-english-34",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "8",
-    "concept": "英文：現在進行式與過去進行式",
-    "stem": "Why was Echo famous in the forest?",
-    "options": [
-      "A. Because she was scared of Zeus.",
-      "B. Because she loved to talk with Hera.",
-      "C. Because she had a beautiful voice and was very kind.",
-      "D. Because she liked to hide in the forest."
-    ],
-    "answer": 2,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量8年級英語科第 34 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g8-english-35",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "8",
-    "concept": "英文：現在進行式與過去進行式",
-    "stem": "Why did Zeus go into the forest and ask Echo for help?",
-    "options": [
-      "A. He wanted to hide from his wife, Hera.",
-      "B. He wanted to hear Echo's beautiful voice.",
-      "C. He was looking for Hera in the forest.",
-      "D. He wanted to help Echo."
-    ],
-    "answer": 0,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量8年級英語科第 35 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g8-english-36",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "8",
-    "concept": "英文：代名詞主格、受格與所有格",
-    "stem": "How did Echo help Zeus?",
-    "options": [
-      "A. She made fun of Hera.",
-      "B. She wanted Hera to listen to her songs.",
-      "C. She fought Hera with her magic.",
-      "D. She stopped Hera and talked with her."
-    ],
-    "answer": 3,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量8年級英語科第 36 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g8-english-39",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "8",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "What is the haftseen table?",
-    "options": [
-      "A. A gift for children.",
-      "B. A table with seven special things.",
-      "C. A new year’s food.",
-      "D. A table to make a fire on."
-    ],
-    "answer": 1,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量8年級英語科第 39 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g8-english-40",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "8",
-    "concept": "英文：代名詞主格、受格與所有格",
-    "stem": "What is the best title for this reading?",
-    "options": [
-      "A. How to Make a Haftseen Table.",
-      "B. A Special Festival of New Beginnings.",
-      "C. How to Cook Persian Food.",
-      "D. The History of Iran."
-    ],
-    "answer": 1,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量8年級英語科第 40 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
     "id": "hs-11412-g9-chinese-1",
     "school": "海山國中",
     "exam": "114學年度第1學期第2次段考",
@@ -5111,7 +4691,7 @@
       "A. 日本人氣動畫電影《鬼滅之刃無限城篇》昨天在中國上映，首日票房達人民幣",
       "B. 上映版本保留了原作中血腥、暴力、衣著暴露的鏡頭，以及主角竈門炭治郎的日輪花紙耳飾",
       "C. 日輪花紙耳飾花紋型似二戰日本軍隊「旭日旗」，動畫在中國播放時將放射狀線條改成直線",
-      "D. 午夜電影院很久沒有這麼熱鬧，年輕人對《鬼滅之刃》極度熱情拉動沉寂已久的電影市場。 四、閱讀題組（每題2分，共20分） 說到聊怪談的百物語，一般都是選在某個夜晚，人們齊聚一處，依序說出怪談，點一百支蠟燭， 說完一個怪談吹熄一支蠟燭，直到說完一百個怪談，據說蠟燭全部吹熄之時，妖怪就會出現。然而， 三島屋的百物語，一次只會請一名說故事者，地點就在店內的箱房「黑白之間」 ，而向說故事者遞茶點 ，迎面而坐，擔任聆聽者的，是店主的姪女阿近，最近，又加入了店主的小兒子富次郎，二人將聽聞 的故事藏在心中，富次郎則是開始將故事畫成畫，無論什麼形式，故事絕不會從「黑白之間」往外傳 ，「聽過就忘，說完就忘。」 此時，兩人之間擺了一個跟米箱差不多大小的桐木箱。這是個全新的木箱，上頭的木紋仍很鮮明 。這個桐木箱是用來存放富次郎圖畫的保管箱。而實際打開蓋子一看，裡頭整整齊齊存放了富次郎之 前的三張畫。箱子內側的二端，嵌著像柵欄般的東西，是以桐木板製成，而那幾張畫就貼在厚實的美 濃紙上，立著夾在這柵欄內。這麼一來，圖畫紙就不會彼此黏在一起，也不會產生折痕，更不會弄皺 。由於採用桐木，還能除蟲防潮。 「這原是書商存放簿子、書畫，以及書信之類的物品，所設計的箱子 。」一般來說，書本都是採疊放，但下方的書本會因為重量而壓傷，要一本一本取出也是件麻煩事， 所以貴重的書本都會放在箱子裡立著擺放。 「這木箱是『聽過就忘箱』 。一名說故事者前來，說完後離 去，我負責作畫，然後收藏在這裡，蓋上蓋子後，那故事就不存在了。」富次郎對阿近說。「所以，存 放在這裡的圖畫，箱內外都不會有用來表示其內容的牌子或標籤。」打開蓋子，只會看到整排美濃紙 ，不知道裡頭的內容。「用來存放小少爺圖畫的桐木箱，需要一個名稱，對吧？」阿勝說， 「就叫作『 怪奇草紙』吧。三島屋在「黑白之間」聽完就忘的各種奇怪故事，全寄放在那個桐木箱裡，今後就讓 它成為奇異百物語的重要輔助角色吧。」它是聆聽者的助手，它的名稱是「怪奇草紙」 。 （改寫自宮部美幸《怪奇草紙》"
+      "D. 午夜電影院很久沒有這麼熱鬧，年輕人對《鬼滅之刃》極度熱情拉動沉寂已久的電影市場。"
     ],
     "answer": 3,
     "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級國文科第 25 題真題。",
@@ -5320,26 +4900,6 @@
     "stage_name": "第1學期・第2次段考"
   },
   {
-    "id": "hs-11412-g9-math-3",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "math",
-    "grade": "9",
-    "concept": "數學：核心概念理解與運算",
-    "stem": "承上題，若 AB = 10 ，則△ABC 的面積為？",
-    "options": [
-      "A. 25 3 2",
-      "B. 25 3",
-      "C. 20",
-      "D. 25"
-    ],
-    "answer": 0,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級數學科第 3 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
     "id": "hs-11412-g9-math-7",
     "school": "海山國中",
     "exam": "114學年度第1學期第2次段考",
@@ -5415,26 +4975,6 @@
     ],
     "answer": 3,
     "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級數學科第 17 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-math-23",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "math",
-    "grade": "9",
-    "concept": "數學：核心概念理解與運算",
-    "stem": "承上題，請問這條山路上坡的部分有幾公里？",
-    "options": [
-      "A. 13",
-      "B. 12",
-      "C. 144 13",
-      "D. 120 13"
-    ],
-    "answer": 2,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級數學科第 23 題真題。",
     "semester": "1",
     "stage": "2",
     "stage_name": "第1學期・第2次段考"
@@ -5800,26 +5340,6 @@
     "stage_name": "第1學期・第2次段考"
   },
   {
-    "id": "hs-11412-g7-social-19",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "7",
-    "concept": "社會：現代公民素養與社會生活",
-    "stem": "承上題，前述政策的主要目的，是想鼓勵現代家庭發揮何項功能?",
-    "options": [
-      "A. 生兒育女的生育功能",
-      "B. 著重生產的經濟功能",
-      "C. 指導課業的教育功能",
-      "D. 防治家暴的保護功能。"
-    ],
-    "answer": 0,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量7年級社會科第 19 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
     "id": "hs-11412-g7-social-20",
     "school": "海山國中",
     "exam": "114學年度第1學期第2次段考",
@@ -5940,26 +5460,6 @@
     "stage_name": "第1學期・第2次段考"
   },
   {
-    "id": "hs-11412-g7-social-27",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "7",
-    "concept": "社會：現代公民素養與社會生活",
-    "stem": "承上題，小琪家是屬於哪一種家庭型態?",
-    "options": [
-      "A. 主幹家庭",
-      "B. 擴展家庭",
-      "C. 重組家庭",
-      "D. 核心家庭。"
-    ],
-    "answer": 1,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量7年級社會科第 27 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
     "id": "hs-11412-g7-social-29",
     "school": "海山國中",
     "exam": "114學年度第1學期第2次段考",
@@ -6040,26 +5540,6 @@
     "stage_name": "第1學期・第2次段考"
   },
   {
-    "id": "hs-11412-g7-social-33",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "7",
-    "concept": "社會：臺灣歷史重要轉折與治理發展",
-    "stem": "承上題，前述可以保護夕花的對應措施，其法源依據為下列何者?",
-    "options": [
-      "A. 民法",
-      "B. 家庭暴力防治法",
-      "C. 性別平等教育法",
-      "D. 家庭教育法。 【題組一】根據下文回答第 34～35 題： 虱目魚是臺灣養殖漁業中重要的魚種，早在大航海時代，荷蘭人統治時期便有養殖記錄，相傳最 早由荷蘭人引進臺灣，並在臺灣某地開始養殖。 關於「虱目魚」名稱的由來，眾說紛紜。較為流傳的說法是鄭氏政權時期，某地漁民進獻此魚， 鄭成功問道： 「這是什麼魚？」後人便以「什麼魚」諧音稱之為「虱目魚」 。另一說則指出， 「虱目魚」 源自西班牙語系中的 Sabador，為音譯而來。根據《臺灣通史》記載：「某地沿海素以畜魚為業，其魚 為麻薩末，番語也。」可見「麻薩末」是早期名稱，其中「麻薩」為平埔族西拉雅語「眼睛」之意， 因虱目魚的眼睛特別明顯，原住民遂以其特徵命名， 「麻薩末」可能正是虱目魚名稱的起源。"
-    ],
-    "answer": 1,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量7年級社會科第 33 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
     "id": "hs-11412-g7-social-34",
     "school": "海山國中",
     "exam": "114學年度第1學期第2次段考",
@@ -6075,26 +5555,6 @@
     ],
     "answer": 1,
     "explanation": "新北市立海山高中（國中部）114-1-2 定期評量7年級社會科第 34 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g7-social-35",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "7",
-    "concept": "社會：臺灣地理環境與自然生態",
-    "stem": "文中提及的某地最可能具有下列何項海岸特色？",
-    "options": [
-      "A. 海岸平原較廣，海水較淺，海岸線平直",
-      "B. 海岸線陡直，多為氣勢雄偉的懸崖峭壁",
-      "C. 岬角與海灣相間，海岸線曲折，多良港",
-      "D. 由珊瑚礁構成，地表崎嶇，生態系豐富 【題組二】根據下文回答第 36～37 題： 「臺 9 線蘇花公路山區路段改善計畫」 （簡稱新臺 9 線）從宜蘭蘇澳鎮到花蓮崇德村，全長約 40 公里。這條道路依山傍海，多位於某山脈北段，地形崎嶇、起伏落差大，加上鄰近海洋，是典型的山 嶺–海岸交錯地帶。 受限於當地地形影響，道路施工困難，常面臨崩塌、落石、土石流等地質災害，因此改善計畫中 特別採用長隧道、橋梁與高標準路基設計，以提升行車安全與防災能力。工程中指出，隧道全長約"
-    ],
-    "answer": 0,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量7年級社會科第 35 題真題。",
     "semester": "1",
     "stage": "2",
     "stage_name": "第1學期・第2次段考"
@@ -6180,26 +5640,6 @@
     "stage_name": "第1學期・第2次段考"
   },
   {
-    "id": "hs-11412-g7-social-42",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "7",
-    "concept": "社會：社會領域核心素養",
-    "stem": "海山旅行社推出暑期離島觀光行程，內容如下： 行程一 行程二 行程三 該島嶼地質上與大陸相連，遊客能在此遙望廈門， 並體驗豐富的戰地文化史蹟，如翟山坑道。 遊客可以在此體驗罕見的海底溫泉（朝日溫泉） ，並 見證白色恐怖時期遺留的監獄遺跡。 這裡是珊瑚礁露出海面所形成的島嶼，遊客可以在 花瓶岩附近浮潛，欣賞獨特的珊瑚礁生態。 若想從行程一玩到行程三，遊客應依序前往圖中哪些離島？",
-    "options": [
-      "A. 甲→己→丁",
-      "B. 甲→戊→丙",
-      "C. 乙→戊→丁",
-      "D. 乙→己→丙"
-    ],
-    "answer": 2,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量7年級社會科第 42 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
     "id": "hs-11412-g7-social-43",
     "school": "海山國中",
     "exam": "114學年度第1學期第2次段考",
@@ -6280,66 +5720,6 @@
     "stage_name": "第1學期・第2次段考"
   },
   {
-    "id": "hs-11412-g7-english-13",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "______, Tony.",
-    "options": [
-      "A. sure",
-      "B. free",
-      "C. safe",
-      "D. Take a picture"
-    ],
-    "answer": 3,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量7年級英語科第 13 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g7-english-16",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：情態助動詞用法",
-    "stem": "A: What day can Mike go swimming?",
-    "options": [
-      "A. Sunday.",
-      "B. on 8:00 p.m.",
-      "C. at 8:00 in the afternoon. B: ______",
-      "D. Tuesdays."
-    ],
-    "answer": 2,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量7年級英語科第 16 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g7-english-18",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "A:______ you play basketball well? B: Sure. I am good at it.",
-    "options": [
-      "A. Are",
-      "B. Is",
-      "C. he; he well 很好地",
-      "D. Does"
-    ],
-    "answer": 3,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量7年級英語科第 18 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
     "id": "hs-11412-g7-english-20",
     "school": "海山國中",
     "exam": "114學年度第1學期第2次段考",
@@ -6375,226 +5755,6 @@
     ],
     "answer": 3,
     "explanation": "新北市立海山高中（國中部）114-1-2 定期評量7年級英語科第 21 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g7-english-23",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：時間與地方介系詞",
-    "stem": "A: What day is it today? B: It is ______.",
-    "options": [
-      "A. on Monday",
-      "B. Monday",
-      "C. What; drawing",
-      "D. What; cooking"
-    ],
-    "answer": 1,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量7年級英語科第 23 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g7-english-24",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：代名詞主格、受格與所有格",
-    "stem": "A: Is Grandma’s birthday______ Tuesday? B: No, it is______ this weekend.",
-    "options": [
-      "A. on ; on",
-      "B. ; on",
-      "C. on; ",
-      "D. on; at"
-    ],
-    "answer": 2,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量7年級英語科第 24 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g7-english-25",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：現在進行式與過去進行式",
-    "stem": "Look! Mike ______ the dog.",
-    "options": [
-      "A. can play",
-      "B. is playing",
-      "C. She is making an online video call to her grandma now.) Dora：Hello, Grandma. Grandma：Hello, sweetie. How (26) your trip? Dora：Great. We have a lot of fun here. But it is so cold in the US",
-      "D. I don’t like it. Grandma：I see. What time is it in the USA? Dora： (27) . And it’s Sunday evening here. Is it seven in Taiwan, too? Grandma：Yes, it is. It’s Monday morning in Taiwan. Dora：Are you (28) breakfast now? Grandma：Yes, I am. Dora：What about Grandpa? (29) is he? Grandma：He is in the bedroom, and he is reading. What are your parents doing? Dora：Mom is cooking dinner in the kitchen, and (30) is making tea. Grandma：OK. Say hi to your parents for me. Goodbye, sweetie. Dora：Bye, Grandma.  trip 旅行 online video call 線上視訊通話 have a lot of fun 玩得很開心 breakfast 早餐"
-    ],
-    "answer": 3,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量7年級英語科第 25 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g7-english-31",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "What CAN Ken and Momo do when they see Turbo Granny?",
-    "options": [
-      "A. Eat.",
-      "B. Drink.",
-      "C. Run.",
-      "D. Stand."
-    ],
-    "answer": 3,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量7年級英語科第 31 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g7-english-32",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "What CAN’T Ken and Momo do when they see Snake Woman?",
-    "options": [
-      "A. Use umbrella.",
-      "B. Give milk.",
-      "C. Play games.",
-      "D. Run."
-    ],
-    "answer": 0,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量7年級英語科第 32 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g7-english-33",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：特殊疑問句型與日常問答",
-    "stem": "Who is “he”?",
-    "options": [
-      "A. Meng Hao-ran.",
-      "B. Wang Wei.",
-      "C. Jacob.",
-      "D. Anita’s friend."
-    ],
-    "answer": 1,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量7年級英語科第 33 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g7-english-34",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：現在進行式與過去進行式",
-    "stem": "With the “time machine,” what can you do?",
-    "options": [
-      "A. Go to many places.",
-      "B. Write a poem.",
-      "C. Know some women.",
-      "D. Go to old time."
-    ],
-    "answer": 3,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量7年級英語科第 34 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g7-english-35",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "Which one is correct? (選出正確的選項)",
-    "options": [
-      "A. All the women in Tang Dynasty are heavy.",
-      "B. Anita and Jacob are cousins.",
-      "C. Anita and Jacob are using the time machine.",
-      "D. Meng Hao-ran and Wang Wei are classmates. (36~37)  a piece of paper 一張紙 face 臉 cut out 剪下 hole 洞 tie 綁 rubber band 橡皮筋"
-    ],
-    "answer": 2,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量7年級英語科第 35 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g7-english-37",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：代名詞主格、受格與所有格",
-    "stem": "Which order is correct? (選出正確的順序) a. tie the small holes with rubber bands b. cut out the eyes c. draw a face on the paper d. cut out the face",
-    "options": [
-      "A. a→b→c→d",
-      "B. c→d→b→a",
-      "C. c→b→a→d",
-      "D. b→d→c→a (38~40) Country Cat Home > Events & Singers Date April 30, 2024 May 1, 2024 Singer Time Maria Dodd 9 p.m. Paul Miller 9:30 p.m. May 5, 2024 June 1, 2024 Hi, everyone. My name is Maria. I’m a singer at Country Cat. My husband and I work and show together. This is the place of our show. I like my job, and I really enjoy it. Next Show: - April 30, 2020 - May 1, 2020 NEXT   home 首頁 event 活動 show 表演 job 工作 enjoy 享受 next 下一個"
-    ],
-    "answer": 1,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量7年級英語科第 37 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g7-english-38",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "What’s the reading about?",
-    "options": [
-      "A. Maria’s husband.",
-      "B. Maria’s family.",
-      "C. Maria’s home.",
-      "D. Maria’s job."
-    ],
-    "answer": 3,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量7年級英語科第 38 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g7-english-39",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：代名詞主格、受格與所有格",
-    "stem": "What is Maria’s job?",
-    "options": [
-      "A. A singer.",
-      "B. A student.",
-      "C. A cook.",
-      "D. A teacher."
-    ],
-    "answer": 0,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量7年級英語科第 39 題真題。",
     "semester": "1",
     "stage": "2",
     "stage_name": "第1學期・第2次段考"
@@ -6860,66 +6020,6 @@
     "stage_name": "第1學期・第2次段考"
   },
   {
-    "id": "hs-11412-g8-social-14",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "8",
-    "concept": "社會：社會領域核心素養",
-    "stem": "岳飛曾以滿江紅表達自身對抗外族的志向，其中一段如下： 「靖康恥，猶未雪。臣子恨，何時滅！駕 長車，踏破賀蘭山缺。壯志飢餐胡虜肉，笑談渴飲匈奴血。待從頭，收拾舊山河，朝天闕。」請問 這首詞當中提到的「胡虜」 、 「匈奴」指涉的國家在圖中何處？",
-    "options": [
-      "A. 甲",
-      "B. 乙",
-      "C. 丙",
-      "D. 丁"
-    ],
-    "answer": 2,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量8年級社會科第 14 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g8-social-15",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "8",
-    "concept": "社會：臺灣歷史重要轉折與治理發展",
-    "stem": "關於圖中各個政權的描述，下列何者正確？",
-    "options": [
-      "A. 甲國曾與北宋合作，企圖消滅乙國，但以失敗告終",
-      "B. 乙國擁有軍事重鎮燕雲十六州，對北宋邊防帶來重大威脅",
-      "C. 丙國由蒙古人所建立，並在統治範圍內施行種族差別待遇",
-      "D. 丁國與南宋聯合滅亡丙國，事成後又進一步率兵南下滅亡南宋 ※以下兩題為題組（16-17），請閱讀完文章以後，回答以下問題。 信仰「切支丹教」的葡萄牙人早在十六世紀中期便前往日本，不僅傳入火器技術，也輸入生絲、 象牙、砂糖等物品。然而，與外來宗教的接觸對當地社會帶來紛爭，導致統治者不得不開始採取禁教 的措施。日本幕府為了阻止「切支丹教」傳布，屢次下令驅逐傳教士，並建造收容葡萄牙人的島嶼： 出島。出島是一座填海造陸而成的扇形人工島嶼，也被稱作是「築島」或「扇島」 。另一方面，荷蘭商 船於 1600 年漂洋抵達日本，開啟了兩地之間的交流，航海士威廉．亞當斯更受到德川家康禮遇，成為 幕府的外交顧問。1637 年島原之亂爆發，荷蘭人協助平亂而深獲幕府信任，因而能夠在中國之外，獨 占與日本之間的貿易。日後，隨著葡萄牙人被驅逐，荷蘭的商館逐漸搬遷到出島上。荷蘭商人輸入天 鵝絨、砂糖、玻璃製品與書籍等物，也帶來彙整海外資訊並翻譯成日文的「風說書」 ，幫助德川幕府理 解世界局勢。在那之後一直到十九世紀日本結束鎖國之前，荷蘭商人是日本理解世界的主要橋樑，出 島更是日本面對西歐的唯一窗口。"
-    ],
-    "answer": 3,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量8年級社會科第 15 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g8-social-16",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "8",
-    "concept": "社會：社會領域核心素養",
-    "stem": "根據上文判斷， 「切支丹教」是哪一個宗教？",
-    "options": [
-      "A. 佛教",
-      "B. 神道教",
-      "C. 天主教",
-      "D. 伊斯蘭教"
-    ],
-    "answer": 2,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量8年級社會科第 16 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
     "id": "hs-11412-g8-social-17",
     "school": "海山國中",
     "exam": "114學年度第1學期第2次段考",
@@ -6955,26 +6055,6 @@
     ],
     "answer": 2,
     "explanation": "新北市立海山高中（國中部）114-1-2 定期評量8年級社會科第 18 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g8-social-19",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "8",
-    "concept": "社會：社會領域核心素養",
-    "stem": "承上題，該立委依其職權，在競選期間最有可能提出下列何項政見？",
-    "options": [
-      "A. 廣設毒品危害防制中心",
-      "B. 糾正內政部警政署緝毒不力",
-      "C. 逮捕吸食毒品者並強制勒戒",
-      "D. 修法把迷幻藥品提升為二級毒品。"
-    ],
-    "answer": 3,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量8年級社會科第 19 題真題。",
     "semester": "1",
     "stage": "2",
     "stage_name": "第1學期・第2次段考"
@@ -7155,26 +6235,6 @@
     ],
     "answer": 3,
     "explanation": "新北市立海山高中（國中部）114-1-2 定期評量8年級社會科第 30 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g8-social-31",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "8",
-    "concept": "社會：社會領域核心素養",
-    "stem": "根據上文第一段內容可知，若換到現代，張釋之行使的權力與下列何者最相近？",
-    "options": [
-      "A. 糾舉國家公務員",
-      "B. 判決閃兵的藝人有期徒刑",
-      "C. 舉辦司法人員特考",
-      "D. 審議中央政府總預算。"
-    ],
-    "answer": 1,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量8年級社會科第 31 題真題。",
     "semester": "1",
     "stage": "2",
     "stage_name": "第1學期・第2次段考"
@@ -7520,86 +6580,6 @@
     "stage_name": "第1學期・第2次段考"
   },
   {
-    "id": "hs-11412-g9-social-7",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "9",
-    "concept": "社會：社會領域核心素養",
-    "stem": "根據資料一推斷，此一命令的下達與下列何人最相關？",
-    "options": [
-      "A. 君士坦丁",
-      "B. 馬丁路德",
-      "C. 狄奧多西",
-      "D. 查士丁尼"
-    ],
-    "answer": 0,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級社會科第 7 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-social-9",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "9",
-    "concept": "社會：世界文明起源與歷史發展",
-    "stem": "根據資料二，教宗所稱「呼籲當地諸侯和他們臣民，來拯救東方的教會……」 促成下列那項行動？",
-    "options": [
-      "A. 十字軍東征",
-      "B. 蒙古西征",
-      "C. 亞歷山大東征",
-      "D. 查士丁尼西征"
-    ],
-    "answer": 0,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級社會科第 9 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-social-10",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "9",
-    "concept": "社會：社會領域核心素養",
-    "stem": "資料三中「對於基督教是特殊的一年」 ，最有可能於下列何時？",
-    "options": [
-      "A. 西元五世紀",
-      "B. 西元十一世紀",
-      "C. 西元十三世紀",
-      "D. 西元十五世紀 【題組】請根據右圖，依序回答 11-12 題："
-    ],
-    "answer": 1,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級社會科第 10 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-social-12",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "9",
-    "concept": "社會：社會領域核心素養",
-    "stem": "後來，節目出現以下內容： 「當錢幣在錢櫃中叮噹作響，增加的只是貪婪 和利己之心。至於教會代禱的功效，僅由神主宰。真誠悔改的基督徒，或生或死，就是沒有贖罪券，也 能分享神和教會的賜福和恩典。」請問：上述中引領改革之人，源於圖中何處？",
-    "options": [
-      "A. 丁",
-      "B. 丙",
-      "C. 戊",
-      "D. 乙"
-    ],
-    "answer": 0,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級社會科第 12 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
     "id": "hs-11412-g9-social-13",
     "school": "海山國中",
     "exam": "114學年度第1學期第2次段考",
@@ -7780,26 +6760,6 @@
     "stage_name": "第1學期・第2次段考"
   },
   {
-    "id": "hs-11412-g9-social-22",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "9",
-    "concept": "社會：社會領域核心素養",
-    "stem": "承上題，部分玩家指出，在 Labubu 玩偶熱銷初期， 「黃牛」大量收購並哄抬轉售價格，嚴重影響一般 消費者以合理價格購得商品的機會。若要針對這種妨礙市場競爭秩序的行為進行規範，應主要根據我 國哪一項法律？",
-    "options": [
-      "A. 《公平交易法》",
-      "B. 《刑法》",
-      "C. 《消費者保護法》",
-      "D. 《文化資產保存法》"
-    ],
-    "answer": 0,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級社會科第 22 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
     "id": "hs-11412-g9-social-23",
     "school": "海山國中",
     "exam": "114學年度第1學期第2次段考",
@@ -7815,26 +6775,6 @@
     ],
     "answer": 0,
     "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級社會科第 23 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-social-24",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "9",
-    "concept": "社會：社會領域核心素養",
-    "stem": "承上題，文中提到的「網路購物平台公司」是屬於下列哪一種市場類型？",
-    "options": [
-      "A. 有形市場、商品市場",
-      "B. 有形市場、勞動市場",
-      "C. 無形市場、商品市場",
-      "D. 無形市場、勞動市場。"
-    ],
-    "answer": 2,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級社會科第 24 題真題。",
     "semester": "1",
     "stage": "2",
     "stage_name": "第1學期・第2次段考"
@@ -7915,26 +6855,6 @@
     ],
     "answer": 2,
     "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級社會科第 28 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-social-29",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "9",
-    "concept": "社會：社會領域核心素養",
-    "stem": "右列為海山國自 2022-2024 年間的進口額一覽表，從表中資料可反映出該國的什麼現象？",
-    "options": [
-      "A. 貿易收入增多 年分 2022 2023 2024",
-      "B. 貿易收入減少 進口額(億美元) 220",
-      "C. 貿易支出增多 230 255",
-      "D. 貿易支出減少"
-    ],
-    "answer": 2,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級社會科第 29 題真題。",
     "semester": "1",
     "stage": "2",
     "stage_name": "第1學期・第2次段考"
@@ -8040,26 +6960,6 @@
     "stage_name": "第1學期・第2次段考"
   },
   {
-    "id": "hs-11412-g9-social-37",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "9",
-    "concept": "社會：臺灣地理環境與自然生態",
-    "stem": "美國地大物博，國家公園眾多，其中在本土 48 州中最大的國家公園，是 一個以氣候乾燥聞名的國家公園，它惡劣的環境使不少人在此遇難，但境 內擁有鹽灘、沙漠、山谷等多樣的地景，因此在 1994 年被設立為國家公 園，現今亦為國際生物圈保護區之一。請問該國家公園位於圖三中何處？",
-    "options": [
-      "A. 甲",
-      "B. 乙",
-      "C. 丙",
-      "D. 丁。 圖二 圖三"
-    ],
-    "answer": 0,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級社會科第 37 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
     "id": "hs-11412-g9-social-39",
     "school": "海山國中",
     "exam": "114學年度第1學期第2次段考",
@@ -8075,46 +6975,6 @@
     ],
     "answer": 1,
     "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級社會科第 39 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-social-40",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "9",
-    "concept": "社會：社會領域核心素養",
-    "stem": "圖四為某作物在全球種植區的農業地圖，深色區域該作物 為種植佔比高的地區，而顏色較淺的區域則表示此作物種 植比例相對少。請問此作物最可能為下列何者？",
-    "options": [
-      "A. 稻米",
-      "B. 可可",
-      "C. 咖啡",
-      "D. 玉米。"
-    ],
-    "answer": 3,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級社會科第 40 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-social-41",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "9",
-    "concept": "社會：臺灣地理環境與自然生態",
-    "stem": "圖五為 2023 年部分國家都市化程度統計圖，中南美洲許多國家都市化 程度較美國高，但經濟發展程度卻不如美國。造成此現象的最主要原因 為下列何者？",
-    "options": [
-      "A. 熱帶氣候範圍廣大，促使人口向都市集中",
-      "B. 都市為農礦產品重要的產地，經濟價值高",
-      "C. 都市的基礎設施健全，吸引鄉村人口移居 圖五",
-      "D. 鄉村生計艱困，導致大量人口湧進大都市。"
-    ],
-    "answer": 3,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級社會科第 41 題真題。",
     "semester": "1",
     "stage": "2",
     "stage_name": "第1學期・第2次段考"
@@ -8140,66 +7000,6 @@
     "stage_name": "第1學期・第2次段考"
   },
   {
-    "id": "hs-11412-g9-social-43",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "9",
-    "concept": "社會：臺灣歷史重要轉折與治理發展",
-    "stem": "下表為某國家 2024 年的經貿資料，請依表中資訊判斷，此國最可能為下列何者？",
-    "options": [
-      "A. 巴西",
-      "B. 智利",
-      "C. 阿根廷",
-      "D. 墨西哥。 面積 8,516,954 平方公里 平均國民年所得 9,032 美元 進口商品 原油、燃料油、汽車零配件、引擎發動機、車輛、光伏電池、藥品、 殺蟲劑、肥料、天然氣、積體電路 出口商品 黃豆、原油、鐵礦石、蔗糖、咖啡、玉米、燃料油、生鮮及冷凍牛肉 【題組】紐奧良是美國南方路易斯安那州第一大城，該地擁有便利的海運及河運，16 世紀初已經有歐 洲人到此地探險。1960 年代後，大量黑人移居紐奧良，逐漸取代白人成為第一大族群，多樣的文化在 此地交會，讓這城市擁有許多獨特之處，例如融合非洲與歐洲音樂元素的爵士樂、結合法國和西班牙 特色的海鮮料理等，這些特色使得紐奧良成為美國文化多元、富有異國 情調的城市之一。 請依上述文章，回答 44~46 題。"
-    ],
-    "answer": 0,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級社會科第 43 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-social-44",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "9",
-    "concept": "社會：社會領域核心素養",
-    "stem": "圖六為美國族群比例圖，請問現今紐澳良當地最大的族群，是圖中哪一 項代號？",
-    "options": [
-      "A. 甲",
-      "B. 乙",
-      "C. 丙",
-      "D. 丁。"
-    ],
-    "answer": 2,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級社會科第 44 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-social-45",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "9",
-    "concept": "社會：臺灣地理環境與自然生態",
-    "stem": "紐澳良位於河川出海口，擁有便利的海運及河運，請問是哪條河川流經 圖六 這個城市？",
-    "options": [
-      "A. 多瑙河",
-      "B. 亞馬孫河",
-      "C. 密西西比河",
-      "D. 聖羅倫斯河。"
-    ],
-    "answer": 2,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級社會科第 45 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
     "id": "hs-11412-g9-social-46",
     "school": "海山國中",
     "exam": "114學年度第1學期第2次段考",
@@ -8215,46 +7015,6 @@
     ],
     "answer": 1,
     "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級社會科第 46 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-social-47",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "9",
-    "concept": "社會：社會領域核心素養",
-    "stem": "請問圖七中哪個代號，是威斯康辛州所在之處？",
-    "options": [
-      "A. 甲",
-      "B. 乙",
-      "C. 丙",
-      "D. 丁。"
-    ],
-    "answer": 3,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級社會科第 47 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-social-48",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "9",
-    "concept": "社會：臺灣歷史重要轉折與治理發展",
-    "stem": "請問在文章中，威斯康辛州主要遇到的問題為下列何者？",
-    "options": [
-      "A. 農業生產技術精進，使農產量供過於求",
-      "B. 集約式的經營農場，導致銷售大幅降低",
-      "C. 專業化的生產方式，生產成本大幅提升",
-      "D. 單一農產大量生產，價格易受市場波動。 圖七 【題組】合恩角位於南美洲智利火地群島南端，被廣泛認為是南美洲的最南端，為世界重要的海角之 一，同時也以海況最惡劣的航道聞名。合恩角附近的海域風暴異常，海水冰冷，甚至長達半年以上有 下雪機會，因此亦有著「海上墳場」之稱，歷史上，曾有 500 多艘船隻在合恩角沉沒，兩萬餘人葬身 海底。第一個成功通過合恩角的歐洲探險家為威廉 斯考滕，他在 1616 年通過此處，並以他的家鄉霍 倫（荷蘭語：Hoorn）來命名，這也是合恩角荷蘭語名 Kaap Hoorn 得名的由來。請依上述文章，回答 49~50 題。"
-    ],
-    "answer": 3,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級社會科第 48 題真題。",
     "semester": "1",
     "stage": "2",
     "stage_name": "第1學期・第2次段考"
@@ -8375,26 +7135,6 @@
     ],
     "answer": 3,
     "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級英語科第 14 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-english-15",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：現在進行式與過去進行式",
-    "stem": "The new MRT stations _______ in two years. It’ll be more convenient for the people in the city.",
-    "options": [
-      "A. are built",
-      "B. are going to build",
-      "C. will be built",
-      "D. have been built 16 I want to know ________"
-    ],
-    "answer": 2,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級英語科第 15 題真題。",
     "semester": "1",
     "stage": "2",
     "stage_name": "第1學期・第2次段考"
@@ -8615,326 +7355,6 @@
     ],
     "answer": 1,
     "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級英語科第 27 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-english-28",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：現在進行式與過去進行式",
-    "stem": "Nobody knew_______",
-    "options": [
-      "A. what happened to the man?",
-      "B. when did the man come.",
-      "C. what time it was.",
-      "D. what was that man."
-    ],
-    "answer": 2,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級英語科第 28 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-english-29",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：現在進行式與過去進行式",
-    "stem": "I don’t know _______this morning.",
-    "options": [
-      "A. who called him",
-      "B. when she call",
-      "C. if she call him",
-      "D. who did she call"
-    ],
-    "answer": 0,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級英語科第 29 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-english-30",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "We haven’t decided when ______ to Tokyo yet.",
-    "options": [
-      "A. to go",
-      "B. will they go",
-      "C. they went",
-      "D. they have gone 二、閱讀測驗 26% Australia Plans Social Media Ban for Children Under 16 The Australian government plans to make a law to ban social media for children under"
-    ],
-    "answer": 0,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級英語科第 30 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-english-31",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "What is the main goal(目標) of the Australian government's social media ban?",
-    "options": [
-      "A. To reduce government use of social media.",
-      "B. To ban all social media platforms in the country.",
-      "C. To stop children under 16 from using social media.",
-      "D. To teach children to use safer parts of the Internet."
-    ],
-    "answer": 2,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級英語科第 31 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-english-32",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：情態助動詞用法",
-    "stem": "Why is DIGI worried about the new rule?",
-    "options": [
-      "A. Children might try to stay away from the Internet.",
-      "B. Some social media platforms might stop working.",
-      "C. Using social media could become more expensive.",
-      "D. Children might turn to more dangerous parts of the Internet."
-    ],
-    "answer": 3,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級英語科第 32 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-english-33",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：情態助動詞用法",
-    "stem": "What might the Australian government think about the current (目前) social media rules?",
-    "options": [
-      "A. They believe the rules are great for protecting children.",
-      "B. They believe social media companies can make good rules.",
-      "C. They think the rules are not good enough and need to be stricter.",
-      "D. They think social media has nothing to do with (不相關) children's feelings."
-    ],
-    "answer": 2,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級英語科第 33 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-english-34",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：代名詞主格、受格與所有格",
-    "stem": "What does Olivia want her future schedule(計畫表) to be like?",
-    "options": [
-      "A. Get home → Eat dinner → Chat online → Watch a movie",
-      "B. Get home → Have dinner → Have fun→ Go to bed",
-      "C. Get home → Cook dinner → Study hard→ Go to bed",
-      "D. Get home → Eat dinner→ Study hard→ Have fun"
-    ],
-    "answer": 3,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級英語科第 34 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-english-35",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：代名詞主格、受格與所有格",
-    "stem": "Which is true about Olivia?",
-    "options": [
-      "A. Olivia usually starts her dinner around six thirty.",
-      "B. Olivia likes to eat instant noodles very much.",
-      "C. Olivia’s mom comes home once every two months.",
-      "D. Olivia enjoys talking with her lovely parents."
-    ],
-    "answer": 0,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級英語科第 35 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-english-36",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：現在進行式與過去進行式",
-    "stem": "What can we know from the reading?",
-    "options": [
-      "A. Olivia is going to be a freshman(新鮮人) in junior high school next year.",
-      "B. Olivia doesn’t like her mother, but likes her father.",
-      "C. Olivia wants her life to be different from now on and wants to make a change.",
-      "D. Olivia's dad watches a movie with her every weekend."
-    ],
-    "answer": 2,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級英語科第 36 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-english-37",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：代名詞主格、受格與所有格",
-    "stem": "What does Her behavior mean?",
-    "options": [
-      "A. Olivia doesn't do her homework or study first.",
-      "B. Olivia doesn't cook instant noodles.",
-      "C. Olivia watches a movie with her dad.",
-      "D. Olivia seldom chats with her friends."
-    ],
-    "answer": 0,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級英語科第 37 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-english-38",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：情態助動詞用法",
-    "stem": "What may endorphins mean?",
-    "options": [
-      "A. They are what can help change a runner's life.",
-      "B. They are what a runner needs while running.",
-      "C. They are what can make people happy.",
-      "D. They are what people eat before jogging."
-    ],
-    "answer": 2,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級英語科第 38 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-english-39",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：現在進行式與過去進行式",
-    "stem": "What do we know from the reading?",
-    "options": [
-      "A. A common person jogs for four or five kilometers in 30 minutes.",
-      "B. Jogging shoes are the cheapest shoes on the market.",
-      "C. Everyone above age forty is usually worried about their health.",
-      "D. Jogging for 8 to 9 kilometers a day is the best pick for a runner who will join a race."
-    ],
-    "answer": 0,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級英語科第 39 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-english-40",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "According to the reading, who has the most correct idea about jogging?",
-    "options": [
-      "A. Amy: I will jog for thirty minutes every day because Dr. Lin told me it will help me never become sick and keep pretty all the time.",
-      "B. Ben: I told myself to go out and the world becomes my gym. Sometimes I walk and sometimes I run. I have seldom felt down and have gotten better grades since I began to jog.",
-      "C. Cathy: A sixty-year-old person like me is too old to jog. It is something belonging to young and healthy guys. I seldom exercise, but I have never gone to the doctor since forty years old.",
-      "D. Dennis: As a worker who needs to work for at least twelve hours a day, I don’t think I need to exercise after work. In fact, all I need is to sleep."
-    ],
-    "answer": 1,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級英語科第 40 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-english-41",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：現在進行式與過去進行式",
-    "stem": "What does that mean in the reading?",
-    "options": [
-      "A. There were a lot of messages on their shop's FB page.",
-      "B. There were not enough waitresses in their shop.",
-      "C. There were a lot of things to do for their business.",
-      "D. There were fewer people waiting outside their shop."
-    ],
-    "answer": 3,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級英語科第 41 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-english-42",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：現在進行式與過去進行式",
-    "stem": "What do we know about Jimmy and Lola from the reading?",
-    "options": [
-      "A. Some people thought the noodles were not hot enough.",
-      "B. They started their noodle business up a few days ago.",
-      "C. Some people would not go because of the unkind waitresses.",
-      "D. They tried to save their business by giving free drinks away."
-    ],
-    "answer": 3,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級英語科第 42 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "hs-11412-g9-english-43",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：現在進行式與過去進行式",
-    "stem": "Jimmy replied to one of the messages on their FB page: Sorry for replying so late, but we sincerely thank you for your messages on our FB page. We should have checked our FB page every day, but we failed to do so. However, we have asked all our waitresses to clean the tables right away after the guests left. We are happy to invite you all to have a free meal again and let you see a different HAPPY Nudo. Just tell us who you are when you come next time. Welcome back anytime! Which message of the following did Jimmy reply to?",
-    "options": [
-      "A. After we sat at the table, we found it was still dirty even after we had ordered our meal. All the waitresses were as busy as bees.",
-      "B. All of us thought HAPPY Nudo would send each one a free plate of sidedish if they checked in on the shop's FB page. But nothing at all!",
-      "C. There were a lot of people waiting outside under the hot sun today. All of us wondered why HAPPY Nudo could not give each one a free drink.",
-      "D. We all agreed the beef noodles were too expensive. There were only a few slices of thin beef in the bowl, and the noodles weren't enough for us."
-    ],
-    "answer": 0,
-    "explanation": "新北市立海山高中（國中部）114-1-2 定期評量9年級英語科第 43 題真題。",
     "semester": "1",
     "stage": "2",
     "stage_name": "第1學期・第2次段考"

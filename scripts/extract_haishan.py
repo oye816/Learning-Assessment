@@ -168,11 +168,26 @@ def extract_questions_from_pdf(pdf_q: Path, pdf_a: Path, subject: str, grade: in
         if subject == "英語" and num <= 10:
             continue
 
+        # 英語科閱讀題組（缺少短文無法獨立作答）或題幹提及 "reading" 但長度不足者排除
+        if subject == "英語":
+            if any(term in stem.lower() for term in ["the reading", "this reading", "the story", "the passage"]):
+                if len(stem) < 180:
+                    continue
+            # 排除題號屬於閱讀題組區塊者
+            if (grade == 7 and num >= 30) or (grade == 8 and num >= 30) or (grade == 9 and num >= 30):
+                continue
+
         # 排除包含圖片、圖表依賴之題目
-        if any(term in stem for term in ["如圖", "附圖", "右圖", "下圖", "附表", "如下表", "圖(一)", "圖(二)", "圖一", "圖二", "如下圖所示"]):
+        image_keywords = [
+            "如圖", "附圖", "右圖", "左圖", "下圖", "上圖", "附表", "如下表", "如右表", "一覽表",
+            "圖(一)", "圖(二)", "圖(三)", "圖一", "圖二", "圖三", "圖四", "圖五", "圖六", "圖七",
+            "如下圖所示", "圖中", "依圖", "由圖", "從圖", "看圖", "見圖", "圖示", "等高線圖",
+            "氣候圖", "統計圖", "農業地圖", "族群比例圖"
+        ]
+        if any(term in stem for term in image_keywords):
             continue
 
-        if len(stem) < 5:
+        if len(stem) < 12:
             continue
 
         remainder = b[m_num.end():]

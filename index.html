@@ -950,7 +950,11 @@
             <span id="qSchoolBadge" class="hidden px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs sm:text-sm font-bold">🏫 段考真題</span>
             <span id="qConceptBadge" class="px-3 py-1 rounded-lg bg-amber-500/15 text-amber-300 border border-amber-500/30 text-xs sm:text-sm font-semibold">核心考點</span>
           </div>
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2.5 sm:gap-3">
+            <!-- 英文語音朗讀播放按鈕 (TTS) -->
+            <button type="button" id="btnSpeakEnglish" onclick="toggleSpeakQuestion()" class="hidden px-2.5 py-1 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 border border-sky-400/40 text-sky-200 text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5 shadow-sm" title="朗讀英文題目與選項（支援標準美式英語語音合成）">
+              <span id="speakIcon">🔊</span> <span id="speakText">朗讀英文</span>
+            </button>
             <!-- 題目字級即時微調 -->
             <div class="flex items-center gap-1.5 bg-slate-900/90 border border-slate-700/80 px-2.5 py-1 rounded-xl text-xs shadow-inner">
               <span class="text-slate-400 font-semibold mr-0.5">字級</span>
@@ -2230,6 +2234,7 @@
     }
 
     function switchTab(tabId) {
+      if (typeof stopSpeaking === 'function') stopSpeaking();
       playSoundEffect('click');
       appState.activeTab = tabId;
       const tabs = ['hub', 'alchemy', 'battle', 'grimoire', 'stats', 'history', 'admin'];
@@ -2342,6 +2347,45 @@
       selectedSubject: 'all' // 'all', 'chinese', 'english', 'math', 'science', 'social'
     };
 
+    /**
+     * 純文字試題自給自足性安全檢查
+     * 阻絕依賴外接圖片、地圖代號、廣播錄音音檔或外部未附短文的題目
+     */
+    function isSelfContainedTextQuestion(q) {
+      if (!q || !q.stem) return false;
+      const text = (q.stem + ' ' + (Array.isArray(q.options) ? q.options.join(' ') : '')).toLowerCase();
+
+      // 1. 嚴格過濾看圖題、地圖題、實驗插圖題與代號題
+      const imagePattern = /如[附右左下]?圖|見[附右左下]?圖|看[附右左下]?圖|附圖[為中]|圖中[的為]|地圖[中上代號]|圖\s*[(（]?\s*[一二三四五六七八九十0-9]+|依據[附右左下]?圖|根據[附右左下]?圖|代號[甲乙丙丁戊己庚辛abcd]{1,4}代表|代號[甲乙丙丁戊己庚辛abcd]{1,4}為|代號[甲乙丙丁戊己庚辛]/i;
+      if (imagePattern.test(text) && !/甲[:：]|乙[:：]/.test(q.stem)) {
+        return false;
+      }
+
+      // 2. 嚴格過濾「承上題」或依賴未提供之前置題目/短文材料之試題
+      if (/承上題|題組/i.test(text)) {
+        return false;
+      }
+      if (/(該報導|上述報導|依據上文|根據上文|由上文|閱讀上述|資料[一二三四五]|閱讀下列文章|由上述資料|根據短文|由這篇報導)/i.test(q.stem) && q.stem.trim().length < 80) {
+        return false;
+      }
+
+      // 3. 嚴格過濾聽力測驗、錄音依賴題
+      const audioPattern = /聽力測驗|聽到的內容|選出聽到的|請聽錄音|聽完對話|listen to the|based on the recording/i;
+      if (audioPattern.test(text)) {
+        return false;
+      }
+
+      // 4. 英文科：過濾無附短文的閱讀理解題
+      if (q.subject === 'english') {
+        const passagePattern = /according to the (reading|passage|article|dialogue|chart)/i;
+        if (passagePattern.test(text) && q.stem.trim().length < 120) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
     function getExamStageTitle(semester, stage) {
       const sem = semester === '1' ? '第一學期' : (semester === '2' ? '第二學期' : '全學期');
       const stg = stage === '1' ? '第一次段考' : (stage === '2' ? '第二次段考' : (stage === '3' ? '第三次段考' : '各次段考'));
@@ -2350,6 +2394,9 @@
 
     function matchQuestionStage(q, semester, stage, grade) {
       if (!q) return false;
+      // 0. 純文字自給自足性驗證（過濾依賴圖片、音檔之題目）
+      if (!isSelfContainedTextQuestion(q)) return false;
+
       // 1. 學期比對（不依賴特定年度，相容 114、113、112 等）
       const qSem = q.semester || (q.exam && (q.exam.includes('第1學期') || q.exam.includes('第一學期') || q.exam.includes('-1-')) ? '1' : (q.exam && (q.exam.includes('第2學期') || q.exam.includes('第二學期') || q.exam.includes('-2-')) ? '2' : '1'));
       if (semester && semester !== 'all' && qSem !== semester) return false;
@@ -3132,7 +3179,7 @@
       const real = (typeof REAL_EXAM_QUESTIONS !== 'undefined' && Array.isArray(REAL_EXAM_QUESTIONS)) 
         ? REAL_EXAM_QUESTIONS 
         : (typeof window !== 'undefined' && Array.isArray(window.REAL_EXAM_QUESTIONS) ? window.REAL_EXAM_QUESTIONS : []);
-      const combined = [...core, ...real];
+      const combined = [...core, ...real].filter(isSelfContainedTextQuestion);
       if (!subjectId) return combined;
       return combined.filter(q => q.subject === subjectId);
     }
@@ -3143,9 +3190,13 @@
     function filterUnseenCandidates(candidates, count = 5) {
       if (!Array.isArray(candidates) || candidates.length === 0) return [];
 
+      // 0. 純文字自給自足性安全過濾（確保無圖片、地圖、音檔依賴）
+      const validCandidates = candidates.filter(isSelfContainedTextQuestion);
+      const safeCandidates = validCandidates.length > 0 ? validCandidates : candidates;
+
       // 1. 依題幹 (stem) 進行嚴格去重，確保同場試煉絕無雙胞胎題目
       const uniqueMap = new Map();
-      candidates.forEach(q => {
+      safeCandidates.forEach(q => {
         if (!q || !q.stem) return;
         const key = q.stem.trim();
         if (!uniqueMap.has(key)) {
@@ -3291,10 +3342,101 @@
       launchBattleSession(appState.battle.title, appState.battle.bossName, appState.battle.questions);
     }
 
+    // ==================== 英文語音發音朗讀 (Web Speech API) ====================
+    let isSpeaking = false;
+
+    function stopSpeaking() {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        try {
+          window.speechSynthesis.cancel();
+        } catch (e) {}
+      }
+      isSpeaking = false;
+      const icon = document.getElementById('speakIcon');
+      const txt = document.getElementById('speakText');
+      if (icon) icon.textContent = '🔊';
+      if (txt) txt.textContent = '朗讀英文';
+    }
+
+    function toggleSpeakQuestion() {
+      if (!('speechSynthesis' in window)) {
+        showToast('您的瀏覽器目前未支援語音朗讀合成功能。', 'warning');
+        return;
+      }
+
+      if (isSpeaking) {
+        stopSpeaking();
+        return;
+      }
+
+      const b = appState.battle;
+      if (!b || !b.questions) return;
+      const q = b.questions[b.currentIndex];
+      if (!q) return;
+
+      stopSpeaking();
+
+      // 整理朗讀文本（題幹中的連續底線替換為 blank 以利自然發音）
+      const cleanStem = (q.stem || '').replace(/_{2,}/g, ' blank ');
+      let speechText = `Question. ${cleanStem}. `;
+      if (Array.isArray(q.options) && q.options.length > 0) {
+        speechText += ' Options: ' + q.options.map((opt, i) => {
+          const letter = String.fromCharCode(65 + i);
+          const cleanOpt = opt.replace(/^[A-D]\.\s*/, '');
+          return `${letter}, ${cleanOpt}`;
+        }).join('. ') + '.';
+      }
+
+      const utterance = new SpeechSynthesisUtterance(speechText);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.92; // 適度微調語速，清晰自然符合國中學生聽力理解速度
+
+      try {
+        const voices = window.speechSynthesis.getVoices();
+        const enVoice = voices.find(v => v.lang === 'en-US' && (v.name.includes('Samantha') || v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('US'))) ||
+                        voices.find(v => v.lang === 'en-US') ||
+                        voices.find(v => v.lang.startsWith('en'));
+        if (enVoice) utterance.voice = enVoice;
+      } catch (e) {}
+
+      utterance.onstart = () => {
+        isSpeaking = true;
+        const icon = document.getElementById('speakIcon');
+        const txt = document.getElementById('speakText');
+        if (icon) icon.textContent = '⏹️';
+        if (txt) txt.textContent = '停止朗讀';
+      };
+
+      utterance.onend = () => {
+        stopSpeaking();
+      };
+
+      utterance.onerror = () => {
+        stopSpeaking();
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
     function renderBattleState() {
       const b = appState.battle;
       const q = b.questions[b.currentIndex];
       if (!q) return;
+
+      // 換題時自動停止前一題朗讀
+      stopSpeaking();
+
+      // 若為英文科或顯著英文內容題目，顯示語音朗讀按鈕
+      const btnSpeak = document.getElementById('btnSpeakEnglish');
+      if (btnSpeak) {
+        const isEnglish = (q.subject === 'english') || 
+          (/^[A-Za-z0-9\s.,?!'"\-_():;]+$/.test((q.stem || '').replace(/[\u4e00-\u9fa5]/g, '').trim()) && (q.stem || '').length > 10);
+        if (isEnglish) {
+          btnSpeak.classList.remove('hidden');
+        } else {
+          btnSpeak.classList.add('hidden');
+        }
+      }
 
       document.getElementById('battleDungeonBadge').textContent = b.title;
       document.getElementById('battleQuestionCounter').textContent = `第 ${b.currentIndex + 1} / ${b.questions.length} 回合`;
@@ -3405,6 +3547,7 @@
     }
 
     function submitBattleAnswer(selectedIdx) {
+      stopSpeaking();
       const b = appState.battle;
       if (b.answeredCurrent) return;
       const q = b.questions[b.currentIndex];
@@ -3525,6 +3668,7 @@
     }
 
     function finishBattleSession() {
+      if (typeof stopSpeaking === 'function') stopSpeaking();
       const b = appState.battle;
       if (!b || b.hasSavedToHistory) return;
       b.hasSavedToHistory = true;
@@ -3601,6 +3745,7 @@
     }
 
     function settleBattleEarly() {
+      if (typeof stopSpeaking === 'function') stopSpeaking();
       const b = appState.battle;
       if (!b || !b.active) return;
       const answeredIndices = [];
