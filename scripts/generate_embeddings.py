@@ -67,10 +67,13 @@ def load_questions():
         "node", "-e",
         "const fs = require('fs');"
         "const indexFile = fs.readFileSync('" + index_path + "', 'utf8');"
-        "const lines = indexFile.split('\\n');"
-        "const coreLines = lines.slice(1483, 1726).join('\\n');"
-        "eval(coreLines.replace('const CORE_QUESTIONS', 'global.CORE_QUESTIONS'));"
-        "console.log(JSON.stringify(global.CORE_QUESTIONS));"
+        "const m = indexFile.match(/const CORE_QUESTIONS\\s*=\\s*(\\[[\\s\\S]*?\\n\\s*\\]);/);"
+        "if (m) {"
+        "  eval('global.CORE_QUESTIONS = ' + m[1]);"
+        "  console.log(JSON.stringify(global.CORE_QUESTIONS));"
+        "} else {"
+        "  console.log('[]');"
+        "}"
     ]
     out = subprocess.check_output(cmd).decode("utf-8")
     core_list = json.loads(out)

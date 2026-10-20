@@ -11,3 +11,6 @@ Thumbs.db
 .venv/
 __pycache__/
 scripts/embeddings_cache.json
+
+# 原始段考試卷與答案卷（PDF/Word/MP3 題庫資料夾）
+題庫/
