@@ -19,6 +19,55 @@
 
 ---
 
+## 🧠 純前端輕量化 RAG 向量題庫系統 (Client-side Vector RAG)
+
+本專案採用創新的**純前端向量檢索增強生成 (Zero-Server Vector RAG)** 架構，無須架設外部向量資料庫伺服器（如 Pinecone 或 Milvus），即可在 GitHub Pages 上實現毫秒級語意檢索與智能防重複出題：
+
+### 1. 核心組成與儲存位置
+* **RAG 向量特徵庫 ([`js/question_embeddings.js`](file:///Users/po/WorkSpace/Git/Learning-Assessment/js/question_embeddings.js))**：
+  * 收錄 **462 道**（含 447 題名校真題 + 15 題核心基礎題）的 **768 維**高維度正規化語意向量。
+  * 由 Google Gemini `gemini-embedding-2` 模型離線計算，網頁載入後由 [`js/rag_engine.js`](file:///Users/po/WorkSpace/Git/Learning-Assessment/js/rag_engine.js) 在瀏覽器記憶體內以**餘弦相似度 (Cosine Similarity)** 進行 0.01 秒等級的極速相似考點檢索。
+* **名校段考真題資料庫 ([`data/real_exam_questions.json`](file:///Users/po/WorkSpace/Git/Learning-Assessment/data/real_exam_questions.json) / [`js/real_exam_questions.js`](file:///Users/po/WorkSpace/Git/Learning-Assessment/js/real_exam_questions.js))**：
+  * 收錄新北升學名校（**海山國中、永和國中、福和國中**）114 學年度第 1 學期第 2 次段考（114-1-2）等 **447 道**經正規化排版之高素養選擇題。
+  * 支援全科覆蓋：國文、英文、數學、自然（生物/理化）、社會（歷史/地理/公民）。
+* **向量運算快取 (`scripts/embeddings_cache.json`)**：
+  * 本地運算快取（已受 `.gitignore` 排除），記錄 `考題文本 -> 768維向量`。新增題目時只對新題調用 API，已存在題目 **0ms 立即命中**，杜絕重複消耗 API 與撞頻率限制。
+
+---
+
+## 🎯 114-1-2 段考特訓出題中心 (2025年第一學期第二次段考)
+
+首頁冒險大廳提供一鍵切換的專屬段考分類出題中心：
+1. **五科分科段考卷**：即時統計國、英、數、自、社真題庫數量，點擊直接出 5 題全真段考挑戰。
+2. **52+ 核心考點特訓**：支援字音辨析、文言文、因數倍數、進行式、臺灣史與公民生活等考點標籤，點選單一考點立即組成精準靶向測驗。
+3. **不足自動 RAG 補齊**：若特定單科或特定考點題目不足 5 題，系統會自動啟動 RAG 向量語意檢索，自整體題庫中抓取考點最相符的題目補足 5 題。
+4. **防重複記憶機制**：結合近期做題記憶，避免同一次段考複習中反覆出現相同題目。
+
+---
+
+## 🛠️ 新增與擴充題庫指南 (Question Bank Ingestion)
+
+若欲加入新學校試卷或新學期段考試題：
+
+1. **試卷原始檔存放**：
+   * 將 PDF/Word 放置於 `題庫/<學校名>/114/<年級>/` 資料夾中（此資料夾已設定於 `.gitignore`，不會上傳至 Git）。
+2. **自動萃取題目與解答**：
+   * 執行專屬解析腳本（例如海山國中真題萃取器）：
+     ```bash
+     source .venv/bin/activate
+     python3 scripts/extract_haishan.py
+     ```
+   * 系統會自動過濾圖表與聽力依賴題，生成結構化 JSON 並合併入 `data/real_exam_questions.json` 與 `js/real_exam_questions.js`。
+3. **生成 RAG 語義特徵向量**：
+   * 執行向量化批次工具：
+     ```bash
+     source .venv/bin/activate
+     python3 scripts/generate_embeddings.py
+     ```
+   * 腳本將自動讀取快取並計算新增考題的 768 維語意向量，自動輸出最新之 `js/question_embeddings.js`。
+
+---
+
 ## 💻 本機開發與測試指南 (Local Development & Testing)
 
 本專案採用現代原生 ES Modules (`type="module"`) 架構，因瀏覽器安全性（CORS）限制，不可直接雙擊以 `file://` 開啟，需透過本機 HTTP 靜態伺服器運行測試。
