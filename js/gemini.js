@@ -7,7 +7,7 @@
 // 2. Gemini 3.1 Flash Lite (gemini-3.1-flash-lite)
 // 3. Gemini 2.5 Flash Lite (gemini-2.5-flash-lite)
 // 使用者於網頁輸入個人的 Google AI Studio API Key，保存在瀏覽器端 localStorage，安全開源零成本。
-// ==============================================================================
+import { humanizeMath } from './math_formatter.js';
 
 export class GeminiService {
   static STORAGE_KEY = 'jh_quest_gemini_api_key';
@@ -148,12 +148,22 @@ export class GeminiService {
 - 出題策略：${styleDesc}
 - 題目數量：恰好 ${count} 題單選題（選項 A、B、C、D 共 4 個）
 
+【數學與符號格式最高準則（極重要）】
+- 嚴禁輸出任何裸露的 LaTeX 代碼（嚴禁出現如 $\\frac{a}{b}$、\\times、\\div、\\sqrt、\\le 等標記）。
+- 所有數學算式與選項，請一律以「人類一目了然、自然易懂」的純文字排版顯示：
+  * 分數請務必寫成「a / b」或「(a + b) / c」，例如：「x / 0.8 - 150」、「(x - 150) / 0.8」、「3 / 4」，絕不可寫 $\\frac{x}{0.8}$。
+  * 乘號請使用「×」、除號使用「÷」或「/」。
+  * 平方或次方請直接使用上標「²」或「³」（例如 x² 或 2³）。
+  * 根號請使用「√」（例如 √16 或 √(x + 1)）。
+  * 不等號請使用「≤」、「≥」、「≠」。
+  * 嚴禁在算式外圍包裹「$」或「$$」符號。
+
 【嚴格格式要求】
 請務必輸出合法的 JSON 物件，嚴禁包含任何額外的解釋文字或 Markdown 標籤（請勿使用 \`\`\`json 或 \`\`\`）。
 JSON 結構必須精確符合以下規格：
 {
-  "concept": "精闢濃縮的考點核心名稱（例如：畢氏定理應用、現在完成式 since/for 判別、莫耳濃度計算）",
-  "topicTitle": "本次試題包主題名稱（例如：畢氏定理進階實戰特訓、現在完成式易混淆對決）",
+  "concept": "精闢濃縮的考點核心名稱（例如：一元一次方程式應用、現在完成式 since/for 判別）",
+  "topicTitle": "本次試題包主題名稱（例如：一元一次方程式進階實戰特訓、打折利潤問題）",
   "coreConcept": "針對學生卡關核心觀念的清晰拆解剖析（100字內）",
   "commonTrap": "學生在段考或會考此題型最常掉入的思維與計算陷阱（100字內）",
   "mnemonic": "秒殺解題口訣或破題心法（親切幽默，帶有RPG冒險風格，50字內）",
@@ -245,13 +255,28 @@ JSON 結構必須精確符合以下規格：
         throw new Error('回傳之題目列表為空。');
       }
 
-      // 確保每道題皆具備所屬科目與年級，防止存入錯題本時被誤判為其他科目
+      // 確保每道題皆具備所屬科目與年級，並全面清洗轉換任何潛在的 LaTeX 數學符號為人類直觀格式
       parsed.questions.forEach((q, idx) => {
         q.id = `gemini-${Date.now()}-${idx}`;
         q.subject = cleanSubject;
         q.grade = grade || '8';
         if (!q.concept) q.concept = parsed.concept || '核心考點';
+
+        // 題目文字全面人類化清洗
+        q.stem = humanizeMath(q.stem);
+        if (Array.isArray(q.options)) {
+          q.options = q.options.map(opt => humanizeMath(opt));
+        }
+        if (q.hint) q.hint = humanizeMath(q.hint);
+        if (q.explanation) q.explanation = humanizeMath(q.explanation);
+        if (q.concept) q.concept = humanizeMath(q.concept);
       });
+
+      // 試題包主旨與解析重點同步人類化
+      parsed.topicTitle = humanizeMath(parsed.topicTitle);
+      parsed.coreConcept = humanizeMath(parsed.coreConcept);
+      parsed.commonTrap = humanizeMath(parsed.commonTrap);
+      parsed.mnemonic = humanizeMath(parsed.mnemonic);
 
       return parsed;
     } catch (parseError) {

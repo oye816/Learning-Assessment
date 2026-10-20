@@ -203,13 +203,16 @@ def extract_questions_from_pdf(pdf_q: Path, pdf_a: Path, subject: str, grade: in
                     "id": q_id,
                     "school": "海山國中",
                     "exam": "114學年度第1學期第2次段考",
+                    "semester": "1",
+                    "stage": "2",
+                    "stage_name": "第1學期・第2次段考",
                     "subject": sub_code,
                     "grade": str(grade),
                     "concept": concept,
                     "stem": stem,
                     "options": options,
                     "answer": ans_map[num],
-                    "explanation": f"新北市立海山高中（國中部）114-1-2 定期評量{grade}年級{subject}科第 {num} 題真題。"
+                    "explanation": f"新北市立海山高中（國中部）定期評量{grade}年級{subject}科第 {num} 題真題。"
                 }
                 extracted.append(item)
 

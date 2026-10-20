@@ -122,16 +122,147 @@
   <script src="js/real_exam_questions.js"></script>
   <!-- RAG 向量特徵資料庫與向量檢索增強模組 (768 維語義向量) -->
   <script src="js/question_embeddings.js"></script>
+  <!-- 數學與理化公式人類易讀化模組 -->
+  <script type="module" src="js/math_formatter.js"></script>
   <script type="module" src="js/rag_engine.js"></script>
   <!-- Gemini AI & Firebase Open Source Modules -->
   <script type="module" src="js/gemini.js"></script>
   <script type="module" src="js/firebase.js"></script>
   <!-- 全域彈窗控制函式（置於 head 保證按鈕渲染與點擊前已就緒） -->
   <script>
-    // 全域安全跳脫輔助函式（防止數學/理化不等式 < > 符號被瀏覽器吃掉或造成 XSS）
+    // 全域數學/理化符號人類易讀化轉換函式（將 LaTeX 格式如 $\frac{x}{0.8} - 150$ 轉為人類直觀文字）
+    window.humanizeMath = function(text) {
+      if (!text || typeof text !== 'string') return text || '';
+      let res = text;
+      res = res.replace(/\\(?:text|mathrm|mathbf|mathit)\{([^{}]+)\}/g, '$1');
+      res = res.replace(/\^\{\\circ\}|\^\\circ|\^°/g, '°');
+
+      function extractBraced(s, startIdx) {
+        if (s[startIdx] !== '{') return null;
+        let depth = 0;
+        for (let i = startIdx; i < s.length; i++) {
+          if (s[i] === '{') depth++;
+          else if (s[i] === '}') {
+            depth--;
+            if (depth === 0) return { content: s.substring(startIdx + 1, i), endIndex: i };
+          }
+        }
+        return null;
+      }
+
+      // 根號處理
+      const rootSuperscripts = { '2': '√', '3': '³√', '4': '⁴√', '5': '⁵√', '6': '⁶√', '7': '⁷√', '8': '⁸√', '9': '⁹√' };
+      let sqrtLoop = 0;
+      while (sqrtLoop < 10) {
+        const idx = res.search(/\\sqrt\s*(\[\d+\])?\s*\{/);
+        if (idx === -1) break;
+        const fullMatch = res.slice(idx).match(/^\\sqrt\s*(\[(\d+)\])?\s*\{/);
+        if (!fullMatch) break;
+        const rootN = fullMatch[2] || '';
+        const braceIdx = idx + fullMatch[0].length - 1;
+        const braced = extractBraced(res, braceIdx);
+        if (!braced) break;
+        const inner = window.humanizeMath(braced.content).trim();
+        const prefix = rootN ? (rootSuperscripts[rootN] || `${rootN}√`) : '√';
+        const rep = (!rootN && inner.length <= 2 && !/[\s+\-*/±×÷]/.test(inner)) ? `${prefix}${inner}` : `${prefix}(${inner})`;
+        res = res.substring(0, idx) + rep + res.substring(braced.endIndex + 1);
+        sqrtLoop++;
+      }
+
+      // 分數處理
+      let fracLoop = 0;
+      while (fracLoop < 10) {
+        const idx = res.search(/\\(?:d?frac)\s*\{/);
+        if (idx === -1) break;
+        const firstBraceIdx = res.indexOf('{', idx);
+        const first = extractBraced(res, firstBraceIdx);
+        if (!first) break;
+        let secondBraceIdx = -1;
+        for (let i = first.endIndex + 1; i < res.length; i++) {
+          if (res[i] === ' ' || res[i] === '\t') continue;
+          if (res[i] === '{') { secondBraceIdx = i; break; }
+          break;
+        }
+        if (secondBraceIdx === -1) break;
+        const second = extractBraced(res, secondBraceIdx);
+        if (!second) break;
+        const num = window.humanizeMath(first.content).trim();
+        const den = window.humanizeMath(second.content).trim();
+        const wrapNum = /[\s+\-±×÷]/.test(num) && !(/^\([^(]+?\)$/.test(num));
+        const wrapDen = /[\s+\-±×÷*/]/.test(den) && !(/^\([^(]+?\)$/.test(den));
+        const rep = `${wrapNum ? `(${num})` : num} / ${wrapDen ? `(${den})` : den}`;
+        res = res.substring(0, idx) + rep + res.substring(second.endIndex + 1);
+        fracLoop++;
+      }
+
+      // 幾何線段與向量
+      res = res.replace(/\\(?:overline|bar)\{([^{}]+)\}/g, '線段 $1');
+      res = res.replace(/\\vec\{([^{}]+)\}/g, '向量 $1');
+
+      // 常見運算符號與希臘/幾何符號
+      const symbolMap = {
+        '\\\\times': ' × ', '\\\\div': ' ÷ ', '\\\\pm': ' ± ', '\\\\mp': ' ∓ ', '\\\\cdot': ' · ',
+        '\\\\leq': ' ≤ ', '\\\\le': ' ≤ ', '\\\\geq': ' ≥ ', '\\\\ge': ' ≥ ',
+        '\\\\neq': ' ≠ ', '\\\\ne': ' ≠ ', '\\\\approx': ' ≈ ', '\\\\equiv': ' ≡ ',
+        '\\\\sim': ' ~ ', '\\\\cong': ' ≅ ', '\\\\infty': '∞', '\\\\pi': 'π',
+        '\\\\theta': 'θ', '\\\\alpha': 'α', '\\\\beta': 'β', '\\\\gamma': 'γ',
+        '\\\\Delta': '△', '\\\\triangle': '△', '\\\\angle': '∠', '\\\\perp': '⊥',
+        '\\\\parallel': '//', '\\\\rightarrow': ' → ', '\\\\to': ' → ', '\\\\leftarrow': ' ← ',
+        '\\\\degree': '°', '\\\\circ': '°', '\\\\%': '%'
+      };
+      for (const [pattern, repl] of Object.entries(symbolMap)) {
+        res = res.replace(new RegExp(pattern, 'g'), repl);
+      }
+
+      // 上標
+      const superscripts = {
+        '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
+        '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹',
+        '+': '⁺', '-': '⁻', 'n': 'ⁿ', 'x': 'ˣ', 'y': 'ʸ'
+      };
+      res = res.replace(/\^\{([0-9+\-nxy])\}/g, (m, p) => superscripts[p] || m);
+      res = res.replace(/\^([0-9])/g, (m, p) => superscripts[p] || m);
+      res = res.replace(/\^\{([^{}]+)\}/g, '^($1)');
+
+      // 下標
+      const subscripts = {
+        '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄',
+        '5': '₅', '6': '₆', '7': '₇', '8': '₈', '9': '₉'
+      };
+      res = res.replace(/_\{([0-9])\}/g, (m, p) => subscripts[p] || m);
+      res = res.replace(/_([0-9])/g, (m, p) => subscripts[p] || m);
+      res = res.replace(/_\{([^{}]+)\}/g, '_($1)');
+
+      // 括號與間距修飾符
+      res = res.replace(/\\left\(/g, '(').replace(/\\right\)/g, ')');
+      res = res.replace(/\\left\[/g, '[').replace(/\\right\]/g, ']');
+      res = res.replace(/\\left\\\{/g, '{').replace(/\\right\\\}/g, '}');
+      res = res.replace(/\\\{/g, '{').replace(/\\\}/g, '}');
+      res = res.replace(/\\[,;:!]/g, ' ');
+      res = res.replace(/\\quad|\\qquad/g, ' ');
+
+      // 清除 LaTeX 行內與塊級定界符 $...$ 或 $$...$$
+      res = res.replace(/\$\$([\s\S]*?)\$\$/g, '$1');
+      res = res.replace(/\$([^\$]+)\$/g, '$1');
+
+      // 清除殘留反斜線跳脫字元
+      res = res.replace(/\\([%$#&_])/g, '$1');
+
+      // 清除多餘連續空白與角度符號重複
+      res = res.replace(/\^°/g, '°');
+      res = res.replace(/[ \t]{2,}/g, ' ');
+
+      return res.trim();
+    };
+
+    // 全域安全跳脫輔助函式（整合數學符號人類易讀化，防止不等式 < > 造成 XSS）
     window.escapeHtml = function(str) {
       if (str === null || str === undefined) return "";
-      return String(str)
+      let s = String(str);
+      if (typeof window.humanizeMath === 'function') {
+        s = window.humanizeMath(s);
+      }
+      return s
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -311,12 +442,12 @@
           <button type="button" id="gradeBtn-9" onclick="setGradeFilter('9')" class="px-2.5 py-1 rounded-lg font-semibold transition-all text-slate-400 hover:text-white">國三會考</button>
         </div>
 
-        <!-- 考試範圍切換 (114-1-2 段考專用) -->
+        <!-- 考試範圍切換 (名校段考特訓專區) -->
         <div class="flex items-center bg-slate-900 border border-slate-700/80 rounded-xl p-0.5 text-xs">
           <button type="button" id="examBtn-all" onclick="setExamFilter('all')" class="px-2.5 py-1 rounded-lg font-semibold transition-all text-slate-400 hover:text-white">全部題庫</button>
-          <button type="button" id="examBtn-114-1-2" onclick="setExamFilter('114-1-2')" class="px-2.5 py-1 rounded-lg font-black transition-all bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow flex items-center gap-1" title="鎖定 114學年度第1學期第2次段考 (2025秋) 永和/福和真題">
+          <button type="button" id="examBtn-stage" onclick="setExamFilter('stage')" class="px-2.5 py-1 rounded-lg font-black transition-all bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow flex items-center gap-1" title="進入名校段考分類出題中心（依學期、段考次數切換）">
             <span>🎯</span>
-            <span>114-1-2 段考特訓</span>
+            <span id="topExamStageBtnText">名校段考特訓</span>
           </button>
         </div>
 
@@ -477,8 +608,8 @@
         </div>
       </div>
 
-      <!-- ==================== 114-1-2 第二次段考分類出題專區 ==================== -->
-      <div id="section-114-1-2" class="rpg-card rounded-3xl p-5 sm:p-6 border border-amber-500/40 bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950/25 shadow-2xl space-y-5">
+      <!-- ==================== 名校段考全真分類出題專區 ==================== -->
+      <div id="section-exam-stage" class="rpg-card rounded-3xl p-5 sm:p-6 border border-amber-500/40 bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950/25 shadow-2xl space-y-5">
         <!-- Header & Exam Info -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
           <div class="flex items-center gap-3">
@@ -487,38 +618,71 @@
             </div>
             <div>
               <div class="flex flex-wrap items-center gap-2">
-                <h3 class="text-lg sm:text-xl font-black text-white">114-1-2 第二次段考分類出題中心</h3>
-                <span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[11px] font-extrabold">2025年第一學期・第二次定期評量</span>
-                <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold">新北名校 164 題真題收錄</span>
+                <h3 class="text-lg sm:text-xl font-black text-white">名校段考全真分類出題中心</h3>
+                <span id="examStageLabelBadge" class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[11px] font-extrabold">第一學期・第二次定期評量</span>
+                <span id="examStageCountBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold">新北名校 447 題真題收錄</span>
               </div>
               <p class="text-xs text-slate-300 mt-1">
-                精選新北市立<span class="text-amber-300 font-bold">永和國中 (154題)</span>與<span class="text-amber-300 font-bold">福和國中 (10題)</span>第二次段考全科真題，支援「分科全真模擬卷」、「單元考點點對點特訓」與「五科綜合大會考」！
+                依<span class="text-amber-300 font-bold">第一／第二學期</span>與<span class="text-amber-300 font-bold">第 1／2／3 次段考</span>精確分類，精選新北升學名校（海山、永和、福和國中）全科真題，支援「分科全真模擬卷」、「單元考點靶向特訓」與「五科綜合大會考」！
               </p>
             </div>
           </div>
           <div class="flex items-center gap-2 flex-shrink-0">
             <!-- 快速五科大會考 -->
-            <button type="button" onclick="start11412MixedBattle()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 hover:brightness-110 text-slate-950 font-black text-xs sm:text-sm shadow-lg shadow-amber-500/25 flex items-center gap-1.5 transition-transform active:scale-95">
+            <button type="button" onclick="startExamStageMixedBattle()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 hover:brightness-110 text-slate-950 font-black text-xs sm:text-sm shadow-lg shadow-amber-500/25 flex items-center gap-1.5 transition-transform active:scale-95">
               <span>⚡</span>
-              <span>114-1-2 五科綜合全真大考 (5題)</span>
+              <span id="mixedBattleBtnText">【第一學期・二次段考】五科綜合大考 (5題)</span>
             </button>
+          </div>
+        </div>
+
+        <!-- 考試維度切換器：學期 + 段考次數 + 年級 -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <!-- 1. 學期選擇 -->
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-400 font-bold flex items-center gap-1">
+              <span>📅</span>
+              <span>學期：</span>
+            </span>
+            <div class="inline-flex bg-slate-950 border border-slate-800 rounded-xl p-0.5">
+              <button type="button" id="btnExamSem-1" onclick="setExamSemesterFilter('1')" class="px-2.5 py-1 rounded-lg font-bold transition-all bg-amber-500 text-slate-950 shadow">📘 第一學期 (上學期)</button>
+              <button type="button" id="btnExamSem-2" onclick="setExamSemesterFilter('2')" class="px-2.5 py-1 rounded-lg font-semibold transition-all text-slate-400 hover:text-white">📙 第二學期 (下學期)</button>
+            </div>
+          </div>
+
+          <!-- 2. 段考次數選擇 -->
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-400 font-bold flex items-center gap-1">
+              <span>📝</span>
+              <span>段考：</span>
+            </span>
+            <div class="inline-flex bg-slate-950 border border-slate-800 rounded-xl p-0.5">
+              <button type="button" id="btnExamStage-1" onclick="setExamStageOrderFilter('1')" class="px-2.5 py-1 rounded-lg font-semibold transition-all text-slate-400 hover:text-white">🥇 第一次段考</button>
+              <button type="button" id="btnExamStage-2" onclick="setExamStageOrderFilter('2')" class="px-2.5 py-1 rounded-lg font-bold transition-all bg-amber-500 text-slate-950 shadow">🥈 第二次段考</button>
+              <button type="button" id="btnExamStage-3" onclick="setExamStageOrderFilter('3')" class="px-2.5 py-1 rounded-lg font-semibold transition-all text-slate-400 hover:text-white">🥉 第三次段考 (期末)</button>
+            </div>
+          </div>
+
+          <!-- 3. 年級範圍選擇 -->
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-400 font-bold flex items-center gap-1">
+              <span>🎒</span>
+              <span>年級：</span>
+            </span>
+            <div class="inline-flex bg-slate-950 border border-slate-800 rounded-xl p-0.5">
+              <button type="button" id="btnStageGrade-all" onclick="setExamGradeFilter('all')" class="px-2 py-0.5 rounded-lg text-xs font-bold transition-all bg-amber-500 text-slate-950">全部年級</button>
+              <button type="button" id="btnStageGrade-7" onclick="setExamGradeFilter('7')" class="px-2 py-0.5 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-white">七年級</button>
+              <button type="button" id="btnStageGrade-8" onclick="setExamGradeFilter('8')" class="px-2 py-0.5 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-white">八年級</button>
+              <button type="button" id="btnStageGrade-9" onclick="setExamGradeFilter('9')" class="px-2 py-0.5 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-white">九年級</button>
+            </div>
           </div>
         </div>
 
         <!-- 模式一：分科出題快速組卷 (5 科卡片) -->
         <div>
-          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-            <div class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
-              <span>📚</span>
-              <span>【分科出題】選擇考科，一鍵生成 5 題 114-1-2 名校真題段考卷：</span>
-            </div>
-            <!-- 年級快速切換 -->
-            <div class="flex items-center gap-1 bg-slate-900 border border-slate-700/80 rounded-xl p-0.5 text-xs">
-              <span class="text-[10px] text-slate-400 px-2">段考範圍：</span>
-              <button type="button" id="btn114Grade-all" onclick="set114GradeFilter('all')" class="px-2 py-0.5 rounded-lg text-xs font-bold transition-all bg-amber-500 text-slate-950">全部年級</button>
-              <button type="button" id="btn114Grade-7" onclick="set114GradeFilter('7')" class="px-2 py-0.5 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-white">七年級 (146題)</button>
-              <button type="button" id="btn114Grade-8" onclick="set114GradeFilter('8')" class="px-2 py-0.5 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-white">八年級 (18題)</button>
-            </div>
+          <div class="text-xs font-bold text-slate-200 flex items-center gap-1.5 mb-3">
+            <span>📚</span>
+            <span>【分科出題】選擇考科，一鍵生成 5 題名校段考真題卷：</span>
           </div>
 
           <div id="examSubjectCardsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -531,7 +695,7 @@
           <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
             <div class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
               <span>🎯</span>
-              <span>【考點分類出題】點擊以下 114-1-2 第二次段考核心章節觀念，立即展開專屬弱點特訓 (5題)：</span>
+              <span>【考點分類出題】點擊以下核心章節考點，立即展開專屬靶向特訓 (5題)：</span>
             </div>
             <!-- 科目切換 Tab -->
             <div id="examConceptSubjectTabs" class="flex items-center gap-1 overflow-x-auto text-xs">
@@ -1519,7 +1683,11 @@
 
     const escapeHtml = window.escapeHtml || function(str) {
       if (str === null || str === undefined) return '';
-      return String(str)
+      let s = String(str);
+      if (typeof window.humanizeMath === 'function') {
+        s = window.humanizeMath(s);
+      }
+      return s
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
@@ -1807,39 +1975,39 @@
     // ==================== 4. MISTAKE ALCHEMY TEMPLATES & DYNAMIC GENERATOR ====================
     const ALCHEMY_PRESETS = [
       {
-        id: 'preset-114-sci-enzyme',
-        label: '🎯 114-1-2 自然：酵素活性與溫度對唾液澱粉酶影響',
+        id: 'preset-sci-enzyme',
+        label: '🎯 第1學期段考 自然：酵素活性與溫度對唾液澱粉酶影響',
         subject: 'science',
         grade: '7',
-        sampleInput: '永和國中 114-1-2 段考題：探討溫度對人體唾液澱粉酶活性的影響，在 0°C、37°C、90°C 下加入本氏液隔水加熱，顏色變化與酵素變性怎麼判斷？'
+        sampleInput: '名校段考真題：探討溫度對人體唾液澱粉酶活性的影響，在 0°C、37°C、90°C 下加入本氏液隔水加熱，顏色變化與酵素變性怎麼判斷？'
       },
       {
-        id: 'preset-114-math-factor',
-        label: '🎯 114-1-2 數學：質因數分解與標準分解式求最大公因數',
+        id: 'preset-math-factor',
+        label: '🎯 第1學期段考 數學：質因數分解與標準分解式求最大公因數',
         subject: 'math',
         grade: '7',
-        sampleInput: '永和國中 114-1-2 段考題：已知 a = 2^3 * 3^2 * 5 * 7，b = 2^2 * 3^3 * 7 * 11，求 (a, b) 與 [a, b] 的標準分解式，指數要取最大還是最小常搞混！'
+        sampleInput: '名校段考真題：已知 a = 2^3 * 3^2 * 5 * 7，b = 2^2 * 3^3 * 7 * 11，求 (a, b) 與 [a, b] 的標準分解式，指數要取最大還是最小常搞混！'
       },
       {
-        id: 'preset-114-eng-continuous',
-        label: '🎯 114-1-2 英語：現在進行式 (Present Continuous) 句型與時間副詞',
+        id: 'preset-eng-continuous',
+        label: '🎯 第1學期段考 英語：現在進行式 (Present Continuous) 句型與時間副詞',
         subject: 'english',
         grade: '7',
-        sampleInput: '福和國中 114-1-2 段考題：Look! The boys are playing soccer over there. 現在進行式 be + V-ing 碰到動詞字尾去 e 加 ing，或者重複字尾加 ing 怎麼快速判別？'
+        sampleInput: '名校段考真題：Look! The boys are playing soccer over there. 現在進行式 be + V-ing 碰到動詞字尾去 e 加 ing，或者重複字尾加 ing 怎麼快速判別？'
       },
       {
-        id: 'preset-114-soc-monsoon',
-        label: '🎯 114-1-2 社會：臺灣冬季東北季風與迎風坡地形雨判讀',
+        id: 'preset-soc-monsoon',
+        label: '🎯 第1學期段考 社會：臺灣冬季東北季風與迎風坡地形雨判讀',
         subject: 'social',
         grade: '7',
-        sampleInput: '永和國中 114-1-2 段考題：臺灣北部與東北部在冬季常陰雨綿綿，基隆與宜蘭降雨量特別豐富，是因為哪一種風向受到哪座山脈阻擋形成的雨量特徵？'
+        sampleInput: '名校段考真題：臺灣北部與東北部在冬季常陰雨綿綿，基隆與宜蘭降雨量特別豐富，是因為哪一種風向受到哪座山脈阻擋形成的雨量特徵？'
       },
       {
-        id: 'preset-114-chi-classical',
-        label: '🎯 114-1-2 國文：文言語譯與一字多義（之、其、以）辨析',
+        id: 'preset-chi-classical',
+        label: '🎯 第1學期段考 國文：文言語譯與一字多義（之、其、以）辨析',
         subject: 'chinese',
         grade: '7',
-        sampleInput: '永和國中 114-1-2 段考題：兒時記趣與論語選文中的文言虛詞「之」字，何者作為代詞？何者作為動詞或助詞？一字多義的比較怎麼解題？'
+        sampleInput: '名校段考真題：兒時記趣與論語選文中的文言虛詞「之」字，何者作為代詞？何者作為動詞或助詞？一字多義的比較怎麼解題？'
       },
       {
         id: 'preset-math-discount',
@@ -1936,7 +2104,7 @@
     let appState = {
       activeTab: 'hub',
       gradeFilter: 'all',
-      examFilter: '114-1-2',
+      examFilter: 'stage',
       player: getFreshPlayerState(),
       dailyQuests: getFreshDailyQuests(),
       mistakes: [], // 新使用者錯題庫預設完全為空
@@ -2138,44 +2306,129 @@
         document.getElementById('currentGradeFilterText').textContent = labelMap[grade] || '全學年題庫';
       }
       renderSubjectDungeons();
-      render114ExamCards();
-      render114ConceptChips();
+      renderExamStageCards();
+      renderExamStageConceptChips();
     }
 
     function setExamFilter(exam) {
       playSoundEffect('click');
       appState.examFilter = exam;
       const btnAll = document.getElementById('examBtn-all');
-      const btn114 = document.getElementById('examBtn-114-1-2');
-      if (btnAll && btn114) {
-        if (exam === '114-1-2') {
-          btn114.className = 'px-2.5 py-1 rounded-lg font-black transition-all bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow flex items-center gap-1';
+      const btnStage = document.getElementById('examBtn-stage');
+      if (btnAll && btnStage) {
+        if (exam === 'stage' || exam === '114-1-2') {
+          btnStage.className = 'px-2.5 py-1 rounded-lg font-black transition-all bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow flex items-center gap-1';
           btnAll.className = 'px-2.5 py-1 rounded-lg font-semibold transition-all text-slate-400 hover:text-white';
-          document.getElementById('currentGradeFilterText').textContent = '🎯 114-1-2 第二次段考名校真題專屬特訓 (2025秋)';
-          const sec = document.getElementById('section-114-1-2');
+          const stageTitle = getExamStageTitle(examStageState.semester, examStageState.stage);
+          document.getElementById('currentGradeFilterText').textContent = `🎯 名校段考特訓 (${stageTitle})`;
+          const sec = document.getElementById('section-exam-stage') || document.getElementById('section-114-1-2');
           if (sec) sec.scrollIntoView({ behavior: 'smooth' });
         } else {
           btnAll.className = 'px-2.5 py-1 rounded-lg font-semibold transition-all bg-violet-600 text-white';
-          btn114.className = 'px-2.5 py-1 rounded-lg font-semibold transition-all text-amber-300 hover:text-white flex items-center gap-1';
+          btnStage.className = 'px-2.5 py-1 rounded-lg font-semibold transition-all text-amber-300 hover:text-white flex items-center gap-1';
           setGradeFilter(appState.gradeFilter);
         }
       }
       renderSubjectDungeons();
-      render114ExamCards();
-      render114ConceptChips();
+      renderExamStageCards();
+      renderExamStageConceptChips();
     }
 
-    // ==================== 114-1-2 EXAM CLASSIFICATION & PAPER GENERATOR ====================
-    let exam114State = {
-      grade: 'all', // 'all', '7', '8'
+    // ==================== 名校段考分類與試卷生成器（依學期、段考次數分） ====================
+    let examStageState = {
+      semester: '1',        // '1': 第一學期(上學期), '2': 第二學期(下學期)
+      stage: '2',           // '1': 第一次段考, '2': 第二次段考, '3': 第三次段考(期末)
+      grade: 'all',         // 'all', '7', '8', '9'
       selectedSubject: 'all' // 'all', 'chinese', 'english', 'math', 'science', 'social'
     };
 
-    function set114GradeFilter(grade) {
+    function getExamStageTitle(semester, stage) {
+      const sem = semester === '1' ? '第一學期' : (semester === '2' ? '第二學期' : '全學期');
+      const stg = stage === '1' ? '第一次段考' : (stage === '2' ? '第二次段考' : (stage === '3' ? '第三次段考' : '各次段考'));
+      return `${sem}・${stg}`;
+    }
+
+    function matchQuestionStage(q, semester, stage, grade) {
+      if (!q) return false;
+      // 1. 學期比對（不依賴特定年度，相容 114、113、112 等）
+      const qSem = q.semester || (q.exam && (q.exam.includes('第1學期') || q.exam.includes('第一學期') || q.exam.includes('-1-')) ? '1' : (q.exam && (q.exam.includes('第2學期') || q.exam.includes('第二學期') || q.exam.includes('-2-')) ? '2' : '1'));
+      if (semester && semester !== 'all' && qSem !== semester) return false;
+
+      // 2. 段考次數比對
+      const qStg = q.stage || (q.exam && (q.exam.includes('第1次') || q.exam.includes('第一次') || /[-_]1\b/.test(q.exam)) ? '1' : (q.exam && (q.exam.includes('第2次') || q.exam.includes('第二次') || /[-_]2\b/.test(q.exam)) ? '2' : (q.exam && (q.exam.includes('第3次') || q.exam.includes('第三次') || q.exam.includes('期末') || /[-_]3\b/.test(q.exam)) ? '3' : '2')));
+      if (stage && stage !== 'all' && qStg !== stage) return false;
+
+      // 3. 年級比對
+      if (grade && grade !== 'all' && String(q.grade) !== String(grade)) return false;
+
+      return true;
+    }
+
+    function updateExamStageUIHeader() {
+      const title = getExamStageTitle(examStageState.semester, examStageState.stage);
+      const labelBadge = document.getElementById('examStageLabelBadge');
+      if (labelBadge) labelBadge.textContent = title;
+
+      const topBtnText = document.getElementById('topExamStageBtnText');
+      if (topBtnText) topBtnText.textContent = `${title}特訓`;
+
+      const mixedBtn = document.getElementById('mixedBattleBtnText');
+      if (mixedBtn) mixedBtn.textContent = `【${title}】五科綜合大考 (5題)`;
+
+      // 計算目前符合條件之總題數
+      const real = (typeof REAL_EXAM_QUESTIONS !== 'undefined' && Array.isArray(REAL_EXAM_QUESTIONS)) ? REAL_EXAM_QUESTIONS : [];
+      const matched = real.filter(q => matchQuestionStage(q, examStageState.semester, examStageState.stage, examStageState.grade));
+      const countBadge = document.getElementById('examStageCountBadge');
+      if (countBadge) {
+        if (matched.length > 0) {
+          countBadge.className = 'px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold';
+          countBadge.textContent = `新北名校 ${matched.length} 題真題收錄`;
+        } else {
+          countBadge.className = 'px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30 text-[11px] font-bold';
+          countBadge.textContent = `題庫收錄中・支援 RAG 智能出題`;
+        }
+      }
+    }
+
+    function setExamSemesterFilter(sem) {
       playSoundEffect('click');
-      exam114State.grade = grade;
-      ['all', '7', '8'].forEach(g => {
-        const btn = document.getElementById('btn114Grade-' + g);
+      examStageState.semester = sem;
+      ['1', '2'].forEach(s => {
+        const btn = document.getElementById('btnExamSem-' + s);
+        if (!btn) return;
+        if (s === sem) {
+          btn.className = 'px-2.5 py-1 rounded-lg font-bold transition-all bg-amber-500 text-slate-950 shadow';
+        } else {
+          btn.className = 'px-2.5 py-1 rounded-lg font-semibold transition-all text-slate-400 hover:text-white';
+        }
+      });
+      updateExamStageUIHeader();
+      renderExamStageCards();
+      renderExamStageConceptChips();
+    }
+
+    function setExamStageOrderFilter(stg) {
+      playSoundEffect('click');
+      examStageState.stage = stg;
+      ['1', '2', '3'].forEach(s => {
+        const btn = document.getElementById('btnExamStage-' + s);
+        if (!btn) return;
+        if (s === stg) {
+          btn.className = 'px-2.5 py-1 rounded-lg font-bold transition-all bg-amber-500 text-slate-950 shadow';
+        } else {
+          btn.className = 'px-2.5 py-1 rounded-lg font-semibold transition-all text-slate-400 hover:text-white';
+        }
+      });
+      updateExamStageUIHeader();
+      renderExamStageCards();
+      renderExamStageConceptChips();
+    }
+
+    function setExamGradeFilter(grade) {
+      playSoundEffect('click');
+      examStageState.grade = grade;
+      ['all', '7', '8', '9'].forEach(g => {
+        const btn = document.getElementById('btnStageGrade-' + g);
         if (!btn) return;
         if (g === grade) {
           btn.className = 'px-2 py-0.5 rounded-lg text-xs font-bold transition-all bg-amber-500 text-slate-950';
@@ -2183,23 +2436,24 @@
           btn.className = 'px-2 py-0.5 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-white';
         }
       });
-      render114ExamCards();
-      render114ConceptChips();
+      updateExamStageUIHeader();
+      renderExamStageCards();
+      renderExamStageConceptChips();
     }
 
-    function select114SubjectTab(subId) {
+    function selectExamSubjectTab(subId) {
       playSoundEffect('click');
-      exam114State.selectedSubject = subId;
-      render114SubjectTabs();
-      render114ConceptChips();
+      examStageState.selectedSubject = subId;
+      renderExamSubjectTabs();
+      renderExamStageConceptChips();
     }
 
-    function render114ExamCards() {
+    function renderExamStageCards() {
       const container = document.getElementById('examSubjectCardsGrid');
       if (!container) return;
 
       const real = (typeof REAL_EXAM_QUESTIONS !== 'undefined' && Array.isArray(REAL_EXAM_QUESTIONS)) ? REAL_EXAM_QUESTIONS : [];
-      const list114 = real.filter(q => q.exam === '114學年度第1學期第2次段考');
+      const stagePool = real.filter(q => matchQuestionStage(q, examStageState.semester, examStageState.stage, examStageState.grade));
 
       const subjects = [
         { id: 'chinese', name: '國文科', icon: '📜', color: 'from-rose-500/20 to-amber-500/20 border-rose-500/40 text-rose-300' },
@@ -2210,21 +2464,18 @@
       ];
 
       container.innerHTML = subjects.map(sub => {
-        let subPool = list114.filter(q => q.subject === sub.id);
-        if (exam114State.grade !== 'all') {
-          subPool = subPool.filter(q => q.grade === exam114State.grade);
-        }
+        const subPool = stagePool.filter(q => q.subject === sub.id);
         const qCount = subPool.length;
         const concepts = [...new Set(subPool.map(q => q.concept ? q.concept.replace(/^.+?：/, '') : ''))].filter(Boolean);
-        const conceptPreview = concepts.slice(0, 2).join('、') || '全真段考評量';
+        const conceptPreview = concepts.slice(0, 2).join('、') || '支援 RAG 智能出題';
 
         return `
           <div class="bg-gradient-to-br ${sub.color} border rounded-2xl p-3.5 flex flex-col justify-between hover:scale-[1.02] transition-all group">
             <div>
               <div class="flex items-center justify-between">
                 <span class="text-2xl">${sub.icon}</span>
-                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-slate-900/80 border border-slate-700 text-amber-300">
-                  ${qCount} 題真題
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full ${qCount > 0 ? 'bg-slate-900/80 border border-slate-700 text-amber-300' : 'bg-slate-900/60 text-slate-400'}">
+                  ${qCount > 0 ? qCount + ' 題真題' : 'RAG 模式'}
                 </span>
               </div>
               <h4 class="font-black text-sm text-white mt-2">${sub.name}段考卷</h4>
@@ -2232,7 +2483,7 @@
                 核心：${conceptPreview}
               </p>
             </div>
-            <button type="button" onclick="start11412SubjectExam('${sub.id}')" class="mt-3 w-full py-2 rounded-xl bg-slate-900/90 hover:bg-amber-500 hover:text-slate-950 text-white font-bold text-xs border border-slate-700 hover:border-amber-400 transition-all shadow flex items-center justify-center gap-1 active:scale-95">
+            <button type="button" onclick="startExamStageSubjectExam('${sub.id}')" class="mt-3 w-full py-2 rounded-xl bg-slate-900/90 hover:bg-amber-500 hover:text-slate-950 text-white font-bold text-xs border border-slate-700 hover:border-amber-400 transition-all shadow flex items-center justify-center gap-1 active:scale-95">
               <span>⚔️</span>
               <span>出 5 題測驗 →</span>
             </button>
@@ -2241,7 +2492,7 @@
       }).join('');
     }
 
-    function render114SubjectTabs() {
+    function renderExamSubjectTabs() {
       const container = document.getElementById('examConceptSubjectTabs');
       if (!container) return;
 
@@ -2255,32 +2506,29 @@
       ];
 
       container.innerHTML = tabs.map(t => {
-        const isAct = exam114State.selectedSubject === t.id;
+        const isAct = examStageState.selectedSubject === t.id;
         return `
-          <button type="button" onclick="select114SubjectTab('${t.id}')" class="px-2.5 py-1 rounded-lg font-bold transition-all whitespace-nowrap ${isAct ? 'bg-amber-500 text-slate-950 shadow' : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'}">
+          <button type="button" onclick="selectExamSubjectTab('${t.id}')" class="px-2.5 py-1 rounded-lg font-bold transition-all whitespace-nowrap ${isAct ? 'bg-amber-500 text-slate-950 shadow' : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'}">
             ${t.label}
           </button>
         `;
       }).join('');
     }
 
-    function render114ConceptChips() {
+    function renderExamStageConceptChips() {
       const container = document.getElementById('examConceptChipsContainer');
       if (!container) return;
 
       const real = (typeof REAL_EXAM_QUESTIONS !== 'undefined' && Array.isArray(REAL_EXAM_QUESTIONS)) ? REAL_EXAM_QUESTIONS : [];
-      let list114 = real.filter(q => q.exam === '114學年度第1學期第2次段考');
+      let stagePool = real.filter(q => matchQuestionStage(q, examStageState.semester, examStageState.stage, examStageState.grade));
 
-      if (exam114State.selectedSubject !== 'all') {
-        list114 = list114.filter(q => q.subject === exam114State.selectedSubject);
-      }
-      if (exam114State.grade !== 'all') {
-        list114 = list114.filter(q => q.grade === exam114State.grade);
+      if (examStageState.selectedSubject !== 'all') {
+        stagePool = stagePool.filter(q => q.subject === examStageState.selectedSubject);
       }
 
       const conceptCounts = {};
       const conceptSubject = {};
-      list114.forEach(q => {
+      stagePool.forEach(q => {
         if (!q.concept) return;
         conceptCounts[q.concept] = (conceptCounts[q.concept] || 0) + 1;
         conceptSubject[q.concept] = q.subject;
@@ -2288,7 +2536,11 @@
 
       const entries = Object.entries(conceptCounts).sort((a, b) => b[1] - a[1]);
       if (entries.length === 0) {
-        container.innerHTML = `<span class="text-xs text-slate-500 py-2">目前篩選條件下無符合考點</span>`;
+        container.innerHTML = `
+          <div class="w-full text-center py-4 text-xs text-slate-400 flex items-center justify-center gap-2">
+            <span>💡 本段考範圍真題陸續增錄中，點擊考科按鈕將直接啟動 RAG 向量題庫智能出題！</span>
+          </div>
+        `;
         return;
       }
 
@@ -2297,7 +2549,7 @@
         const subMeta = SUBJECT_META[sub] || SUBJECT_META.math;
         const escapedConcept = concept.replace(/'/g, "\\'");
         return `
-          <button type="button" onclick="start11412ConceptExam('${sub}', '${escapedConcept}')" class="group flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-amber-950/50 border border-slate-800 hover:border-amber-400/60 text-xs text-slate-300 hover:text-amber-200 transition-all shadow-sm active:scale-95" title="以此考點生成 5 題特訓試卷">
+          <button type="button" onclick="startExamStageConceptExam('${sub}', '${escapedConcept}')" class="group flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-amber-950/50 border border-slate-800 hover:border-amber-400/60 text-xs text-slate-300 hover:text-amber-200 transition-all shadow-sm active:scale-95" title="以此考點生成 5 題特訓試卷">
             <span>${subMeta.icon}</span>
             <span class="font-semibold">${escapeHtml(concept)}</span>
             <span class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-amber-300 font-mono group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">${count}題</span>
@@ -2306,33 +2558,49 @@
       }).join('');
     }
 
-    function start11412SubjectExam(subjectId) {
+    function startExamStageSubjectExam(subjectId) {
       playSoundEffect('click');
       const real = (typeof REAL_EXAM_QUESTIONS !== 'undefined' && Array.isArray(REAL_EXAM_QUESTIONS)) ? REAL_EXAM_QUESTIONS : [];
-      let pool = real.filter(q => q.exam === '114學年度第1學期第2次段考' && q.subject === subjectId);
-      if (exam114State.grade !== 'all') {
-        const filtered = pool.filter(q => q.grade === exam114State.grade);
-        if (filtered.length >= 5) pool = filtered;
+      let pool = real.filter(q => matchQuestionStage(q, examStageState.semester, examStageState.stage, examStageState.grade) && q.subject === subjectId);
+      
+      // 若該科真題數不足 5 題，啟動 RAG 向量特徵庫或全量同科庫補足 5 題
+      if (pool.length < 5) {
+        if (typeof RagEngine !== 'undefined' && RagEngine.fallbackKeywordSearch) {
+          const stageTitle = getExamStageTitle(examStageState.semester, examStageState.stage);
+          const ragExtra = RagEngine.fallbackKeywordSearch({
+            query: stageTitle + ' 核心段考評量',
+            subject: subjectId,
+            grade: examStageState.grade,
+            topK: 10
+          });
+          pool = [...pool, ...ragExtra];
+        }
+        if (pool.length < 5) {
+          const allSubPool = real.filter(q => q.subject === subjectId);
+          pool = [...pool, ...allSubPool];
+        }
       }
+
       const subMeta = SUBJECT_META[subjectId] || SUBJECT_META.math;
-      const gradeLabel = exam114State.grade === 'all' ? '全學年' : (exam114State.grade + '年級');
+      const stageTitle = getExamStageTitle(examStageState.semester, examStageState.stage);
+      const gradeLabel = examStageState.grade === 'all' ? '全學年' : (examStageState.grade + '年級');
       const selected = filterUnseenCandidates(pool, 5);
 
-      launchBattleSession(`🎯【114-1-2 第二次段考】${subMeta.name}真題卷 (${gradeLabel})`, `${subMeta.bossName}・段考審判者`, selected);
+      launchBattleSession(`🎯【${stageTitle}】${subMeta.name}真題卷 (${gradeLabel})`, `${subMeta.bossName}・段考審判者`, selected);
     }
 
-    function start11412ConceptExam(subjectId, concept) {
+    function startExamStageConceptExam(subjectId, concept) {
       playSoundEffect('click');
       const real = (typeof REAL_EXAM_QUESTIONS !== 'undefined' && Array.isArray(REAL_EXAM_QUESTIONS)) ? REAL_EXAM_QUESTIONS : [];
-      let pool = real.filter(q => q.exam === '114學年度第1學期第2次段考' && q.subject === subjectId);
+      let pool = real.filter(q => matchQuestionStage(q, examStageState.semester, examStageState.stage, examStageState.grade) && q.subject === subjectId);
       let conceptPool = pool.filter(q => (q.concept || '').includes(concept));
-      
-      // 若該考點真題數不足 5 題，使用 RAG 向量檢索在該科目 114-1-2 題庫中擴展補齊
+
+      // 若該考點真題數不足 5 題，啟動 RAG 向量檢索在該科目中深度語義補齊
       if (conceptPool.length < 5) {
         if (typeof RagEngine !== 'undefined' && RagEngine.retrieveSimilarQuestions) {
           const ragResults = RagEngine.retrieveSimilarQuestions(concept, 8, subjectId);
-          const ragExamQuestions = ragResults.map(r => r.question).filter(q => q && q.exam === '114學年度第1學期第2次段考');
-          conceptPool = [...conceptPool, ...ragExamQuestions];
+          const ragQuestions = ragResults.map(r => r.question).filter(Boolean);
+          conceptPool = [...conceptPool, ...ragQuestions];
         }
         if (conceptPool.length < 5) {
           conceptPool = [...conceptPool, ...pool];
@@ -2340,33 +2608,45 @@
       }
 
       const subMeta = SUBJECT_META[subjectId] || SUBJECT_META.math;
+      const stageTitle = getExamStageTitle(examStageState.semester, examStageState.stage);
       const selected = filterUnseenCandidates(conceptPool, 5);
       const cleanConcept = concept.replace(/^.+?：/, '');
 
-      launchBattleSession(`🎯【114-1-2 考點特訓】${subMeta.icon} ${cleanConcept}`, `${subMeta.bossName}・核心守護神`, selected);
+      launchBattleSession(`🎯【${stageTitle} 考點特訓】${subMeta.icon} ${cleanConcept}`, `${subMeta.bossName}・核心守護神`, selected);
     }
 
-    function start11412MixedBattle() {
+    function startExamStageMixedBattle() {
       playSoundEffect('click');
       const real = (typeof REAL_EXAM_QUESTIONS !== 'undefined' && Array.isArray(REAL_EXAM_QUESTIONS)) ? REAL_EXAM_QUESTIONS : [];
-      const list114 = real.filter(q => q.exam === '114學年度第1學期第2次段考');
+      const stagePool = real.filter(q => matchQuestionStage(q, examStageState.semester, examStageState.stage, examStageState.grade));
       const subjects = ['chinese', 'english', 'math', 'science', 'social'];
       const pickedList = [];
 
       subjects.forEach(subId => {
-        let subPool = list114.filter(q => q.subject === subId);
-        if (exam114State.grade !== 'all') {
-          const gPool = subPool.filter(q => q.grade === exam114State.grade);
-          if (gPool.length > 0) subPool = gPool;
+        let subPool = stagePool.filter(q => q.subject === subId);
+        if (subPool.length === 0) {
+          // 若本段考無該科真題，自該科全量真題或核心題補充
+          subPool = real.filter(q => q.subject === subId);
         }
         const picked = filterUnseenCandidates(subPool, 1);
         if (picked.length > 0) pickedList.push(picked[0]);
       });
 
       const finalQuestions = pickedList.sort(() => Math.random() - 0.5);
-      const gradeLabel = exam114State.grade === 'all' ? '國中七/八年級' : (exam114State.grade + '年級');
-      launchBattleSession(`⚡【114-1-2 第二次段考】五科綜合全真大考 (${gradeLabel})`, '星界審判巨像・114段考考官', finalQuestions);
+      const stageTitle = getExamStageTitle(examStageState.semester, examStageState.stage);
+      const gradeLabel = examStageState.grade === 'all' ? '國中七～九年級' : (examStageState.grade + '年級');
+      launchBattleSession(`⚡【${stageTitle}】五科綜合全真大考 (${gradeLabel})`, '星界審判巨像・段考總考官', finalQuestions);
     }
+
+    // 相容性別名（確保任何既有呼叫均安全運行）
+    const render114ExamCards = renderExamStageCards;
+    const render114ConceptChips = renderExamStageConceptChips;
+    const render114SubjectTabs = renderExamSubjectTabs;
+    const set114GradeFilter = setExamGradeFilter;
+    const select114SubjectTab = selectExamSubjectTab;
+    const start11412SubjectExam = startExamStageSubjectExam;
+    const start11412ConceptExam = startExamStageConceptExam;
+    const start11412MixedBattle = startExamStageMixedBattle;
 
     // ==================== 7. ADVENTURE HUB RENDERING ====================
     function renderDailyQuests() {
@@ -2904,8 +3184,8 @@
     }
 
     function startSubjectDungeon(subjectId) {
-      if (appState.examFilter === '114-1-2') {
-        start11412SubjectExam(subjectId);
+      if (appState.examFilter === 'stage' || appState.examFilter === '114-1-2') {
+        startExamStageSubjectExam(subjectId);
         return;
       }
       const subMeta = SUBJECT_META[subjectId] || SUBJECT_META.math;
@@ -2941,8 +3221,8 @@
     }
 
     function startQuickMixedBattle() {
-      if (appState.examFilter === '114-1-2') {
-        start11412MixedBattle();
+      if (appState.examFilter === 'stage' || appState.examFilter === '114-1-2') {
+        startExamStageMixedBattle();
         return;
       }
       const subjects = ['chinese', 'english', 'math', 'science', 'social'];
@@ -3041,15 +3321,15 @@
       const schoolBadge = document.getElementById('qSchoolBadge');
       if (schoolBadge) {
         if (q.school) {
-          const examLabel = (q.exam && (q.exam.includes('114') || q.exam.includes('第2次段考'))) ? '114-1-2 段考真題' : (q.exam || '段考真題');
-          schoolBadge.textContent = `🏫 ${q.school}・${examLabel}`;
+          const stageTag = q.stage_name || (q.semester && q.stage ? `第${q.semester}學期・第${q.stage}次段考` : (q.exam ? q.exam.replace(/^\d+學年度/, '') : '段考真題'));
+          schoolBadge.textContent = `🏫 ${q.school}・${stageTag}`;
           schoolBadge.classList.remove('hidden');
         } else {
           schoolBadge.classList.add('hidden');
         }
       }
-      document.getElementById('qConceptBadge').textContent = q.concept;
-      document.getElementById('qStemText').textContent = q.stem;
+      document.getElementById('qConceptBadge').textContent = window.humanizeMath ? window.humanizeMath(q.concept || '') : (q.concept || '');
+      document.getElementById('qStemText').textContent = window.humanizeMath ? window.humanizeMath(q.stem || '') : (q.stem || '');
 
       document.getElementById('battleHintBanner').classList.add('hidden');
       document.getElementById('battleFeedbackBox').classList.add('hidden');
@@ -3430,18 +3710,18 @@
               </div>
             </div>
 
-            <p class="q-stem-scalable text-lg sm:text-xl md:text-2xl font-bold text-white leading-relaxed">${m.stem}</p>
+            <p class="q-stem-scalable text-lg sm:text-xl md:text-2xl font-bold text-white leading-relaxed">${escapeHtml(m.stem)}</p>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               ${m.options.map((opt, idx) => `
                 <div class="q-opt-scalable px-4 py-3 rounded-xl border text-base sm:text-lg ${idx === m.answer ? 'bg-emerald-950/50 border-emerald-500/50 text-emerald-200 font-bold' : 'bg-slate-950/60 border-slate-800 text-slate-400'}">
-                  ${opt} ${idx === m.answer ? '✓ (正確解答)' : ''}
+                  ${escapeHtml(opt)} ${idx === m.answer ? '✓ (正確解答)' : ''}
                 </div>
               `).join('')}
             </div>
 
             <div class="q-exp-scalable bg-slate-950/80 border border-slate-800 rounded-xl p-4 text-sm sm:text-base md:text-lg text-slate-200 leading-relaxed">
-              <span class="text-amber-300 font-bold">💡 破題關鍵：</span>${m.explanation}
+              <span class="text-amber-300 font-bold">💡 破題關鍵：</span>${escapeHtml(m.explanation)}
             </div>
           </div>
         `;
@@ -4138,17 +4418,17 @@
                 第 ${qIdx + 1} 題：${statusText} (${q.concept || '核心觀念'})
               </span>
             </div>
-            <p class="q-stem-scalable text-lg sm:text-xl md:text-2xl font-bold text-white leading-relaxed tracking-wide">${q.stem || ''}</p>
+            <p class="q-stem-scalable text-lg sm:text-xl md:text-2xl font-bold text-white leading-relaxed tracking-wide">${escapeHtml(q.stem || '')}</p>
             <div class="q-opt-scalable text-base sm:text-lg md:text-xl text-slate-200 space-y-2.5 leading-relaxed">
               ${q.options ? q.options.map((opt, oIdx) => {
                 let badge = '';
                 if (hasUserAns && oIdx === q.selectedAnswer && oIdx === q.correctAnswer) badge = '<span class="text-emerald-400 font-bold ml-2">(您的選擇・正確)</span>';
                 else if (hasUserAns && oIdx === q.selectedAnswer) badge = '<span class="text-rose-400 font-bold ml-2">(您的選擇・錯誤)</span>';
                 else if (oIdx === q.correctAnswer) badge = '<span class="text-emerald-400 font-bold ml-2">(正確解答)</span>';
-                return `<div class="p-3.5 sm:p-4 rounded-xl transition-all ${oIdx === q.correctAnswer ? 'bg-emerald-950/50 border border-emerald-500/40 text-emerald-100 font-semibold' : 'bg-slate-950/40'}">${opt} ${badge}</div>`;
+                return `<div class="p-3.5 sm:p-4 rounded-xl transition-all ${oIdx === q.correctAnswer ? 'bg-emerald-950/50 border border-emerald-500/40 text-emerald-100 font-semibold' : 'bg-slate-950/40'}">${escapeHtml(opt)} ${badge}</div>`;
               }).join('') : ''}
             </div>
-            ${q.explanation ? `<div class="q-exp-scalable text-sm sm:text-base md:text-lg text-slate-200 bg-slate-950/90 p-4 rounded-xl border border-slate-800 leading-relaxed">💡 詳解：${q.explanation}</div>` : ''}
+            ${q.explanation ? `<div class="q-exp-scalable text-sm sm:text-base md:text-lg text-slate-200 bg-slate-950/90 p-4 rounded-xl border border-slate-800 leading-relaxed">💡 詳解：${escapeHtml(q.explanation)}</div>` : ''}
           </div>
         `;
         }).join('');
@@ -4298,7 +4578,7 @@
       render114ExamCards();
       render114SubjectTabs();
       render114ConceptChips();
-      setExamFilter(appState.examFilter || '114-1-2');
+      setExamFilter(appState.examFilter || 'stage');
 
       updateGeminiKeyUI();
       initAuthListener();
