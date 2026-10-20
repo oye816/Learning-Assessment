@@ -174,7 +174,27 @@ JSON 結構必須精確符合以下規格：
   ]
 }`;
 
-    const userPrompt = `【學生輸入的錯題或想複習的弱點觀念】\n${inputText}`;
+    // 透過 RAG 向量引擎檢索真實會考/名校段考真題作為 Few-Shot Exemplars
+    let ragContext = '';
+    let ragExemplars = [];
+    if (typeof window !== 'undefined' && window.RagEngine) {
+      try {
+        ragExemplars = await window.RagEngine.retrieveSimilarQuestions({
+          query: inputText,
+          subject,
+          grade,
+          topK: 2,
+          apiKey
+        });
+        if (ragExemplars && ragExemplars.length > 0) {
+          ragContext = window.RagEngine.buildRAGPromptContext(ragExemplars);
+        }
+      } catch (ragErr) {
+        console.warn('⚠️ RAG 檢索時遭遇微小異常，自動以通用提示詞出題:', ragErr);
+      }
+    }
+
+    const userPrompt = `【學生輸入的錯題或想複習的弱點觀念】\n${inputText}${ragContext}`;
 
     const endpoint = this.getApiEndpoint(apiKey);
 
@@ -219,6 +239,7 @@ JSON 結構必須精確符合以下規格：
       parsed.mnemonic = parsed.mnemonic || parsed.coreAnalysis || '🔮 破題心法：掌握核心概念，逐一排除干擾選項！';
       parsed.isAIGenerated = true;
       parsed.modelUsed = this.getModel();
+      parsed.ragExemplars = ragExemplars;
 
       if (!Array.isArray(parsed.questions) || parsed.questions.length === 0) {
         throw new Error('回傳之題目列表為空。');

@@ -10,3 +10,4 @@ Thumbs.db
 *.log
 .venv/
 __pycache__/
+scripts/embeddings_cache.json
