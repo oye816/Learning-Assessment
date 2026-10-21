@@ -24,7 +24,7 @@ export const CONFIG = {
 
   // 2. 管理者 Google 帳號清單 (這些帳號登入後將自動解鎖「👑 導師管理後台」)
   adminEmails: [
-    "admin@gmail.com",
+    "your-email@example.com",
     "teacher@example.com"
   ],
 

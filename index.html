@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>星耀國中學習評量系統｜國中五科段考題庫 ＆ AI 弱點出題</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚔️</text></svg>">
   <script>
     // 依據執行環境動態標註網頁標題
     (function updateEnvironmentTitle() {
@@ -79,42 +80,48 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #475569;
     }
-    /* 題目、選項與詳解字級自適應放大系統 */
+    /* 題目、選項與詳解字級自適應放大系統 (全站統一最佳黃金閱讀比例) */
     :root {
       --q-font-scale: 1.15;
     }
+    /* 1. 題幹層級：清晰聚焦、中文字距行高最佳化 */
     .q-stem-scalable {
-      font-size: calc(1.35rem * var(--q-font-scale, 1.15)) !important;
+      font-size: calc(1.25rem * var(--q-font-scale, 1.15)) !important;
       line-height: 1.75 !important;
+      letter-spacing: 0.015em;
     }
     @media (min-width: 640px) {
       .q-stem-scalable {
-        font-size: calc(1.6rem * var(--q-font-scale, 1.15)) !important;
+        font-size: calc(1.38rem * var(--q-font-scale, 1.15)) !important;
       }
     }
     @media (min-width: 1024px) {
       .q-stem-scalable {
-        font-size: calc(1.85rem * var(--q-font-scale, 1.15)) !important;
+        font-size: calc(1.50rem * var(--q-font-scale, 1.15)) !important;
       }
     }
 
+    /* 2. 選項層級：易讀、易觸控、排版不擁擠 */
     .q-opt-scalable {
-      font-size: calc(1.15rem * var(--q-font-scale, 1.15)) !important;
+      font-size: calc(1.02rem * var(--q-font-scale, 1.15)) !important;
       line-height: 1.6 !important;
+      letter-spacing: 0.01em;
     }
     @media (min-width: 640px) {
       .q-opt-scalable {
-        font-size: calc(1.3rem * var(--q-font-scale, 1.15)) !important;
+        font-size: calc(1.10rem * var(--q-font-scale, 1.15)) !important;
       }
     }
 
+    /* 3. 詳解與說明層級：舒適柔和、長文好閱讀 */
     .q-exp-scalable {
-      font-size: calc(1.08rem * var(--q-font-scale, 1.15)) !important;
-      line-height: 1.7 !important;
+      font-size: calc(0.96rem * var(--q-font-scale, 1.15)) !important;
+      line-height: 1.75 !important;
+      letter-spacing: 0.01em;
     }
     @media (min-width: 640px) {
       .q-exp-scalable {
-        font-size: calc(1.22rem * var(--q-font-scale, 1.15)) !important;
+        font-size: calc(1.05rem * var(--q-font-scale, 1.15)) !important;
       }
     }
   </style>
@@ -268,6 +275,53 @@
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+    };
+
+    // 全域安全 SVG 向量圖形渲染函式（支援幾何、實驗、光路與統計圖表即時展示）
+    window.renderSafeSvg = function(rawSvg, title = '題型圖解') {
+      if (!rawSvg || typeof rawSvg !== 'string') return '';
+      
+      // 1. 萃取 <svg ...>...</svg> 區塊
+      const svgMatch = rawSvg.match(/<svg[\s\S]*?<\/svg>/i);
+      if (!svgMatch) return '';
+      let cleanSvg = svgMatch[0];
+
+      // 2. 嚴格過濾潛在惡意標籤 (XSS 防護)
+      cleanSvg = cleanSvg.replace(/<(script|iframe|object|embed|link|style)[\s\S]*?<\/\1>/gi, '');
+      cleanSvg = cleanSvg.replace(/<(script|iframe|object|embed|link|style)[^>]*>/gi, '');
+
+      // 3. 過濾危險事件屬性 (on*)
+      cleanSvg = cleanSvg.replace(/\s+on\w+\s*=\s*(["'])[\s\S]*?\1/gi, '');
+      cleanSvg = cleanSvg.replace(/\s+on\w+\s*=\s*[^\s>]+/gi, '');
+
+      // 4. 過濾 javascript: 虛擬協定
+      cleanSvg = cleanSvg.replace(/(href|xlink:href)\s*=\s*(["'])\s*javascript:[\s\S]*?\2/gi, '$1="#"');
+
+      // 5. 確保具備標準 xmlns 命名空間
+      if (!cleanSvg.includes('xmlns=')) {
+        cleanSvg = cleanSvg.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
+      }
+
+      // 6. 注入自適應樣式 class
+      cleanSvg = cleanSvg.replace('<svg', '<svg class="max-w-full max-h-56 sm:max-h-72 mx-auto drop-shadow-md select-none"');
+
+      const safeTitle = window.escapeHtml ? window.escapeHtml(title) : title;
+
+      return `
+        <div class="my-3 sm:my-4 rounded-2xl bg-gradient-to-b from-slate-950/95 via-slate-900/95 to-slate-950/95 border border-indigo-500/30 p-3 sm:p-5 shadow-xl flex flex-col items-center justify-center relative overflow-hidden group">
+          <div class="w-full flex items-center justify-between pb-2 mb-2 border-b border-slate-800/80 text-[11px] font-bold text-slate-400">
+            <span class="flex items-center gap-1.5 text-indigo-300">
+              <span class="text-sm">📐</span> <span>${safeTitle}</span>
+            </span>
+            <span class="px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 text-[10px] font-mono tracking-wider">
+              SVG 向量繪圖・無損清晰
+            </span>
+          </div>
+          <div class="w-full flex items-center justify-center py-1 overflow-x-auto">
+            ${cleanSvg}
+          </div>
+        </div>
+      `;
     };
 
     // 全域自動回填設定視窗所有欄位（無論先開彈窗、後開彈窗或切換頁籤，100% 確保內容自動帶出可見）
@@ -596,10 +650,15 @@
               <span class="text-xs text-slate-400">智慧分析</span>
             </div>
             <h3 class="font-extrabold text-base text-white mt-2">遇到不會的考題？</h3>
-            <p class="text-xs text-slate-300 mt-1">輸入題目或卡關觀念，即時剖析核心概念並生成同型練習題！</p>
+            <p class="text-xs text-slate-300 mt-1">輸入題目、卡關觀念，或上傳考卷圖片，即時剖析核心概念並生成同型練習題！</p>
           </div>
           <div class="mt-3 flex gap-2">
-            <input id="quickHubMistakeInput" type="text" placeholder="例：一元一次方程式打折問題、凸透鏡成像..." class="flex-1 bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-fuchsia-400" />
+            <input id="quickHubMistakeInput" type="text" placeholder="輸入題目文字、或點相機上傳圖片..." class="flex-1 bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-fuchsia-400 min-w-0" />
+            <input type="file" id="quickHubImageInput" accept="image/*" class="hidden" onchange="handleQuickHubImageSelected(this)" />
+            <button type="button" onclick="document.getElementById('quickHubImageInput').click()" class="px-3 py-2 rounded-xl bg-violet-800/80 hover:bg-violet-700 border border-violet-500/50 text-white text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1 shadow-sm" title="拍照或上傳題目圖片">
+              <span>📷</span>
+              <span class="hidden sm:inline">拍照/上傳</span>
+            </button>
             <button type="button" onclick="quickJumpToAlchemy()" class="px-3.5 py-2 rounded-xl bg-fuchsia-600 hover:bg-fuchsia-500 text-white text-xs font-bold whitespace-nowrap transition-colors">
               AI 出題 →
             </button>
@@ -619,7 +678,7 @@
               <div class="flex flex-wrap items-center gap-2">
                 <h3 class="text-lg sm:text-xl font-black text-white">名校段考全真題庫</h3>
                 <span id="examStageLabelBadge" class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[11px] font-extrabold">第一學期・第二次段考</span>
-                <span id="examStageCountBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold">新北名校 368 題真題收錄</span>
+                <span id="examStageCountBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold">新北三大名校 3,696 題純淨真題收錄</span>
               </div>
               <p class="text-xs text-slate-300 mt-1">
                 依<span class="text-amber-300 font-bold">學期</span>與<span class="text-amber-300 font-bold">段考次數</span>精準分類，精選新北升學名校（海山、永和、福和國中）全科真題，支援分科測驗、章節考點特訓與五科綜合大考！
@@ -754,24 +813,82 @@
           </div>
         </div>
 
-        <!-- Step 1: Quick Preset Chips -->
+        <!-- Step 1: Preset Select Dropdown -->
         <div class="mt-5">
-          <div class="text-xs font-bold text-slate-300 mb-2 flex items-center gap-1.5">
-            <span>🔥</span>
-            <span>常考弱點範本（點擊自動帶入）：</span>
-          </div>
-          <div id="alchemyPresetChips" class="flex flex-wrap gap-2">
-            <!-- Populated by JS -->
+          <label for="alchemyPresetSelect" class="text-xs font-bold text-slate-300 mb-2 flex items-center justify-between">
+            <span class="flex items-center gap-1.5">
+              <span>🔥</span>
+              <span>常考弱點範本（選擇後自動帶入）：</span>
+            </span>
+            <span class="text-[11px] text-fuchsia-400 font-normal">💡 涵蓋國中五科常考盲點與名校段考真題</span>
+          </label>
+          <div class="relative">
+            <select id="alchemyPresetSelect" onchange="selectAlchemyPreset(this.value)" class="w-full bg-slate-950/90 border border-slate-700 hover:border-fuchsia-400/60 focus:border-fuchsia-400 focus:outline-none rounded-2xl px-4 py-3 text-xs sm:text-sm text-slate-200 font-medium focus:ring-2 focus:ring-fuchsia-500/20 transition-all cursor-pointer shadow-inner">
+              <!-- Populated by JS -->
+            </select>
           </div>
         </div>
 
         <!-- Step 2: Custom Question Input Form -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 mt-5">
           <div class="lg:col-span-8 space-y-3">
-            <label for="alchemyQuestionInput" class="block text-xs font-bold text-slate-300">
-              📝 貼上題目、錯誤選項或卡關觀念：
-            </label>
-            <textarea id="alchemyQuestionInput" rows="4" class="w-full rounded-2xl bg-slate-950/90 border border-slate-700 focus:border-fuchsia-400 focus:outline-none p-3.5 text-sm text-white placeholder-slate-500 leading-relaxed" placeholder="例如：一件衣服按定價打八折出售，還比成本多賺 120 元；若按定價打六折出售則賠 80 元，請問這件衣服成本多少元？（或輸入：現在完成式 since 與 for 差別、凸透鏡成像位置、莫耳濃度計算、文言文『之』字代詞用法...）"></textarea>
+            <div class="flex items-center justify-between">
+              <label for="alchemyQuestionInput" class="block text-xs font-bold text-slate-300">
+                📝 貼上題目、錯誤選項或卡關觀念：
+              </label>
+              <!-- RAG 自訂題庫管理徽章按鈕 -->
+              <button type="button" onclick="openCustomRagModal()" id="btnCustomRagBadge" class="text-[11px] font-bold px-2.5 py-1 rounded-xl bg-indigo-950/80 border border-indigo-500/40 text-indigo-300 hover:text-white hover:border-indigo-400 transition-all flex items-center gap-1 shadow-sm" title="檢視所有拍照收錄的 RAG 知識庫題庫">
+                <span>📚</span>
+                <span>RAG 題庫：<span id="customRagCountBadge" class="text-amber-300 font-mono font-extrabold">0</span> 題自訂考題</span>
+              </button>
+            </div>
+            <textarea id="alchemyQuestionInput" rows="4" class="w-full rounded-2xl bg-slate-950/90 border border-slate-700 focus:border-fuchsia-400 focus:outline-none p-3.5 text-sm text-white placeholder-slate-500 leading-relaxed" placeholder="例如：一件衣服按定價打八折出售，還比成本多賺 120 元；若按定價打六折出售則賠 80 元，請問這件衣服成本多少元？（亦可直接拍照上傳考卷或題目圖片！）"></textarea>
+
+            <!-- 考題圖片上傳與預覽區塊 (支援拍照、上傳檔案、拖曳、剪貼簿 Ctrl+V 貼上) -->
+            <div id="alchemyImageUploadContainer" class="space-y-2">
+              <input type="file" id="alchemyImageFileInput" accept="image/*" class="hidden" onchange="handleAlchemyImageFileSelected(this)">
+              
+              <!-- 上傳引導框 -->
+              <div id="alchemyImageDropZone" onclick="document.getElementById('alchemyImageFileInput').click()" class="cursor-pointer border-2 border-dashed border-slate-700 hover:border-fuchsia-400/80 bg-slate-950/60 hover:bg-slate-900/60 rounded-2xl p-3 sm:p-3.5 text-center transition-all group">
+                <div class="flex items-center justify-center gap-2 text-xs sm:text-sm font-bold text-slate-300 group-hover:text-fuchsia-300">
+                  <span class="text-lg">📷</span>
+                  <span>拍照或上傳題目圖片（手機拍照、點擊選檔、或鍵盤 Ctrl+V 貼上截圖）</span>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-1">
+                  AI 將透過多模態視覺辨識原題並解析，原題將自動登錄至 <span class="text-amber-300 font-bold">RAG 向量題庫</span> 供未來出題參考！
+                </p>
+              </div>
+
+              <!-- 圖片預覽卡片 (有選取圖片時顯示) -->
+              <div id="alchemyImagePreviewCard" class="hidden bg-slate-900/90 border border-fuchsia-500/50 rounded-2xl p-3 flex items-center justify-between gap-3 shadow-lg">
+                <div class="flex items-center gap-3 overflow-hidden">
+                  <img id="alchemyImagePreviewImg" src="" alt="考題圖片預覽" class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-xl border border-slate-700 flex-shrink-0 cursor-pointer hover:opacity-90 transition-opacity" onclick="previewLargeUploadedImage()" title="點擊放大預覽">
+                  <div class="overflow-hidden">
+                    <div class="flex items-center gap-2">
+                      <span class="text-xs font-bold text-fuchsia-300 flex items-center gap-1">
+                        <span>📸</span> <span>已選取考題圖片</span>
+                      </span>
+                      <span id="alchemyImageSizeBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-mono"></span>
+                    </div>
+                    <p id="alchemyImageNameText" class="text-xs text-white font-medium truncate mt-0.5"></p>
+                    <p class="text-[10px] text-emerald-400 mt-1 font-semibold flex items-center gap-1">
+                      <span>✨</span> <span>出題時將由 Gemini 進行視覺多模態辨識，並自動收錄至 RAG 題庫</span>
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 flex-shrink-0">
+                  <button type="button" onclick="previewLargeUploadedImage()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-bold text-slate-300 border border-slate-700 transition-colors" title="檢視大圖">
+                    放大
+                  </button>
+                  <button type="button" onclick="document.getElementById('alchemyImageFileInput').click()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-bold text-cyan-300 border border-slate-700 transition-colors">
+                    更換
+                  </button>
+                  <button type="button" onclick="clearAlchemyUploadedImage()" class="px-2.5 py-1.5 rounded-lg bg-rose-950/60 hover:bg-rose-900 text-[11px] font-bold text-rose-300 border border-rose-800/50 transition-colors">
+                    移除
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="lg:col-span-4 flex flex-col justify-between bg-slate-900/70 border border-slate-800 rounded-2xl p-4 space-y-3">
@@ -789,10 +906,11 @@
               </div>
               <div>
                 <label for="alchemyGradeSelect" class="block text-[11px] font-bold text-slate-400 mb-1">目標難度</label>
-                <select id="alchemyGradeSelect" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none focus:border-violet-400">
-                  <option value="7">七年級 (基礎)</option>
-                  <option value="8" selected>八年級 (進階)</option>
-                  <option value="9">九年級 (會考難度)</option>
+                <select id="alchemyGradeSelect" onchange="setGradeFilter(this.value)" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none focus:border-violet-400">
+                  <option value="all">全學年 (綜合素養)</option>
+                  <option value="7">七年級 (基礎觀念)</option>
+                  <option value="8">八年級 (核心進階)</option>
+                  <option value="9">九年級 (會考總複習)</option>
                 </select>
               </div>
             </div>
@@ -976,15 +1094,18 @@
         </div>
 
         <!-- Question Stem -->
-        <div id="qStemText" class="q-stem-scalable text-xl sm:text-2xl md:text-3xl font-bold text-white leading-relaxed bg-slate-950/70 border border-slate-800/90 rounded-2xl p-6 sm:p-8 tracking-wide shadow-inner">
+        <div id="qStemText" class="q-stem-scalable font-bold text-white leading-relaxed bg-slate-950/70 border border-slate-800/90 rounded-2xl p-5 sm:p-7 tracking-wide shadow-inner">
           題目載入中...
         </div>
 
+        <!-- Question Diagram Container (SVG 幾何/實驗向量圖形展示) -->
+        <div id="qDiagramContainer" class="hidden"></div>
+
         <!-- Mentor Hint Box (Hidden until Hint item used) -->
-        <div id="battleHintBanner" class="hidden rounded-2xl bg-amber-500/15 border border-amber-400/40 p-4 text-sm sm:text-base md:text-lg text-amber-200 flex items-start gap-3">
+        <div id="battleHintBanner" class="q-exp-scalable hidden rounded-2xl bg-amber-500/15 border border-amber-400/40 p-4 text-amber-200 flex items-start gap-3">
           <span class="text-xl">🧙‍♂️</span>
-          <div class="leading-relaxed">
-            <span class="font-bold">星耀大魔導師破題提示：</span>
+          <div class="leading-relaxed font-medium">
+            <span class="font-bold text-amber-300">星耀大魔導師破題提示：</span>
             <span id="battleHintText"></span>
           </div>
         </div>
@@ -1008,7 +1129,7 @@
               </button>
             </div>
           </div>
-          <p id="feedbackExplanationText" class="q-exp-scalable text-base sm:text-lg md:text-xl text-slate-200 leading-relaxed font-medium"></p>
+          <p id="feedbackExplanationText" class="q-exp-scalable text-slate-200 leading-relaxed font-medium"></p>
         </div>
       </div>
 
@@ -1386,7 +1507,6 @@
               <select id="selectGeminiModel" onchange="handleModelChange()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-violet-400 font-mono">
                 <option value="gemini-3.5-flash-lite" selected>Gemini 3.5 Flash Lite (預設推薦・極速省流思考)</option>
                 <option value="gemini-3.1-flash-lite">Gemini 3.1 Flash Lite (輕量穩定・高性價比)</option>
-                <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite (經典輕量級模型)</option>
               </select>
             </div>
             <div>
@@ -1439,7 +1559,7 @@
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-300 mb-1">管理者 Google 帳號清單 (以逗號分隔)：</label>
-            <input type="text" id="inputCustomAdminEmails" placeholder="admin@gmail.com, teacher@example.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-violet-400" />
+            <input type="text" id="inputCustomAdminEmails" placeholder="oye816@gmail.com, teacher@example.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-violet-400" />
             <small class="text-[10px] text-slate-400">登入符合信箱的使用者將自動解鎖「👑 導師管理後台」。</small>
           </div>
           <div class="flex items-center justify-end gap-2 pt-2">
@@ -1490,6 +1610,45 @@
         <div id="modalDetailQuestionsList" class="space-y-4 mt-4">
           <!-- Populated dynamically -->
         </div>
+      </div>
+    </div>
+
+    <!-- ==================== MODAL: CUSTOM RAG KNOWLEDGE BASE ==================== -->
+    <div id="customRagModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+      <div class="rpg-card rounded-3xl p-6 sm:p-8 max-w-3xl w-full max-h-[85vh] overflow-y-auto border border-indigo-500/50 shadow-2xl relative space-y-4">
+        <button type="button" onclick="closeCustomRagModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg font-bold">✕</button>
+        <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 pr-8 gap-2">
+          <div class="flex items-center gap-2.5">
+            <span class="text-2xl">📚</span>
+            <div>
+              <h3 class="text-lg sm:text-xl font-black text-white">RAG 向量題庫知識庫（拍照與自訂考題）</h3>
+              <p class="text-xs text-slate-400">所有拍照辨識的考題皆已在此登錄並向量化，支援 Firebase 雲端同步共享！</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <!-- 題目字級即時微調 -->
+            <div class="flex items-center gap-1.5 bg-slate-900/90 border border-slate-700/80 px-2.5 py-1 rounded-xl text-xs shadow-inner">
+              <span class="text-slate-400 font-semibold mr-0.5">字級</span>
+              <button type="button" onclick="changeQuestionFontSize(-1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-violet-600 text-white font-bold flex items-center justify-center transition-all active:scale-95" title="縮小字型">A-</button>
+              <span class="fontScaleDisplayCustomRag px-1.5 text-amber-300 font-bold font-mono">放大</span>
+              <button type="button" onclick="changeQuestionFontSize(1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-violet-600 text-white font-bold flex items-center justify-center transition-all active:scale-95" title="放大字型">A+</button>
+            </div>
+            <button type="button" onclick="refreshCloudRagQuestions()" class="text-xs text-sky-400 hover:text-sky-300 font-bold flex items-center gap-1.5 bg-sky-950/60 hover:bg-sky-900/60 px-3 py-1.5 rounded-xl border border-sky-800/60 transition-all shadow-sm">
+              <span>🔄</span> 雲端同步更新
+            </button>
+          </div>
+        </div>
+        <div id="customRagListContainer" class="space-y-3 mt-4">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== MODAL: IMAGE LIGHTBOX PREVIEW ==================== -->
+    <div id="imageLightboxModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md" onclick="closeImageLightboxModal()">
+      <div class="relative max-w-4xl max-h-[90vh] flex flex-col items-center" onclick="event.stopPropagation()">
+        <button type="button" onclick="closeImageLightboxModal()" class="absolute -top-10 right-0 text-white hover:text-amber-300 text-xl font-bold">✕ 關閉</button>
+        <img id="imageLightboxImg" src="" alt="大圖檢視" class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl border border-slate-700">
       </div>
     </div>
 </main>
@@ -1698,19 +1857,7 @@
       }
     };
 
-    const escapeHtml = window.escapeHtml || function(str) {
-      if (str === null || str === undefined) return '';
-      let s = String(str);
-      if (typeof window.humanizeMath === 'function') {
-        s = window.humanizeMath(s);
-      }
-      return s
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    };
+    const escapeHtml = window.escapeHtml;
 
     /**
      * 隨機洗牌單一題目的選項（A/B/C/D），並自動重新對應正確答案索引與解析文字
@@ -2126,6 +2273,7 @@
       dailyQuests: getFreshDailyQuests(),
       mistakes: [], // 新使用者錯題庫預設完全為空
       alchemyCurrentPack: null,
+      alchemyUploadedImage: null, // 上傳之考題圖片物件 { base64, mimeType, name, size }
       currentUser: null,
       isAdmin: false,
       personalRecords: [],
@@ -2175,6 +2323,9 @@
           } else {
             appState.dailyQuests = getFreshDailyQuests();
           }
+          if (parsed && parsed.gradeFilter && ['all', '7', '8', '9'].includes(parsed.gradeFilter)) {
+            appState.gradeFilter = parsed.gradeFilter;
+          }
         } else {
           appState.player = getFreshPlayerState();
           appState.mistakes = [];
@@ -2185,6 +2336,17 @@
         appState.mistakes = [];
         appState.dailyQuests = getFreshDailyQuests();
       }
+
+      // 讀取全域獨立持久化年級偏好（跨訪客/登入狀態無縫繼承）
+      try {
+        const savedPref = localStorage.getItem('star_user_grade_preference');
+        if (savedPref && ['all', '7', '8', '9'].includes(savedPref)) {
+          appState.gradeFilter = savedPref;
+        }
+      } catch (e) {}
+      if (typeof examStageState !== 'undefined') {
+        examStageState.grade = appState.gradeFilter || 'all';
+      }
     }
 
     function saveState() {
@@ -2192,11 +2354,17 @@
         localStorage.setItem(getStorageKey(), JSON.stringify({
           player: appState.player,
           mistakes: appState.mistakes,
-          dailyQuests: appState.dailyQuests
+          dailyQuests: appState.dailyQuests,
+          gradeFilter: appState.gradeFilter
         }));
       } catch (e) {
         // Ignore storage restrictions
       }
+      try {
+        if (appState.gradeFilter) {
+          localStorage.setItem('star_user_grade_preference', appState.gradeFilter);
+        }
+      } catch (e) {}
       // 同步勇者雲端存檔（包含經驗值、星幣、每日任務進度）
       if (appState.currentUser && window.FirebaseService && typeof window.FirebaseService.syncUserProfile === 'function') {
         window.FirebaseService.syncUserProfile(appState.currentUser, appState);
@@ -2293,6 +2461,11 @@
         renderMistakeGrimoire();
       } else if (tabId === 'stats') {
         renderStatsAndRadar();
+      } else if (tabId === 'alchemy') {
+        const sel = document.getElementById('alchemyGradeSelect');
+        if (sel && appState.gradeFilter) {
+          sel.value = appState.gradeFilter;
+        }
       } else if (tabId === 'battle') {
         if (!appState.battle.questions || appState.battle.questions.length === 0) {
           startQuickMixedBattle();
@@ -2300,28 +2473,70 @@
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    function setGradeFilter(grade) {
-      playSoundEffect('click');
-      appState.gradeFilter = grade;
+
+    function setGradeFilter(grade, playSound = true) {
+      if (playSound) playSoundEffect('click');
+      const validGrade = ['all', '7', '8', '9'].includes(String(grade)) ? String(grade) : 'all';
+      appState.gradeFilter = validGrade;
+      if (typeof examStageState !== 'undefined') {
+        examStageState.grade = validGrade;
+      }
+
+      // 1. 本地儲存記住年級設定
+      try {
+        localStorage.setItem('star_user_grade_preference', validGrade);
+      } catch (e) {}
+      saveState();
+
+      // 2. 同步頂部導航年級按鈕樣式
       ['all', '7', '8', '9'].forEach(g => {
         const btn = document.getElementById('gradeBtn-' + g);
         if (!btn) return;
-        if (g === grade) {
+        if (g === validGrade) {
           btn.className = 'px-2.5 py-1 rounded-lg font-semibold transition-all bg-violet-600 text-white';
         } else {
           btn.className = 'px-2.5 py-1 rounded-lg font-semibold transition-all text-slate-400 hover:text-white';
         }
       });
+
+      // 3. 同步名校段考題庫中心年級按鈕樣式
+      ['all', '7', '8', '9'].forEach(g => {
+        const btn = document.getElementById('btnStageGrade-' + g);
+        if (!btn) return;
+        if (g === validGrade) {
+          btn.className = 'px-2 py-0.5 rounded-lg text-xs font-bold transition-all bg-amber-500 text-slate-950';
+        } else {
+          btn.className = 'px-2 py-0.5 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-white';
+        }
+      });
+
+      // 4. 同步 AI 弱點出題的難度下拉選單
+      const alchemyGradeSel = document.getElementById('alchemyGradeSelect');
+      if (alchemyGradeSel) {
+        alchemyGradeSel.value = validGrade;
+      }
+
+      // 5. 更新文字標籤
       const labelMap = {
         all: '全學年題庫 (國一～國三)',
         '7': '七年級 (國一精選)',
         '8': '八年級 (國二精選)',
         '9': '九年級 (會考總複習)'
       };
-      if (appState.examFilter === '114-1-2') {
-        document.getElementById('currentGradeFilterText').textContent = '🎯 114-1-2 第二次段考名校真題專屬特訓 (' + (labelMap[grade] || '全學年') + ')';
-      } else {
-        document.getElementById('currentGradeFilterText').textContent = labelMap[grade] || '全學年題庫';
+      const curFilterText = document.getElementById('currentGradeFilterText');
+      if (curFilterText) {
+        if (appState.examFilter === '114-1-2' || appState.examFilter === 'stage') {
+          const stageTitle = (typeof getExamStageTitle === 'function' && typeof examStageState !== 'undefined')
+            ? getExamStageTitle(examStageState.semester, examStageState.stage)
+            : '名校段考';
+          curFilterText.textContent = `🎯 名校段考特訓 (${stageTitle}・${labelMap[validGrade] || '全學年'})`;
+        } else {
+          curFilterText.textContent = labelMap[validGrade] || '全學年題庫';
+        }
+      }
+
+      if (typeof updateExamStageUIHeader === 'function') {
+        updateExamStageUIHeader();
       }
       renderSubjectDungeons();
       renderExamStageCards();
@@ -2366,32 +2581,42 @@
      */
     function isSelfContainedTextQuestion(q) {
       if (!q || !q.stem) return false;
-      const text = (q.stem + ' ' + (Array.isArray(q.options) ? q.options.join(' ') : '')).toLowerCase();
+      const stem = q.stem || '';
+      const opts = Array.isArray(q.options) ? q.options : [];
+      const text = (stem + ' ' + opts.join(' ')).toLowerCase();
+      
+      // 排除「看圖說故事」成語干擾
+      const textNoIdiom = text.replace(/看圖說故事/g, '');
+      const stemNoIdiom = stem.replace(/看圖說故事/g, '');
+      
+      const hasSvg = Boolean(q.diagramSvg && typeof q.diagramSvg === 'string' && q.diagramSvg.includes('<svg'));
 
-      // 1. 嚴格過濾看圖題、地圖題、實驗插圖題與代號題
-      const imagePattern = /如[附右左下]?圖|見[附右左下]?圖|看[附右左下]?圖|附圖[為中]|圖中[的為]|地圖[中上代號]|圖\s*[(（]?\s*[一二三四五六七八九十0-9]+|依據[附右左下]?圖|根據[附右左下]?圖|代號[甲乙丙丁戊己庚辛abcd]{1,4}代表|代號[甲乙丙丁戊己庚辛abcd]{1,4}為|代號[甲乙丙丁戊己庚辛]/i;
-      if (imagePattern.test(text) && !/甲[:：]|乙[:：]/.test(q.stem)) {
-        return false;
+      // 1. 嚴格過濾看圖題、地圖題、實驗插圖題與代號題（若已由 AI 內建 diagramSvg 向量圖則放行）
+      if (!hasSvg) {
+        const imagePattern = /如[附右左下]?圖|見[附右左下]?圖|看[附右左下]?圖|附圖[為中]|圖中[的為]|地圖[中上代號]|圖\s*[(（]?\s*[一二三四五六七八九十0-9]+|依據[附右左下]?圖|根據[附右左下]?圖|代號[甲乙丙丁戊己庚辛abcd]{1,4}代表|代號[甲乙丙丁戊己庚辛abcd]{1,4}為|代號[甲乙丙丁戊己庚辛]|★標示之處/i;
+        if (imagePattern.test(textNoIdiom) && !/甲[:：]|乙[:：]/.test(stemNoIdiom)) {
+          return false;
+        }
       }
 
       // 2. 嚴格過濾「承上題」或依賴未提供之前置題目/短文材料之試題
-      if (/承上題|題組/i.test(text)) {
+      if (/承上題|題組/i.test(stemNoIdiom)) {
         return false;
       }
-      if (/(該報導|上述報導|依據上文|根據上文|由上文|閱讀上述|資料[一二三四五]|閱讀下列文章|由上述資料|根據短文|由這篇報導)/i.test(q.stem) && q.stem.trim().length < 80) {
+      if (/(該報導|上述報導|依據上文|根據上文|由上文|閱讀上述|資料[一二三四五]|閱讀下列文章|由上述資料|根據短文|由這篇報導|依據這篇報導|根據上述資料|文章中)/i.test(stemNoIdiom) && stemNoIdiom.trim().length < 80) {
         return false;
       }
 
       // 3. 嚴格過濾聽力測驗、錄音依賴題
       const audioPattern = /聽力測驗|聽到的內容|選出聽到的|請聽錄音|聽完對話|listen to the|based on the recording/i;
-      if (audioPattern.test(text)) {
+      if (audioPattern.test(textNoIdiom)) {
         return false;
       }
 
       // 4. 英文科：過濾無附短文的閱讀理解題
       if (q.subject === 'english') {
         const passagePattern = /according to the (reading|passage|article|dialogue|chart)/i;
-        if (passagePattern.test(text) && q.stem.trim().length < 120) {
+        if (passagePattern.test(textNoIdiom) && stemNoIdiom.trim().length < 120) {
           return false;
         }
       }
@@ -2485,20 +2710,7 @@
     }
 
     function setExamGradeFilter(grade) {
-      playSoundEffect('click');
-      examStageState.grade = grade;
-      ['all', '7', '8', '9'].forEach(g => {
-        const btn = document.getElementById('btnStageGrade-' + g);
-        if (!btn) return;
-        if (g === grade) {
-          btn.className = 'px-2 py-0.5 rounded-lg text-xs font-bold transition-all bg-amber-500 text-slate-950';
-        } else {
-          btn.className = 'px-2 py-0.5 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-white';
-        }
-      });
-      updateExamStageUIHeader();
-      renderExamStageCards();
-      renderExamStageConceptChips();
+      setGradeFilter(grade);
     }
 
     function selectExamSubjectTab(subId) {
@@ -2622,7 +2834,7 @@
       const real = (typeof REAL_EXAM_QUESTIONS !== 'undefined' && Array.isArray(REAL_EXAM_QUESTIONS)) ? REAL_EXAM_QUESTIONS : [];
       let pool = real.filter(q => matchQuestionStage(q, examStageState.semester, examStageState.stage, examStageState.grade) && q.subject === subjectId);
       
-      // 若該科真題數不足 5 題，啟動 RAG 向量特徵庫或全量同科庫補足 5 題
+      // 若該科真題數不足 5 題，啟動 RAG 向量特徵庫或全量同科庫補足 5 題（優先符合指定年級）
       if (pool.length < 5) {
         if (typeof RagEngine !== 'undefined' && RagEngine.fallbackKeywordSearch) {
           const stageTitle = getExamStageTitle(examStageState.semester, examStageState.stage);
@@ -2635,8 +2847,20 @@
           pool = [...pool, ...ragExtra];
         }
         if (pool.length < 5) {
-          const allSubPool = real.filter(q => q.subject === subjectId);
+          let allSubPool = real.filter(q => q.subject === subjectId);
+          if (examStageState.grade && examStageState.grade !== 'all') {
+            const gradeFiltered = allSubPool.filter(q => String(q.grade) === String(examStageState.grade));
+            if (gradeFiltered.length > 0) allSubPool = gradeFiltered;
+          }
           pool = [...pool, ...allSubPool];
+        }
+      }
+
+      // 嚴格年級過濾：若指定年級非 all，確保試題符合該年級
+      if (examStageState.grade && examStageState.grade !== 'all') {
+        const strictPool = pool.filter(q => !q.grade || String(q.grade) === String(examStageState.grade));
+        if (strictPool.length >= 3) {
+          pool = strictPool;
         }
       }
 
@@ -2654,11 +2878,16 @@
       let pool = real.filter(q => matchQuestionStage(q, examStageState.semester, examStageState.stage, examStageState.grade) && q.subject === subjectId);
       let conceptPool = pool.filter(q => (q.concept || '').includes(concept));
 
-      // 若該考點真題數不足 5 題，啟動 RAG 向量檢索在該科目中深度語義補齊
+      // 若該考點真題數不足 5 題，啟動 RAG 向量檢索在該科目中深度語義補齊（遵守年級設定）
       if (conceptPool.length < 5) {
-        if (typeof RagEngine !== 'undefined' && RagEngine.retrieveSimilarQuestions) {
-          const ragResults = RagEngine.retrieveSimilarQuestions(concept, 8, subjectId);
-          const ragQuestions = ragResults.map(r => r.question).filter(Boolean);
+        if (typeof RagEngine !== 'undefined' && RagEngine.fallbackKeywordSearch) {
+          const ragResults = RagEngine.fallbackKeywordSearch({
+            query: concept,
+            subject: subjectId,
+            grade: examStageState.grade,
+            topK: 8
+          });
+          const ragQuestions = ragResults.filter(Boolean);
           conceptPool = [...conceptPool, ...ragQuestions];
         }
         if (conceptPool.length < 5) {
@@ -2666,12 +2895,20 @@
         }
       }
 
+      if (examStageState.grade && examStageState.grade !== 'all') {
+        const strictPool = conceptPool.filter(q => !q.grade || String(q.grade) === String(examStageState.grade));
+        if (strictPool.length >= 3) {
+          conceptPool = strictPool;
+        }
+      }
+
       const subMeta = SUBJECT_META[subjectId] || SUBJECT_META.math;
       const stageTitle = getExamStageTitle(examStageState.semester, examStageState.stage);
+      const gradeLabel = examStageState.grade === 'all' ? '全學年' : (examStageState.grade + '年級');
       const selected = filterUnseenCandidates(conceptPool, 5);
       const cleanConcept = concept.replace(/^.+?：/, '');
 
-      launchBattleSession(`🎯【${stageTitle} 考點特訓】${subMeta.icon} ${cleanConcept}`, `${subMeta.bossName}・核心守護神`, selected);
+      launchBattleSession(`🎯【${stageTitle} 考點特訓】${subMeta.icon} ${cleanConcept} (${gradeLabel})`, `${subMeta.bossName}・核心守護神`, selected);
     }
 
     function startExamStageMixedBattle() {
@@ -2684,8 +2921,11 @@
       subjects.forEach(subId => {
         let subPool = stagePool.filter(q => q.subject === subId);
         if (subPool.length === 0) {
-          // 若本段考無該科真題，自該科全量真題或核心題補充
-          subPool = real.filter(q => q.subject === subId);
+          // 若本段考無該科真題，自該科全量真題或核心題補充（優先符合指定年級）
+          subPool = real.filter(q => q.subject === subId && (examStageState.grade === 'all' || String(q.grade) === String(examStageState.grade)));
+          if (subPool.length === 0) {
+            subPool = real.filter(q => q.subject === subId);
+          }
         }
         const picked = filterUnseenCandidates(subPool, 1);
         if (picked.length > 0) pickedList.push(picked[0]);
@@ -2804,6 +3044,10 @@
     function quickJumpToAlchemy() {
       const val = document.getElementById('quickHubMistakeInput').value.trim();
       switchTab('alchemy');
+      if (appState.gradeFilter) {
+        const gradeEl = document.getElementById('alchemyGradeSelect');
+        if (gradeEl) gradeEl.value = appState.gradeFilter;
+      }
       if (val) {
         document.getElementById('alchemyQuestionInput').value = val;
         runMistakeAlchemy();
@@ -2819,29 +3063,335 @@
         : ALCHEMY_PRESETS.find(p => p.subject === subjectId);
       if (preset) {
         document.getElementById('alchemyQuestionInput').value = preset.sampleInput;
-        if (preset.grade) document.getElementById('alchemyGradeSelect').value = preset.grade;
+        const gradeEl = document.getElementById('alchemyGradeSelect');
+        if (gradeEl) {
+          if (appState.gradeFilter && appState.gradeFilter !== 'all') {
+            gradeEl.value = appState.gradeFilter;
+          } else if (preset.grade) {
+            gradeEl.value = preset.grade;
+          }
+        }
+        const select = document.getElementById('alchemyPresetSelect');
+        if (select) {
+          select.value = preset.id;
+        }
         runMistakeAlchemy();
+      }
+    }
+
+    // ==================== 7-B. IMAGE UPLOAD & RAG EXTENSION ====================
+    function compressAndProcessImage(file, callback) {
+      if (!file || !file.type.startsWith('image/')) {
+        showToast('⚠️ 請選擇有效的圖片檔案 (JPG、PNG、WEBP 等)', 'warning');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const maxDim = 1600;
+          let width = img.width;
+          let height = img.height;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          const mimeType = 'image/jpeg';
+          const dataUrl = canvas.toDataURL(mimeType, 0.85);
+          callback({
+            base64: dataUrl,
+            mimeType: mimeType,
+            name: file.name || '考題拍照.jpg',
+            size: Math.round(dataUrl.length * 0.75)
+          });
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function setAlchemyUploadedImage(imgObj) {
+      if (!imgObj) return;
+      appState.alchemyUploadedImage = imgObj;
+      const dropZone = document.getElementById('alchemyImageDropZone');
+      const previewCard = document.getElementById('alchemyImagePreviewCard');
+      const previewImg = document.getElementById('alchemyImagePreviewImg');
+      const nameText = document.getElementById('alchemyImageNameText');
+      const sizeBadge = document.getElementById('alchemyImageSizeBadge');
+
+      if (dropZone) dropZone.classList.add('hidden');
+      if (previewCard) previewCard.classList.remove('hidden');
+      if (previewImg) previewImg.src = imgObj.base64;
+      if (nameText) nameText.textContent = imgObj.name || '考題圖片';
+      if (sizeBadge) {
+        const kb = Math.round(imgObj.size / 1024);
+        sizeBadge.textContent = kb > 1024 ? (kb / 1024).toFixed(1) + ' MB' : kb + ' KB';
+      }
+    }
+
+    function clearAlchemyUploadedImage() {
+      appState.alchemyUploadedImage = null;
+      const dropZone = document.getElementById('alchemyImageDropZone');
+      const previewCard = document.getElementById('alchemyImagePreviewCard');
+      const fileInput = document.getElementById('alchemyImageFileInput');
+      const quickInput = document.getElementById('quickHubImageInput');
+
+      if (dropZone) dropZone.classList.remove('hidden');
+      if (previewCard) previewCard.classList.add('hidden');
+      if (fileInput) fileInput.value = '';
+      if (quickInput) quickInput.value = '';
+      showToast('🗑️ 已清除上傳的考題圖片', 'info');
+    }
+
+    function handleAlchemyImageFileSelected(input) {
+      if (input.files && input.files[0]) {
+        compressAndProcessImage(input.files[0], function(imgObj) {
+          setAlchemyUploadedImage(imgObj);
+          showToast('📷 考題圖片已載入，點選下方「啟動 Gemini AI 智慧出題」進行分析！', 'info');
+        });
+      }
+    }
+
+    function handleQuickHubImageSelected(input) {
+      if (input.files && input.files[0]) {
+        compressAndProcessImage(input.files[0], function(imgObj) {
+          setAlchemyUploadedImage(imgObj);
+          switchTab('alchemy');
+          showToast('📷 考題圖片已就緒，請點擊「啟動 Gemini AI 智慧出題」進行辨識與出題！', 'info');
+        });
+      }
+    }
+
+    function previewLargeUploadedImage() {
+      if (!appState.alchemyUploadedImage) return;
+      const modal = document.getElementById('imageLightboxModal');
+      const img = document.getElementById('imageLightboxImg');
+      if (modal && img) {
+        img.src = appState.alchemyUploadedImage.base64;
+        modal.classList.remove('hidden');
+      }
+    }
+
+    function closeImageLightboxModal() {
+      const modal = document.getElementById('imageLightboxModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function updateCustomRagCountBadge() {
+      const badge = document.getElementById('customRagCountBadge');
+      if (badge && window.RagEngine) {
+        badge.textContent = window.RagEngine.getCustomQuestionsCount();
+      }
+    }
+
+    function openCustomRagModal() {
+      renderCustomRagModalList();
+      applyQuestionFontScale();
+      const modal = document.getElementById('customRagModal');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeCustomRagModal() {
+      const modal = document.getElementById('customRagModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function renderCustomRagModalList() {
+      const container = document.getElementById('customRagListContainer');
+      if (!container || !window.RagEngine) return;
+
+      const list = window.RagEngine.getCustomQuestions();
+      updateCustomRagCountBadge();
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-10 px-4 rounded-2xl bg-slate-900/60 border border-dashed border-slate-800">
+            <span class="text-3xl">📭</span>
+            <h4 class="text-white font-extrabold text-sm sm:text-base mt-2">目前尚無自訂拍照題庫</h4>
+            <p class="text-xs text-slate-400 mt-1 max-w-md mx-auto leading-relaxed">
+              只要在「遇到不會的考題？」點擊相機拍照或上傳題目圖片，AI 辨識出的原題將會自動向量化並儲存於此，在未來的出題中作為命題典範！
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="flex items-center justify-between text-xs text-slate-400 px-1 pb-1">
+          <span>共收錄 <strong class="text-amber-300">${list.length}</strong> 題自訂拍照與卡關考題</span>
+          <span class="text-[11px] text-emerald-400">✓ 已全數建構 768 維語義向量檢索特徵</span>
+        </div>
+        ${list.map(q => {
+          const subMeta = SUBJECT_META[q.subject] || SUBJECT_META.math;
+          const dateStr = q.createdAt ? new Date(q.createdAt).toLocaleDateString() : '近期';
+          const isCloud = q.cloudSynced || q.cloudDocId || (q.id && q.id.startsWith('cloud-rag-'));
+          return `
+            <div class="bg-slate-950/90 rounded-2xl p-4 sm:p-5 border border-slate-800 hover:border-indigo-500/50 transition-all space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${subMeta.badgeClass} border">${escapeHtml(subMeta.name)}</span>
+                  <span class="text-xs text-slate-400">${escapeHtml(q.grade)} 年級</span>
+                  <span class="text-xs font-bold text-amber-300">【${escapeHtml(q.concept || '核心考點')}】</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  ${isCloud ? '<span class="text-[10px] text-sky-400 bg-sky-950/70 border border-sky-800/60 px-2 py-0.5 rounded-full font-bold">☁️ 雲端已同步</span>' : '<span class="text-[10px] text-amber-400 bg-amber-950/70 border border-amber-800/60 px-2 py-0.5 rounded-full font-bold">💻 本機快取</span>'}
+                  <span class="text-[10px] text-slate-500">${escapeHtml(dateStr)}</span>
+                  <button type="button" onclick="deleteCustomRagQuestion('${q.id}')" class="text-[11px] text-rose-400 hover:text-rose-300 font-bold px-2 py-0.5 rounded bg-rose-950/40 border border-rose-800/40 transition-colors">
+                    🗑️ 刪除
+                  </button>
+                </div>
+              </div>
+              <p class="q-stem-scalable font-bold text-white leading-relaxed tracking-wide">${escapeHtml(q.stem)}</p>
+              ${Array.isArray(q.options) && q.options.length > 0 ? `
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                  ${q.options.map((opt, i) => `
+                    <div class="q-opt-scalable p-3 rounded-xl border font-bold ${i === q.answer ? 'border-emerald-500/60 bg-emerald-950/40 text-emerald-300' : 'border-slate-800 bg-slate-900 text-slate-300'}">
+                      ${i === q.answer ? '✅ ' : ''}${escapeHtml(opt)}
+                    </div>
+                  `).join('')}
+                </div>
+              ` : ''}
+              ${q.explanation ? `
+                <div class="q-exp-scalable text-slate-200 bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 leading-relaxed font-medium">
+                  <strong class="text-indigo-300">💡 破題要點：</strong>${escapeHtml(q.explanation)}
+                </div>
+              ` : ''}
+            </div>
+          `;
+        }).join('')}
+      `;
+    }
+
+    async function deleteCustomRagQuestion(id) {
+      if (!window.RagEngine) return;
+      await window.RagEngine.deleteCustomQuestion(id);
+      renderCustomRagModalList();
+      showToast('🗑️ 已從 RAG 向量知識庫中移除此題', 'info');
+    }
+
+    async function refreshCloudRagQuestions() {
+      if (window.RagEngine && window.RagEngine.syncCloudQuestions) {
+        showToast('☁️ 正在與 Firebase 雲端資料庫同步 RAG 題庫...', 'info');
+        await window.RagEngine.syncCloudQuestions();
+        renderCustomRagModalList();
+        updateCustomRagCountBadge();
+        showToast('✅ 雲端 RAG 題庫同步完成！', 'success');
+      } else {
+        showToast('尚未連線至 Firebase 雲端服務', 'warning');
+      }
+    }
+
+    function initImageUploadHandlers() {
+      // 支援全局截圖貼上 (Ctrl+V / Cmd+V)
+      window.addEventListener('paste', function(e) {
+        const items = e.clipboardData && e.clipboardData.items;
+        if (!items) return;
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].type && items[i].type.indexOf('image') !== -1) {
+            const file = items[i].getAsFile();
+            if (file) {
+              compressAndProcessImage(file, function(imgObj) {
+                setAlchemyUploadedImage(imgObj);
+                if (appState.activeTab !== 'alchemy') {
+                  switchTab('alchemy');
+                }
+                showToast('📷 已從剪貼簿讀取考題圖片！', 'info');
+              });
+              e.preventDefault();
+              break;
+            }
+          }
+        }
+      });
+
+      // 支援拖曳圖片至 AI 出題上傳框
+      const dropZone = document.getElementById('alchemyImageDropZone');
+      if (dropZone) {
+        ['dragenter', 'dragover'].forEach(eventName => {
+          dropZone.addEventListener(eventName, function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.add('border-fuchsia-400', 'bg-slate-900/80');
+          });
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+          dropZone.addEventListener(eventName, function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.remove('border-fuchsia-400', 'bg-slate-900/80');
+          });
+        });
+        dropZone.addEventListener('drop', function(e) {
+          const dt = e.dataTransfer;
+          const files = dt && dt.files;
+          if (files && files[0] && files[0].type.startsWith('image/')) {
+            compressAndProcessImage(files[0], function(imgObj) {
+              setAlchemyUploadedImage(imgObj);
+              showToast('📷 考題圖片拖曳載入成功！', 'info');
+            });
+          }
+        });
       }
     }
 
     // ==================== 8. MISTAKE ALCHEMY ENGINE ====================
     function renderAlchemyPresets() {
-      const container = document.getElementById('alchemyPresetChips');
-      if (!container) return;
-      container.innerHTML = ALCHEMY_PRESETS.map(p => `
-        <button type="button" onclick="selectAlchemyPreset('${p.id}')" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-fuchsia-950/60 border border-slate-700 hover:border-fuchsia-400/60 text-xs font-semibold text-slate-200 hover:text-fuchsia-200 transition-all">
-          ${p.label}
-        </button>
-      `).join('');
+      const select = document.getElementById('alchemyPresetSelect');
+      if (!select) return;
+
+      const stagePresets = ALCHEMY_PRESETS.filter(p => p.label.includes('段考'));
+      const corePresets = ALCHEMY_PRESETS.filter(p => !p.label.includes('段考'));
+
+      let html = `<option value="" disabled selected>✨ 請選擇常考弱點範本（選擇後自動帶入並出題）...</option>`;
+
+      if (stagePresets.length > 0) {
+        html += `<optgroup label="🎯 名校段考熱門真題考點（第一/二次段考）">`;
+        html += stagePresets.map(p => `
+          <option value="${p.id}">【${p.grade || '7'}年級】${escapeHtml(p.label.replace(/^🎯\s*/, ''))}</option>
+        `).join('');
+        html += `</optgroup>`;
+      }
+
+      if (corePresets.length > 0) {
+        html += `<optgroup label="📚 國中各科常考核心弱點範本">`;
+        html += corePresets.map(p => `
+          <option value="${p.id}">【${p.grade || '8'}年級】${escapeHtml(p.label)}</option>
+        `).join('');
+        html += `</optgroup>`;
+      }
+
+      select.innerHTML = html;
     }
 
     function selectAlchemyPreset(presetId) {
+      if (!presetId) return;
       playSoundEffect('click');
       const preset = ALCHEMY_PRESETS.find(p => p.id === presetId);
       if (!preset) return;
       document.getElementById('alchemyQuestionInput').value = preset.sampleInput;
       document.getElementById('alchemySubjectSelect').value = preset.subject;
-      document.getElementById('alchemyGradeSelect').value = preset.grade;
+      const gradeEl = document.getElementById('alchemyGradeSelect');
+      if (gradeEl) {
+        if (appState.gradeFilter && appState.gradeFilter !== 'all') {
+          gradeEl.value = appState.gradeFilter;
+        } else if (preset.grade) {
+          gradeEl.value = preset.grade;
+        }
+      }
+      const select = document.getElementById('alchemyPresetSelect');
+      if (select && select.value !== presetId) {
+        select.value = presetId;
+      }
       runMistakeAlchemy();
     }
 
@@ -2865,16 +3415,25 @@
       const cleanInput = (inputText || '').trim() || '國中重點考題觀念特訓';
       const detectedSub = detectSubjectFromText(cleanInput, subject);
       const subMeta = SUBJECT_META[detectedSub] || SUBJECT_META.math;
+      const targetGrade = grade || (document.getElementById('alchemyGradeSelect')?.value) || appState.gradeFilter || 'all';
 
-      // 1. 透過 RAG 向量引擎從 194 題庫中檢索匹配度最高、貼近考點的候選題目
+      // 1. 透過 RAG 向量引擎從全真段考題庫中檢索匹配度最高、貼近考點的候選題目
       let retrieved = [];
       if (typeof window !== 'undefined' && window.RagEngine && window.RagEngine.fallbackKeywordSearch) {
         retrieved = window.RagEngine.fallbackKeywordSearch({
           query: cleanInput,
           subject: detectedSub,
-          grade: grade,
+          grade: targetGrade,
           topK: 12
         });
+      }
+
+      // 年級篩選：若指定年級非 all，優先取符合年級之候選題
+      if (targetGrade !== 'all' && retrieved.length > 0) {
+        const gradeMatched = retrieved.filter(q => String(q.grade) === String(targetGrade));
+        if (gradeMatched.length > 0) {
+          retrieved = gradeMatched;
+        }
       }
 
       // 2. 透過防重複過濾器過濾掉近期幾場已做過的題目 (appState.recentQuestionIds)
@@ -2885,10 +3444,16 @@
         selectedQuestions = retrieved.slice(0, 4);
       }
 
-      // 若候選題目不足 4 題，自該科全量題庫隨機挑選未作答題目補足
+      // 若候選題目不足 4 題，自該科全量題庫挑選未作答題目補足（優先符合指定年級）
       if (selectedQuestions.length < 4) {
         const pool = getCombinedQuestionPool(detectedSub);
-        const remaining = pool.filter(q => !selectedQuestions.some(sq => sq.id === q.id));
+        let remaining = pool.filter(q => !selectedQuestions.some(sq => sq.id === q.id));
+        if (targetGrade !== 'all') {
+          const gradeRemaining = remaining.filter(q => String(q.grade) === String(targetGrade));
+          if (gradeRemaining.length > 0) {
+            remaining = gradeRemaining;
+          }
+        }
         const extra = (typeof filterUnseenCandidates === 'function')
           ? filterUnseenCandidates(remaining, 4 - selectedQuestions.length)
           : remaining.sort(() => Math.random() - 0.5).slice(0, 4 - selectedQuestions.length);
@@ -2898,7 +3463,7 @@
       // 3. 根據檢索結果動態組裝單元觀念拆解、常考陷阱與破題口訣
       const primaryQ = selectedQuestions[0] || {};
       const primaryConcept = primaryQ.concept || '重點考點聚焦';
-      const cleanGrade = grade || primaryQ.grade || '8';
+      const cleanGrade = (targetGrade && targetGrade !== 'all') ? targetGrade : (primaryQ.grade || '8');
 
       const diagnosis = {
         subject: detectedSub,
@@ -2986,24 +3551,24 @@
         const matchLabel = pack.ragExemplars[0].matchType === 'vector' ? 'Gemini 向量匹配' : '語義特徵匹配';
 
         ragSectionHtml = `
-          <div class="rounded-2xl p-4 bg-gradient-to-r from-violet-950/70 via-slate-900/90 to-indigo-950/70 border border-violet-500/40 space-y-2.5">
+          <div class="rounded-2xl p-5 bg-gradient-to-r from-violet-950/70 via-slate-900/90 to-indigo-950/70 border border-violet-500/40 space-y-3">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div class="flex items-center gap-2">
-                <span class="text-lg">🧬</span>
-                <span class="text-xs sm:text-sm font-black text-violet-200">RAG 向量檢索到的台灣名校／會考真題典範（AI 學習此命題結構生成練習題）：</span>
+                <span class="text-xl">🧬</span>
+                <span class="text-sm sm:text-base font-black text-violet-200">RAG 向量檢索到的台灣名校／會考真題典範（AI 學習命題結構）：</span>
               </div>
-              <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/40">
+              <span class="text-xs font-bold px-3 py-1 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/40">
                 ${matchLabel}：${topScore}
               </span>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
               ${pack.ragExemplars.map((ex, i) => `
-                <div class="bg-slate-950/90 p-3 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-1">
+                <div class="bg-slate-950/90 p-4 rounded-xl border border-slate-800 space-y-1.5">
                   <div class="flex items-center justify-between">
-                    <span class="font-bold text-amber-300">【${escapeHtml(ex.school || '會考精選')}・${escapeHtml(ex.grade)}年級】</span>
-                    <span class="text-[11px] text-slate-400">${escapeHtml(ex.concept || '')}</span>
+                    <span class="font-bold text-sm text-amber-300">【${escapeHtml(ex.school || '會考精選')}・${escapeHtml(ex.grade)}年級】</span>
+                    <span class="text-xs text-slate-400 font-semibold">${escapeHtml(ex.concept || '')}</span>
                   </div>
-                  <div class="text-white font-medium line-clamp-2">${escapeHtml(ex.stem)}</div>
+                  <div class="q-exp-scalable text-white font-medium text-sm sm:text-base leading-relaxed">${escapeHtml(ex.stem)}</div>
                 </div>
               `).join('')}
             </div>
@@ -3013,32 +3578,81 @@
 
       const questionsHtml = pack.questions.map((q, idx) => {
         const optsHtml = q.options.map((opt, oIdx) => `
-          <button type="button" id="alkOpt-${idx}-${oIdx}" onclick="checkAlchemyInlineAnswer(${idx}, ${oIdx})" class="q-opt-scalable text-left px-5 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-base sm:text-lg font-semibold text-slate-200 transition-all">
-            ${escapeHtml(opt)}
+          <button type="button" id="alkOpt-${idx}-${oIdx}" onclick="checkAlchemyInlineAnswer(${idx}, ${oIdx})" class="q-opt-scalable p-4 sm:p-5 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-left font-bold text-slate-200 transition-all shadow-sm flex items-center justify-between group active:scale-98">
+            <span class="leading-relaxed">${escapeHtml(opt)}</span>
+            <span class="text-xs sm:text-sm px-2.5 py-0.5 rounded-lg bg-slate-800 group-hover:bg-violet-600 text-slate-400 group-hover:text-white font-mono shrink-0 ml-3">${['A', 'B', 'C', 'D'][oIdx] || (oIdx + 1)}</span>
           </button>
         `).join('');
 
         return `
-          <div class="rpg-card rounded-2xl p-5 sm:p-6 border border-slate-800 hover:border-violet-500/40 transition-all space-y-3.5">
+          <div class="rpg-card rounded-2xl p-5 sm:p-7 border border-slate-800 hover:border-violet-500/40 transition-all space-y-4">
             <div class="flex flex-wrap items-center justify-between gap-2">
-              <div class="flex items-center gap-2">
-                <span class="w-6 h-6 rounded-lg bg-fuchsia-600 text-white text-xs font-black flex items-center justify-center">Q${idx + 1}</span>
-                <span class="text-xs sm:text-sm font-bold text-amber-300">${escapeHtml(q.concept)}</span>
+              <div class="flex items-center gap-2.5">
+                <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-fuchsia-600 text-white text-xs sm:text-sm font-black flex items-center justify-center shadow">Q${idx + 1}</span>
+                <span class="text-sm sm:text-base font-extrabold text-amber-300">${escapeHtml(q.concept)}</span>
               </div>
               <button type="button" onclick="saveQuestionToGrimoireFromAlchemy(${idx})" class="text-xs sm:text-sm text-slate-400 hover:text-amber-300 font-semibold">
                 📌 收錄至錯題本
               </button>
             </div>
-            <p class="q-stem-scalable text-lg sm:text-xl md:text-2xl font-bold text-white leading-relaxed">${escapeHtml(q.stem)}</p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <p class="q-stem-scalable font-bold text-white leading-relaxed tracking-wide">${escapeHtml(q.stem)}</p>
+            ${(q.diagramSvg && typeof window.renderSafeSvg === 'function') ? window.renderSafeSvg(q.diagramSvg, `${subMeta.name}・幾何實驗圖解`) : ''}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               ${optsHtml}
             </div>
-            <div id="alkFeedback-${idx}" class="q-exp-scalable hidden rounded-xl p-4 text-sm sm:text-base md:text-lg leading-relaxed border"></div>
+            <div id="alkFeedback-${idx}" class="q-exp-scalable hidden rounded-2xl p-4 sm:p-5 leading-relaxed border font-medium"></div>
           </div>
         `;
       }).join('');
 
+      // 組裝「學生拍照上傳辨識出的原題」展示卡片
+      let extractedOriginalHtml = '';
+      if (pack.extractedQuestion) {
+        const eq = pack.extractedQuestion;
+        extractedOriginalHtml = `
+          <div class="rpg-card rounded-3xl p-5 sm:p-7 border border-emerald-500/50 bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950/30 space-y-4 shadow-xl">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+              <div class="flex items-center gap-2.5">
+                <span class="text-2xl">📸</span>
+                <div>
+                  <h4 class="text-base sm:text-lg font-black text-emerald-300">考題圖片多模態辨識結果（原題提取）：</h4>
+                  <p class="text-xs text-slate-400 mt-0.5">已由 Gemini 辨識還原原題，並自動同步收錄至本機 <strong class="text-amber-300">RAG 向量知識庫</strong>，供後續出題檢索參考！</p>
+                </div>
+              </div>
+              <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                📚 已收錄至 RAG 題庫
+              </span>
+            </div>
+            <div class="bg-slate-950/80 rounded-2xl p-5 border border-emerald-500/30 space-y-3">
+              <div class="flex items-center justify-between text-xs sm:text-sm">
+                <span class="font-bold text-amber-300">【原題考點：${escapeHtml(eq.concept || '核心觀念')}】</span>
+                <span class="text-slate-400 font-semibold">${escapeHtml(eq.grade || pack.grade)} 年級 / ${escapeHtml(SUBJECT_META[eq.subject]?.name || pack.subjectName)}</span>
+              </div>
+              <p class="q-stem-scalable font-bold text-white leading-relaxed tracking-wide">${escapeHtml(eq.stem)}</p>
+              ${(eq.diagramSvg && typeof window.renderSafeSvg === 'function') ? window.renderSafeSvg(eq.diagramSvg, '原題幾何實驗圖解還原') : ''}
+              ${Array.isArray(eq.options) && eq.options.length > 0 ? `
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                  ${eq.options.map((opt, i) => `
+                    <div class="q-opt-scalable p-3.5 sm:p-4 rounded-2xl font-bold border ${i === eq.answer ? 'bg-emerald-950/50 border-emerald-500/60 text-emerald-200' : 'bg-slate-900 border-slate-800 text-slate-300'}">
+                      ${i === eq.answer ? '✅ 正確答案：' : ''}${escapeHtml(opt)}
+                    </div>
+                  `).join('')}
+                </div>
+              ` : ''}
+              ${eq.explanation ? `
+                <div class="q-exp-scalable text-slate-200 bg-slate-900/80 p-4 rounded-2xl border border-slate-800 leading-relaxed font-medium">
+                  <span class="text-emerald-400 font-bold">💡 原題詳解破題：</span>${escapeHtml(eq.explanation)}
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }
+
       container.innerHTML = `
+        <!-- 【原題提取：學生考題圖片辨識結果與 RAG 收錄】 -->
+        ${extractedOriginalHtml}
+
         <!-- 【第一順位：AI 生成的 4 道練習題】 -->
         <div class="space-y-4">
           <!-- 頂部資訊與行動工具列 -->
@@ -3081,24 +3695,39 @@
           </div>
         </div>
 
-        <!-- 【第二順位：核心觀念拆解、常考陷阱與秒殺口訣】 -->
-        <div class="rpg-card rounded-3xl p-5 sm:p-6 border border-slate-800 space-y-3">
-          <h4 class="text-sm sm:text-base font-black text-cyan-300 flex items-center gap-2">
+        <!-- 【第二順位：核心觀念拆解、常考陷阱與秒殺口訣（重點整理加大）】 -->
+        <div class="rpg-card rounded-3xl p-5 sm:p-7 border border-slate-800 space-y-4">
+          <h4 class="text-lg sm:text-xl md:text-2xl font-black text-cyan-300 flex items-center gap-2">
             <span>🎯</span>
-            <span>解題重點與觀念解析（作答參考）：</span>
+            <span>解題重點與觀念解析（作答重點整理）：</span>
           </h4>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5">
-              <div class="text-xs font-extrabold text-cyan-300 mb-1">🎯 核心觀念拆解</div>
-              <p class="text-xs text-slate-300 leading-relaxed">${escapeHtml(pack.coreConcept)}</p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-5 sm:p-6 flex flex-col justify-between">
+              <div>
+                <div class="text-base sm:text-lg font-black text-cyan-300 mb-2.5 flex items-center gap-1.5">
+                  <span>🎯</span>
+                  <span>核心觀念拆解</span>
+                </div>
+                <p class="q-exp-scalable text-slate-100 leading-relaxed font-medium">${escapeHtml(pack.coreConcept)}</p>
+              </div>
             </div>
-            <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5">
-              <div class="text-xs font-extrabold text-rose-300 mb-1">⚠️ 考試最常掉入的陷阱</div>
-              <p class="text-xs text-slate-300 leading-relaxed">${escapeHtml(pack.commonTrap)}</p>
+            <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-5 sm:p-6 flex flex-col justify-between">
+              <div>
+                <div class="text-base sm:text-lg font-black text-rose-300 mb-2.5 flex items-center gap-1.5">
+                  <span>⚠️</span>
+                  <span>考試最常掉入的陷阱</span>
+                </div>
+                <p class="q-exp-scalable text-slate-100 leading-relaxed font-medium">${escapeHtml(pack.commonTrap)}</p>
+              </div>
             </div>
-            <div class="bg-slate-950/80 border border-amber-500/30 rounded-2xl p-3.5">
-              <div class="text-xs font-extrabold text-amber-300 mb-1">🔑 秒殺記憶口訣</div>
-              <p class="text-xs text-amber-100 font-semibold leading-relaxed">${escapeHtml(pack.mnemonic)}</p>
+            <div class="bg-slate-950/80 border border-amber-500/40 rounded-2xl p-5 sm:p-6 flex flex-col justify-between bg-gradient-to-br from-amber-950/30 to-slate-950/90 shadow-md">
+              <div>
+                <div class="text-base sm:text-lg font-black text-amber-300 mb-2.5 flex items-center gap-1.5">
+                  <span>🔑</span>
+                  <span>秒殺記憶口訣</span>
+                </div>
+                <p class="q-exp-scalable text-amber-200 leading-relaxed font-bold">${escapeHtml(pack.mnemonic)}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -3123,22 +3752,22 @@
         const btn = document.getElementById(`alkOpt-${qIdx}-${oIdx}`);
         if (!btn) return;
         if (oIdx === q.answer) {
-          btn.className = 'q-opt-scalable text-left px-5 py-3.5 rounded-xl bg-emerald-500/25 border-2 border-emerald-400 text-base sm:text-lg font-bold text-emerald-200';
+          btn.className = 'q-opt-scalable p-4 sm:p-5 rounded-2xl bg-emerald-500/25 border-2 border-emerald-400 text-left font-bold text-emerald-200 flex items-center justify-between';
         } else if (oIdx === selectedOptIdx && !isCorrect) {
-          btn.className = 'q-opt-scalable text-left px-5 py-3.5 rounded-xl bg-rose-500/25 border-2 border-rose-400 text-base sm:text-lg font-bold text-rose-200';
+          btn.className = 'q-opt-scalable p-4 sm:p-5 rounded-2xl bg-rose-500/25 border-2 border-rose-400 text-left font-bold text-rose-200 flex items-center justify-between';
         }
       });
 
       fbEl.classList.remove('hidden');
       if (isCorrect) {
         playSoundEffect('correct');
-        fbEl.className = 'q-exp-scalable rounded-xl p-4 text-sm sm:text-base md:text-lg leading-relaxed border bg-emerald-950/60 border-emerald-500/50 text-emerald-200';
-        fbEl.innerHTML = `<strong>✅ 答對了！ (+15 EXP, +10 🪙)</strong><br/>${escapeHtml(q.explanation)}`;
+        fbEl.className = 'q-exp-scalable rounded-2xl p-4 sm:p-5 leading-relaxed border bg-emerald-950/60 border-emerald-500/50 text-emerald-200 font-medium';
+        fbEl.innerHTML = `<strong>✅ 答對了！ (+15 EXP, +10 🪙)</strong><br/><span class="mt-1 block">${escapeHtml(q.explanation)}</span>`;
         addPlayerReward(15, 10);
       } else {
         playSoundEffect('wrong');
-        fbEl.className = 'q-exp-scalable rounded-xl p-4 text-sm sm:text-base md:text-lg leading-relaxed border bg-rose-950/60 border-rose-500/50 text-rose-200';
-        fbEl.innerHTML = `<strong>❌ 再想一下！提示：${escapeHtml(q.hint)}</strong><br/>詳解：${escapeHtml(q.explanation)}`;
+        fbEl.className = 'q-exp-scalable rounded-2xl p-4 sm:p-5 leading-relaxed border bg-rose-950/60 border-rose-500/50 text-rose-200 font-medium';
+        fbEl.innerHTML = `<strong>❌ 再想一下！提示：${escapeHtml(q.hint)}</strong><br/><span class="mt-1 block">💡 詳解：${escapeHtml(q.explanation)}</span>`;
         addMistakeRecord(q);
       }
 
@@ -3175,7 +3804,8 @@
                   correctAnswer: pq.answer,
                   selectedAnswer: uAns ? uAns.selectedOptIdx : null,
                   isCorrect: uAns ? uAns.isCorrect : false,
-                  explanation: pq.explanation
+                  explanation: pq.explanation,
+                  diagramSvg: pq.diagramSvg || null
                 };
               })
             }).then(() => {
@@ -3279,7 +3909,7 @@
       const subMeta = SUBJECT_META[subjectId] || SUBJECT_META.math;
       let pool = getCombinedQuestionPool(subjectId);
       if (appState.gradeFilter !== 'all') {
-        const filtered = pool.filter(q => q.grade === appState.gradeFilter);
+        const filtered = pool.filter(q => String(q.grade) === String(appState.gradeFilter));
         if (filtered.length > 0) pool = filtered;
       }
 
@@ -3298,14 +3928,23 @@
         ? generatePracticePack(randomTopic2, subjectId, g2, 'drill') 
         : { questions: [] };
 
-      const allCandidates = [
+      let allCandidates = [
         ...pool,
         ...(extraPack1.questions || []),
         ...(extraPack2.questions || [])
       ];
 
+      // 嚴格年級過濾：若非全學年，優先保留完全相符之年級題目
+      if (appState.gradeFilter !== 'all') {
+        const strictGradeCandidates = allCandidates.filter(q => !q.grade || String(q.grade) === String(appState.gradeFilter));
+        if (strictGradeCandidates.length >= 3) {
+          allCandidates = strictGradeCandidates;
+        }
+      }
+
+      const gradeLabel = appState.gradeFilter === 'all' ? '全學年' : (appState.gradeFilter + '年級');
       const selected = filterUnseenCandidates(allCandidates, 5);
-      launchBattleSession(`${subMeta.icon} ${subMeta.name}單元測驗`, `${subMeta.name}考點守門者`, selected);
+      launchBattleSession(`${subMeta.icon} ${subMeta.name}單元測驗 (${gradeLabel})`, `${subMeta.name}考點守門者`, selected);
     }
 
     function startQuickMixedBattle() {
@@ -3325,11 +3964,15 @@
         
         let pool = getCombinedQuestionPool(subId);
         if (currentGradeFilter !== 'all') {
-          const filtered = pool.filter(q => q.grade === currentGradeFilter);
+          const filtered = pool.filter(q => String(q.grade) === String(currentGradeFilter));
           if (filtered.length > 0) pool = filtered;
         }
 
-        const candidates = [...pool, ...(pack.questions || [])];
+        let candidates = [...pool, ...(pack.questions || [])];
+        if (currentGradeFilter !== 'all') {
+          const strictCandidates = candidates.filter(q => !q.grade || String(q.grade) === String(currentGradeFilter));
+          if (strictCandidates.length > 0) candidates = strictCandidates;
+        }
         const picked = filterUnseenCandidates(candidates, 1);
         if (picked.length > 0) {
           mixedQuestions.push(picked[0]);
@@ -3337,7 +3980,8 @@
       });
 
       const finalShuffled = mixedQuestions.sort(() => Math.random() - 0.5);
-      launchBattleSession('⚡ 五科綜合模擬考', '五科會考守門者', finalShuffled);
+      const gradeLabel = currentGradeFilter === 'all' ? '全學年綜合' : (currentGradeFilter + '年級');
+      launchBattleSession(`⚡ 五科綜合模擬考 (${gradeLabel})`, '五科會考守門者', finalShuffled);
     }
 
     function launchBattleSession(title, bossName, questionsList) {
@@ -3510,6 +4154,17 @@
       document.getElementById('qConceptBadge').textContent = window.humanizeMath ? window.humanizeMath(q.concept || '') : (q.concept || '');
       document.getElementById('qStemText').textContent = window.humanizeMath ? window.humanizeMath(q.stem || '') : (q.stem || '');
 
+      const diagramEl = document.getElementById('qDiagramContainer');
+      if (diagramEl) {
+        if (q.diagramSvg && typeof window.renderSafeSvg === 'function') {
+          diagramEl.innerHTML = window.renderSafeSvg(q.diagramSvg, `${subMeta.name}・幾何實驗圖解`);
+          diagramEl.classList.remove('hidden');
+        } else {
+          diagramEl.innerHTML = '';
+          diagramEl.classList.add('hidden');
+        }
+      }
+
       document.getElementById('battleHintBanner').classList.add('hidden');
       document.getElementById('battleFeedbackBox').classList.add('hidden');
       document.getElementById('battleActionBanner').textContent = '請選擇正確咒語發動攻擊！';
@@ -3520,15 +4175,15 @@
         const isDisabled = b.disabledOptions.includes(idx);
         if (isDisabled) {
           return `
-            <button type="button" disabled class="q-opt-scalable p-5 sm:p-6 rounded-2xl bg-slate-950/40 border border-slate-800/50 text-slate-600 line-through text-left text-base sm:text-lg font-semibold cursor-not-allowed">
+            <button type="button" disabled class="q-opt-scalable p-4 sm:p-5 rounded-2xl bg-slate-950/40 border border-slate-800/50 text-slate-600 line-through text-left font-semibold cursor-not-allowed">
               ${safeOptText} （已被秘藥封印）
             </button>
           `;
         }
         return `
-          <button type="button" id="battleOptBtn-${idx}" onclick="submitBattleAnswer(${idx})" class="q-opt-scalable p-5 sm:p-6 rounded-2xl bg-slate-900 hover:bg-violet-950/60 border border-slate-700 hover:border-violet-400 text-left text-lg sm:text-xl md:text-2xl font-bold text-slate-100 transition-all flex items-center justify-between group active:scale-98">
+          <button type="button" id="battleOptBtn-${idx}" onclick="submitBattleAnswer(${idx})" class="q-opt-scalable p-4 sm:p-5 rounded-2xl bg-slate-900 hover:bg-violet-950/60 border border-slate-700 hover:border-violet-400 text-left font-bold text-slate-100 transition-all flex items-center justify-between group active:scale-98">
             <span class="leading-relaxed">${safeOptText}</span>
-            <span class="text-xs sm:text-sm px-3 py-1 rounded-lg bg-slate-800 group-hover:bg-violet-600 text-slate-400 group-hover:text-white font-mono shrink-0 ml-3">${idx + 1}</span>
+            <span class="text-xs sm:text-sm px-2.5 py-0.5 rounded-lg bg-slate-800 group-hover:bg-violet-600 text-slate-400 group-hover:text-white font-mono shrink-0 ml-3">${idx + 1}</span>
           </button>
         `;
       }).join('');
@@ -3599,11 +4254,11 @@
         const btn = document.getElementById('battleOptBtn-' + idx);
         if (!btn) return;
         if (idx === q.answer) {
-          btn.className = 'q-opt-scalable p-5 sm:p-6 rounded-2xl bg-emerald-500/25 border-2 border-emerald-400 text-left text-lg sm:text-xl md:text-2xl font-black text-emerald-200 flex items-center justify-between';
+          btn.className = 'q-opt-scalable p-4 sm:p-5 rounded-2xl bg-emerald-500/25 border-2 border-emerald-400 text-left font-black text-emerald-200 flex items-center justify-between';
         } else if (idx === selectedIdx && !isCorrect) {
-          btn.className = 'q-opt-scalable p-5 sm:p-6 rounded-2xl bg-rose-500/25 border-2 border-rose-500 text-left text-lg sm:text-xl md:text-2xl font-black text-rose-200 flex items-center justify-between';
+          btn.className = 'q-opt-scalable p-4 sm:p-5 rounded-2xl bg-rose-500/25 border-2 border-rose-500 text-left font-black text-rose-200 flex items-center justify-between';
         } else {
-          btn.className = 'q-opt-scalable p-5 sm:p-6 rounded-2xl bg-slate-950/50 border border-slate-800 text-left text-lg sm:text-xl md:text-2xl text-slate-500 flex items-center justify-between opacity-60';
+          btn.className = 'q-opt-scalable p-4 sm:p-5 rounded-2xl bg-slate-950/50 border border-slate-800 text-left text-slate-500 flex items-center justify-between opacity-60';
         }
       });
 
@@ -3756,7 +4411,8 @@
             correctAnswer: q.answer,
             selectedAnswer: userAns,
             isCorrect: isCorr,
-            explanation: q.explanation
+            explanation: q.explanation,
+            diagramSvg: q.diagramSvg || null
           };
         });
 
@@ -3812,7 +4468,11 @@
       switchTab('alchemy');
       document.getElementById('alchemyQuestionInput').value = `${q.concept}：${q.stem}`;
       document.getElementById('alchemySubjectSelect').value = q.subject;
-      document.getElementById('alchemyGradeSelect').value = q.grade || '8';
+      if (appState.gradeFilter && appState.gradeFilter !== 'all') {
+        document.getElementById('alchemyGradeSelect').value = appState.gradeFilter;
+      } else {
+        document.getElementById('alchemyGradeSelect').value = q.grade || '8';
+      }
       runMistakeAlchemy();
     }
 
@@ -3832,6 +4492,9 @@
       const existing = appState.mistakes.find(m => m.stem === questionObj.stem);
       if (existing) {
         existing.wrongCount = (existing.wrongCount || 1) + 1;
+        if (!existing.diagramSvg && questionObj.diagramSvg) {
+          existing.diagramSvg = questionObj.diagramSvg;
+        }
       } else {
         appState.mistakes.unshift({
           id: 'm-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
@@ -3843,6 +4506,7 @@
           answer: questionObj.answer,
           hint: questionObj.hint,
           explanation: questionObj.explanation,
+          diagramSvg: questionObj.diagramSvg || null,
           wrongCount: 1
         });
       }
@@ -3892,17 +4556,19 @@
               </div>
             </div>
 
-            <p class="q-stem-scalable text-lg sm:text-xl md:text-2xl font-bold text-white leading-relaxed">${escapeHtml(m.stem)}</p>
+            <p class="q-stem-scalable font-bold text-white leading-relaxed tracking-wide">${escapeHtml(m.stem)}</p>
+
+            ${(m.diagramSvg && typeof window.renderSafeSvg === 'function') ? window.renderSafeSvg(m.diagramSvg, `${subMeta.name}・錯題圖解`) : ''}
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               ${m.options.map((opt, idx) => `
-                <div class="q-opt-scalable px-4 py-3 rounded-xl border text-base sm:text-lg ${idx === m.answer ? 'bg-emerald-950/50 border-emerald-500/50 text-emerald-200 font-bold' : 'bg-slate-950/60 border-slate-800 text-slate-400'}">
+                <div class="q-opt-scalable p-3.5 sm:p-4 rounded-2xl border font-bold ${idx === m.answer ? 'bg-emerald-950/50 border-emerald-500/50 text-emerald-200' : 'bg-slate-950/60 border-slate-800 text-slate-400'}">
                   ${escapeHtml(opt)} ${idx === m.answer ? '✓ (正確解答)' : ''}
                 </div>
               `).join('')}
             </div>
 
-            <div class="q-exp-scalable bg-slate-950/80 border border-slate-800 rounded-xl p-4 text-sm sm:text-base md:text-lg text-slate-200 leading-relaxed">
+            <div class="q-exp-scalable bg-slate-950/80 border border-slate-800 rounded-2xl p-4 text-slate-200 leading-relaxed font-medium">
               <span class="text-amber-300 font-bold">💡 破題關鍵：</span>${escapeHtml(m.explanation)}
             </div>
           </div>
@@ -3916,7 +4582,11 @@
       switchTab('alchemy');
       document.getElementById('alchemyQuestionInput').value = `${m.concept}：${m.stem}`;
       document.getElementById('alchemySubjectSelect').value = m.subject;
-      document.getElementById('alchemyGradeSelect').value = m.grade || '8';
+      if (appState.gradeFilter && appState.gradeFilter !== 'all') {
+        document.getElementById('alchemyGradeSelect').value = appState.gradeFilter;
+      } else {
+        document.getElementById('alchemyGradeSelect').value = m.grade || '8';
+      }
       runMistakeAlchemy();
     }
 
@@ -4145,12 +4815,13 @@
       const gradeEl = document.getElementById('alchemyGradeSelect');
       const styleEl = document.getElementById('alchemyStyleSelect');
       const spinIcon = document.getElementById('aiSpinIcon');
+      const uploadedImg = appState.alchemyUploadedImage;
 
-      const rawText = inputEl.value.trim() || ALCHEMY_PRESETS[0].sampleInput;
-      if (!inputEl.value.trim()) inputEl.value = rawText;
+      const rawText = inputEl.value.trim() || (uploadedImg ? '' : ALCHEMY_PRESETS[0].sampleInput);
+      if (!inputEl.value.trim() && !uploadedImg) inputEl.value = rawText;
 
       let subject = subjectEl.value;
-      if (subject === 'auto') {
+      if (subject === 'auto' && rawText) {
         subject = detectSubjectFromText(rawText);
         subjectEl.value = subject;
       }
@@ -4163,7 +4834,11 @@
 
       if (spinIcon) spinIcon.classList.remove('hidden');
       const curModelName = (window.GeminiService && window.GeminiService.getModel) ? window.GeminiService.getModel() : 'Gemini AI';
-      showToast(`🤖 正在透過 RAG 向量檢索真題並召喚 ${curModelName} 出題中...`, 'info');
+      if (uploadedImg) {
+        showToast(`🤖 正在透過多模態視覺辨識考題圖片並召喚 ${curModelName} 分析出題中...`, 'info');
+      } else {
+        showToast(`🤖 正在透過 RAG 向量檢索真題並召喚 ${curModelName} 出題中...`, 'info');
+      }
 
       try {
         const pack = await window.GeminiService.generateQuizPack({
@@ -4171,16 +4846,48 @@
           subject: subject,
           grade: gradeEl.value,
           style: styleEl.value,
-          count: 4
+          count: 4,
+          imageBase64: uploadedImg ? uploadedImg.base64 : null,
+          imageMimeType: uploadedImg ? uploadedImg.mimeType : 'image/jpeg'
         });
+
+        // 若成功從圖片辨識出題目，自動登錄至 RAG 向量題庫知識庫（本機＋Firestore 雲端）！
+        if (pack.extractedQuestion && window.RagEngine) {
+          try {
+            await window.RagEngine.addCustomQuestion(
+              pack.extractedQuestion, 
+              window.GeminiService.getApiKey(),
+              appState.currentUser
+            );
+            updateCustomRagCountBadge();
+            // 若題幹輸入框為空，自動回填辨識出之原題文字
+            if (!inputEl.value.trim() && pack.extractedQuestion.stem) {
+              inputEl.value = pack.extractedQuestion.stem;
+            }
+            // 若科目為自動偵測，自動同步為辨識出之科目
+            if (subject === 'auto' && pack.extractedQuestion.subject) {
+              subjectEl.value = pack.extractedQuestion.subject;
+            }
+          } catch (ragSaveErr) {
+            console.warn('⚠️ 自動收錄 RAG 題庫時略過:', ragSaveErr);
+          }
+        }
 
         appState.alchemyCurrentPack = pack;
         renderAlchemyPackOutput(pack);
         playSoundEffect('levelup');
-        const ragCount = (pack.ragExemplars && pack.ragExemplars.length > 0) ? pack.ragExemplars.length : 0;
-        showToast(ragCount > 0 
-          ? `✨ RAG 向量增強成功！已檢索 ${ragCount} 道真題典範並生成 4 道專屬練習題！` 
-          : '✨ Gemini AI 智慧出題成功！已生成 4 道專屬練習題！', 'success');
+        
+        let successMsg = '✨ Gemini AI 智慧出題成功！已生成 4 道專屬練習題！';
+        if (pack.extractedQuestion) {
+          if (appState.currentUser) {
+            successMsg = '📸 考題圖片辨識成功！原題已同步至 Firestore 雲端知識庫，並生成 4 道專屬練習題！';
+          } else {
+            successMsg = '📸 考題圖片辨識成功！原題已收錄至本機題庫（登入 Google 可同步至全校雲端題庫）！';
+          }
+        } else if (pack.ragExemplars && pack.ragExemplars.length > 0) {
+          successMsg = `✨ RAG 向量增強成功！已檢索 ${pack.ragExemplars.length} 道真題典範並生成 4 道專屬練習題！`;
+        }
+        showToast(successMsg, 'success');
 
         const resContainer = document.getElementById('alchemyResultContainer');
         if (resContainer) {
@@ -4316,11 +5023,27 @@
     window.addEventListener('firebase-auth-changed', (e) => {
       if (e.detail) {
         applyUserLoggedIn(e.detail.user, e.detail.isAdmin);
+        // 登入或切換帳號時，自動嘗試與 Firestore 雲端同步 RAG 題庫
+        if (window.RagEngine && window.RagEngine.syncCloudQuestions) {
+          window.RagEngine.syncCloudQuestions().then(() => updateCustomRagCountBadge()).catch(() => {});
+        }
       }
     });
 
     window.addEventListener('firebase-service-ready', () => {
       initAuthListener();
+      // Firebase 服務就緒時，自動載入全校雲端 RAG 題庫
+      if (window.RagEngine && window.RagEngine.syncCloudQuestions) {
+        window.RagEngine.syncCloudQuestions().then(() => updateCustomRagCountBadge()).catch(() => {});
+      }
+    });
+
+    window.addEventListener('rag-cloud-synced', () => {
+      updateCustomRagCountBadge();
+      const modal = document.getElementById('customRagModal');
+      if (modal && !modal.classList.contains('hidden')) {
+        renderCustomRagModalList();
+      }
     });
 
     function updateAdminUI(isAdmin) {
@@ -4605,17 +5328,18 @@
                 第 ${qIdx + 1} 題：${statusText} (${q.concept || '核心觀念'})
               </span>
             </div>
-            <p class="q-stem-scalable text-lg sm:text-xl md:text-2xl font-bold text-white leading-relaxed tracking-wide">${escapeHtml(q.stem || '')}</p>
-            <div class="q-opt-scalable text-base sm:text-lg md:text-xl text-slate-200 space-y-2.5 leading-relaxed">
+            <p class="q-stem-scalable font-bold text-white leading-relaxed tracking-wide">${escapeHtml(q.stem || '')}</p>
+            ${(q.diagramSvg && typeof window.renderSafeSvg === 'function') ? window.renderSafeSvg(q.diagramSvg, '考題圖解') : ''}
+            <div class="space-y-2.5">
               ${q.options ? q.options.map((opt, oIdx) => {
                 let badge = '';
                 if (hasUserAns && oIdx === q.selectedAnswer && oIdx === q.correctAnswer) badge = '<span class="text-emerald-400 font-bold ml-2">(您的選擇・正確)</span>';
                 else if (hasUserAns && oIdx === q.selectedAnswer) badge = '<span class="text-rose-400 font-bold ml-2">(您的選擇・錯誤)</span>';
                 else if (oIdx === q.correctAnswer) badge = '<span class="text-emerald-400 font-bold ml-2">(正確解答)</span>';
-                return `<div class="p-3.5 sm:p-4 rounded-xl transition-all ${oIdx === q.correctAnswer ? 'bg-emerald-950/50 border border-emerald-500/40 text-emerald-100 font-semibold' : 'bg-slate-950/40'}">${escapeHtml(opt)} ${badge}</div>`;
+                return `<div class="q-opt-scalable p-3.5 sm:p-4 rounded-2xl transition-all font-bold ${oIdx === q.correctAnswer ? 'bg-emerald-950/50 border border-emerald-500/40 text-emerald-100' : 'bg-slate-950/40 text-slate-300 border border-slate-800/60'}">${escapeHtml(opt)} ${badge}</div>`;
               }).join('') : ''}
             </div>
-            ${q.explanation ? `<div class="q-exp-scalable text-sm sm:text-base md:text-lg text-slate-200 bg-slate-950/90 p-4 rounded-xl border border-slate-800 leading-relaxed">💡 詳解：${escapeHtml(q.explanation)}</div>` : ''}
+            ${q.explanation ? `<div class="q-exp-scalable text-slate-200 bg-slate-950/90 p-4 rounded-2xl border border-slate-800 leading-relaxed font-medium">💡 詳解：${escapeHtml(q.explanation)}</div>` : ''}
           </div>
         `;
         }).join('');
@@ -4706,7 +5430,7 @@
       { label: '標準', scale: 1.0 },
       { label: '放大', scale: 1.15 },
       { label: '特大', scale: 1.30 },
-      { label: '極大', scale: 1.45 }
+      { label: '超大', scale: 1.45 }
     ];
     let currentFontScaleIdx = 1; // 預設「放大」 (1.15x)
 
@@ -4726,7 +5450,7 @@
       document.documentElement.style.setProperty('--q-font-scale', current.scale);
       const display = document.getElementById('fontScaleDisplay');
       if (display) display.textContent = current.label;
-      document.querySelectorAll('.fontScaleDisplayModal, .fontScaleDisplayAlchemy, .fontScaleDisplayGrimoire, .fontScaleDisplayLabel').forEach(el => {
+      document.querySelectorAll('.fontScaleDisplayModal, .fontScaleDisplayAlchemy, .fontScaleDisplayGrimoire, .fontScaleDisplayCustomRag, .fontScaleDisplayLabel').forEach(el => {
         el.textContent = current.label;
       });
     }
@@ -4746,6 +5470,14 @@
 
     window.changeQuestionFontSize = changeQuestionFontSize;
     window.initQuestionFontScale = initQuestionFontScale;
+    window.handleAlchemyImageFileSelected = handleAlchemyImageFileSelected;
+    window.handleQuickHubImageSelected = handleQuickHubImageSelected;
+    window.clearAlchemyUploadedImage = clearAlchemyUploadedImage;
+    window.previewLargeUploadedImage = previewLargeUploadedImage;
+    window.closeImageLightboxModal = closeImageLightboxModal;
+    window.openCustomRagModal = openCustomRagModal;
+    window.closeCustomRagModal = closeCustomRagModal;
+    window.deleteCustomRagQuestion = deleteCustomRagQuestion;
 
     // ==================== 12. INITIALIZATION ====================
     window.onload = function () {
@@ -4759,19 +5491,25 @@
         } catch (e) {}
       }
       loadSavedState();
+      // 套用儲存之年級偏好設定（同步 UI 導航按鈕、段考按鈕與 AI 出題下拉選單）
+      setGradeFilter(appState.gradeFilter || 'all', false);
       updateHeaderUI();
       renderDailyQuests();
-      renderSubjectDungeons();
       renderAlchemyPresets();
-      render114ExamCards();
       render114SubjectTabs();
-      render114ConceptChips();
       setExamFilter(appState.examFilter || 'stage');
 
       updateGeminiKeyUI();
+      updateCustomRagCountBadge();
+      initImageUploadHandlers();
       initAuthListener();
       document.getElementById('alchemyQuestionInput').value = ALCHEMY_PRESETS[0].sampleInput;
-      const defaultPack = generatePracticePack(ALCHEMY_PRESETS[0].sampleInput, 'math', '7', 'progressive');
+      const presetSel = document.getElementById('alchemyPresetSelect');
+      if (presetSel && ALCHEMY_PRESETS.length > 0) {
+        presetSel.value = ALCHEMY_PRESETS[0].id;
+      }
+      const initialGrade = appState.gradeFilter || 'all';
+      const defaultPack = generatePracticePack(ALCHEMY_PRESETS[0].sampleInput, 'math', initialGrade, 'progressive');
       appState.alchemyCurrentPack = defaultPack;
       renderAlchemyPackOutput(defaultPack);
 

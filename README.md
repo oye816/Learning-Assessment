@@ -15,7 +15,6 @@
 
 1. **Gemini 3.5 Flash Lite (`gemini-3.5-flash-lite`)**：預設推薦首選，具備超高反應速度與精準的會考素養題型推理能力。
 2. **Gemini 3.1 Flash Lite (`gemini-3.1-flash-lite`)**：輕量穩定版本，適合各類標準單選題與公式變體生成。
-3. **Gemini 2.5 Flash Lite (`gemini-2.5-flash-lite`)**：經典輕量級架構模型，高相容度與高性價比。
 
 ---
 
@@ -24,14 +23,13 @@
 本專案採用創新的**純前端向量檢索增強生成 (Zero-Server Vector RAG)** 架構，無須架設外部向量資料庫伺服器（如 Pinecone 或 Milvus），即可在 GitHub Pages 上實現毫秒級語意檢索與智能防重複出題：
 
 ### 1. 核心組成與儲存位置
-* **RAG 向量特徵庫 ([`js/question_embeddings.js`](file:///Users/po/WorkSpace/Git/Learning-Assessment/js/question_embeddings.js))**：
-  * 收錄 **383 道**（含 368 題名校真題 + 15 題核心基礎題）的 **768 維**高維度正規化語意向量。
-  * 由 Google Gemini `gemini-embedding-2` 模型離線計算，網頁載入後由 [`js/rag_engine.js`](file:///Users/po/WorkSpace/Git/Learning-Assessment/js/rag_engine.js) 在瀏覽器記憶體內以**餘弦相似度 (Cosine Similarity)** 進行 0.01 秒等級的極速相似考點檢索。
 * **名校段考真題資料庫 ([`data/real_exam_questions.json`](file:///Users/po/WorkSpace/Git/Learning-Assessment/data/real_exam_questions.json) / [`js/real_exam_questions.js`](file:///Users/po/WorkSpace/Git/Learning-Assessment/js/real_exam_questions.js))**：
-  * 依**「第一學期／第二學期」**與**「第 1／2／3 次段考」**通用維度分類（不綁定特定單一學年度），收錄新北升學名校（**海山國中、永和國中、福和國中**）等 **368 道**經純文字自給自足審查（100% 排除看圖題、聽力題、缺短文閱讀題組與承上題依賴題）之高素養選擇題。
-  * 支援全科覆蓋：國文、英文、數學、自然（生物/理化）、社會（歷史/地理/公民）。
-* **向量運算快取 (`scripts/embeddings_cache.json`)**：
-  * 本地運算快取（已受 `.gitignore` 排除），記錄 `考題文本 -> 768維向量`。新增題目時只對新題調用 API，已存在題目 **0ms 立即命中**，杜絕重複消耗 API 與撞頻率限制。
+  * 依**「第一學期／第二學期」**與**「第 1／2／3 次段考」**通用維度分類（不綁定特定單一學年度），完整收錄新北升學名校（**海山國中、永和國中、福和國中**）等 **3,696 道**經純文字自給自足審查之高素養選擇題。
+  * 支援全科覆蓋：自然 (748題)、國文 (713題)、數學 (430題)、英文 (542題)、社會 (1,263題)，涵蓋七 (1,512題)、八 (1,128題)、九 (1,056題) 全年級。
+* **雙軌雲端題庫擴充 (Firebase Firestore `rag_custom_questions`)**：
+  * 學生拍照上傳辨識之題目與 AI 弱點特訓題，自動雙向同步至雲端 Firestore，讓個人與群體題庫隨作答持續自發性豐富。
+* **RAG 向量特徵庫與檢索引擎 ([`js/rag_engine.js`](file:///Users/po/WorkSpace/Git/Learning-Assessment/js/rag_engine.js))**：
+  * 在瀏覽器端以純前端檢索比對學生錯題觀念，毫秒級提取 2 題最具代表性的台灣名校段考真題，作為 Gemini AI 延伸出題的 Few-Shot 範例錨點。
 
 ---
 
@@ -49,45 +47,58 @@
 
 ---
 
-## 🛡️ 純文字自給自足試題防護 ＆ 語音朗讀輔助 (Self-Sufficiency & TTS)
+## 🛡️ 純文字自給自足防護 ＆ 📐 智慧幾何/實驗向量繪圖 (SVG)
 
-為了提供最流暢的純前端自主評量體驗，系統在題庫管理、AI 出題與測驗互動全面落實「自給自足」防護準則：
+系統在題庫管理、AI 出題與測驗互動全面落實「自給自足」防護，並具備強大的 AI 向量繪圖能力：
 
-1. **全面排除「看圖題」與「音檔依賴題」**：
-   * 國中試卷中常見的**聽力測驗**（需外接考場播音設備）、**地圖代號題**（如依據附圖甲乙丙丁位置）、**實驗附圖題**以及**未附短文之閱讀題組**，在無外部多媒體支援下會導致學生無法作答。
-   * **題庫深度清洗**：所有題庫真題均經過自動與人工雙重篩查，剔除所有圖文依賴題，確保 100% 純文字可解。
-   * **Gemini 出題提示詞約束**：嚴格禁止 AI 產生指涉不存在圖表之題目，實驗題與幾何題強制要求純文字定義與條件完整化。
-   * **前端抽題雙重安全防禦**：抽題時透過 `isSelfContainedTextQuestion` 正則檢驗，杜絕任何潛在圖文或聽力題目流至作答介面。
-2. **🔊 Web Speech API 原生英文語音朗讀**：
-   * 英文科題目在右上角自動顯示「🔊 朗讀英文 / ⏹️ 停止」功能。
-   * 採用瀏覽器原生語音合成技術（`en-US`），無須下載肥大音檔或額外 API 費用，兼顧發音聆聽與單字語法學習。
-3. **📐 人類直觀數學排版**：
-   * 全面淘汰在純文字介面難以閱讀的裸露 LaTeX 標記（如 `$\frac{x}{0.8}-150$`）。
-   * 自動轉換為人類一目了然的直觀排版（如 `x / 0.8 - 150`、乘號 `×`、除號 `÷`、平方 `x²`、根號 `√` 等）。
-
+1. **🎨 智慧幾何與實驗圖形向量繪製 (SVG 支援)**：
+   * 當 Gemini AI 出題情境涉及**數學幾何**（直角坐標系、相似三角形、圓形弦心距）或**自然科學實驗**（電路開關、浮力天平、滑輪槓桿、凸透鏡成像光路、地層構造）時，會在題目中自動輸出標準 `diagramSvg` 向量代碼。
+   * 前端內建安全過濾器（`renderSafeSvg`），徹底清洗 `<script>`、`<iframe>`、`on*` 惡意事件屬性，包裝為自適應深色科技卡片。
+   * **不依賴外部圖床或圖片空間**，手機與電腦螢幕 100% 清晰無損縮放，作答大廳、AI 弱點出題、錯題本與成績明細均可完整回顧。
+2. **全面排除「缺圖題」與「音檔依賴題」**：
+   * 國中試卷中若依賴外部掃描紙本插圖、聽力測驗（需外接播音設備）或未附短文之閱讀題組，在無外部多媒體支援下會導致學生無法作答。
+   * **抽題動態放行**：純文字題經 `isSelfContainedTextQuestion` 正則篩查；若題目已自帶 AI 向量 `diagramSvg` 繪圖，則自動放行「如下圖所示」之圖文題目！
+3. **🔊 Web Speech API 原生英文語音朗讀**：
+   * 英文科題目在右上角自動顯示「🔊 朗讀英文 / ⏹️ 停止」功能，採用瀏覽器原生語音合成技術（`en-US`），無須下載肥大音檔。
+4. **📐 人類直觀數學排版**：
+   * 自動轉換裸露 LaTeX 標記為人類直觀排版（如 `x / 0.8 - 150`、乘號 `×`、除號 `÷`、平方 `x²`、根號 `√` 等）。
 
 ---
 
 ## 🛠️ 新增與擴充題庫指南 (Question Bank Ingestion)
 
-若欲加入新學校試卷或新學期段考試題：
+當學校釋出新學期段考試題或加入新學校試卷時，**無須重新執行整個題庫，支援快速增量截取**：
 
-1. **試卷原始檔存放**：
-   * 將 PDF/Word 放置於 `題庫/<學校名>/114/<年級>/` 資料夾中（此資料夾已設定於 `.gitignore`，不會上傳至 Git）。
-2. **自動萃取題目與解答**：
-   * 執行專屬解析腳本（例如海山國中真題萃取器）：
-     ```bash
-     source .venv/bin/activate
-     python3 scripts/extract_haishan.py
-     ```
-   * 系統會自動過濾圖表與聽力依賴題，生成結構化 JSON 並合併入 `data/real_exam_questions.json` 與 `js/real_exam_questions.js`。
-3. **生成 RAG 語義特徵向量**：
-   * 執行向量化批次工具：
-     ```bash
-     source .venv/bin/activate
-     python3 scripts/generate_embeddings.py
-     ```
-   * 腳本將自動讀取快取並計算新增考題的 768 維語意向量，自動輸出最新之 `js/question_embeddings.js`。
+### 1. 試卷原始檔存放
+* 將 PDF/Word 放置於 `題庫/<學校名>/114/<年級>/` 資料夾中（此資料夾已設定於 `.gitignore`，不會上傳至 Git）。
+
+### 2. 執行題庫萃取工具（支援增量或全量）
+系統腳本具備**「題幹唯一識別與自動去重機制」**，既有 3,696 題會完整保留，僅將新題目追加進庫：
+
+* **方法 A：針對「新增的特定學校」快速增量截取（最推薦・僅需數秒）**：
+  ```bash
+  # 僅增量解析海山國中新試卷並追加進庫
+  ./.venv/bin/python scripts/batch_extract_all_exams.py --school haishan
+
+  # 僅增量解析福和國中新試卷
+  ./.venv/bin/python scripts/batch_extract_all_exams.py --school fuhe
+
+  # 僅增量解析永和國中新試卷
+  ./.venv/bin/python scripts/batch_extract_all_exams.py --school yonghe
+  ```
+
+* **方法 B：全量掃描所有學校試卷（預設亦為增量保護模式）**：
+  ```bash
+  ./.venv/bin/python scripts/batch_extract_all_exams.py
+  ```
+  腳本會掃描全部學校資料夾，已存在的題目自動略過，新題目無縫併入。
+
+* **方法 C：強制清空並重新構建全題庫（僅在修改正則清洗邏輯時使用）**：
+  ```bash
+  ./.venv/bin/python scripts/batch_extract_all_exams.py --clean
+  ```
+
+系統執行完成後，會自動更新 `data/real_exam_questions.json` 與 `js/real_exam_questions.js`，網頁端重新整理即刻生效！
 
 ---
 
@@ -157,7 +168,7 @@
 
 1. 打開您的網站網址。
 2. 點擊右上角「**🤖 AI 金鑰**」打開設定視窗：
-   - **Gemini AI 出題**：貼上您的 [Google AI Studio API Key](https://aistudio.google.com/)，並可切換 Gemini 3.5 / 3.1 / 2.5 Flash Lite 模型。
+   - **Gemini AI 出題**：貼上您的 [Google AI Studio API Key](https://aistudio.google.com/)，並可切換 Gemini 3.5 / 3.1 Flash Lite 模型。
    - **Firebase 與 Google 登入**：直接貼上 Firebase Config JSON，並填寫您的管理員 Google 信箱，點擊儲存即可！
    - 登入後可隨時點選姓名旁的 **`👑 設為管理員`** 一鍵解鎖「👑 導師管理後台」。
 

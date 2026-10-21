@@ -3,6 +3,7 @@
 
 export class RagEngine {
   static _queryCache = new Map();
+  static CUSTOM_STORAGE_KEY = 'jh_quest_custom_rag_questions';
 
   /**
    * 檢查題庫向量庫是否已載入完成
@@ -14,13 +15,217 @@ export class RagEngine {
   }
 
   /**
-   * 取得現有向量題庫清單
+   * 取得使用者自訂或圖片辨識收錄的 RAG 題庫
+   */
+  static getCustomQuestions() {
+    if (typeof localStorage === 'undefined') return [];
+    try {
+      const raw = localStorage.getItem(this.CUSTOM_STORAGE_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      console.warn('⚠️ 讀取自訂 RAG 題庫失敗:', e);
+      return [];
+    }
+  }
+
+  /**
+   * 儲存自訂 RAG 題庫清單
+   */
+  static saveCustomQuestions(list) {
+    if (typeof localStorage === 'undefined') return;
+    try {
+      localStorage.setItem(this.CUSTOM_STORAGE_KEY, JSON.stringify(list || []));
+    } catch (e) {
+      console.warn('⚠️ 儲存自訂 RAG 題庫失敗:', e);
+    }
+  }
+
+  static _cloudQuestionsCache = [];
+  static _isSyncingCloud = false;
+
+  /**
+   * 同步 Firebase Firestore 雲端 RAG 共享題庫
+   */
+  static async syncCloudQuestions() {
+    if (this._isSyncingCloud) return this._cloudQuestionsCache;
+    if (typeof window === 'undefined' || !window.FirebaseService || !window.FirebaseService.isAvailable()) {
+      return this._cloudQuestionsCache;
+    }
+
+    this._isSyncingCloud = true;
+    try {
+      const cloudList = await window.FirebaseService.fetchCloudRagQuestions(200);
+      if (Array.isArray(cloudList) && cloudList.length > 0) {
+        this._cloudQuestionsCache = cloudList;
+        console.log(`☁️ RAG 雲端共享題庫載入成功，共 ${cloudList.length} 道雲端真題`);
+
+        // 將雲端題目合併至本地 localStorage（雙向快取保險）
+        const localList = this.getCustomQuestions();
+        const localStems = new Set(localList.map(q => q.stem ? q.stem.trim() : ''));
+        let hasNew = false;
+        cloudList.forEach(cq => {
+          if (cq.stem && !localStems.has(cq.stem.trim())) {
+            localList.push(cq);
+            localStems.add(cq.stem.trim());
+            hasNew = true;
+          }
+        });
+        if (hasNew) {
+          this.saveCustomQuestions(localList);
+        }
+
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('rag-cloud-synced', { detail: { count: cloudList.length } }));
+        }
+      }
+      return this._cloudQuestionsCache;
+    } catch (err) {
+      console.warn('⚠️ 同步雲端 RAG 題庫時發生例外:', err);
+      return this._cloudQuestionsCache;
+    } finally {
+      this._isSyncingCloud = false;
+    }
+  }
+
+  /**
+   * 新增一道由學生上傳圖片辨識出（或自訂）的考題至 RAG 題庫（本機＋Firestore 雲端雙寫）
+   * @param {Object} qData 考題物件 { stem, options, answer, concept, explanation, subject, grade, school }
+   * @param {string} [apiKey] Gemini API Key (若提供則即時計算 768 維 Embedding 向量)
+   * @param {Object} [user] 當前登入的使用者資訊
+   */
+  static async addCustomQuestion(qData, apiKey = '', user = null) {
+    if (!qData || !qData.stem) return null;
+
+    const customList = this.getCustomQuestions();
+    
+    // 檢查是否已存在相同題幹 (避免重複收錄)
+    const existingIdx = customList.findIndex(item => item.stem && item.stem.trim() === qData.stem.trim());
+    
+    const cleanSubject = qData.subject || 'math';
+    const cleanGrade = String(qData.grade || '8');
+    const cleanConcept = qData.concept || '考點解析';
+    const searchText = `【${cleanSubject} ${cleanGrade}年級】考點：${cleanConcept}。題幹：${qData.stem}`;
+
+    let vector = null;
+    if (apiKey) {
+      try {
+        vector = await this.embedQuery(searchText, apiKey);
+      } catch (err) {
+        console.warn('⚠️ 自訂考題 Embedding 特徵計算失敗，使用文字備援:', err);
+      }
+    }
+
+    const newQuestion = {
+      id: qData.id || `custom-rag-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      subject: cleanSubject,
+      grade: cleanGrade,
+      concept: cleanConcept,
+      stem: qData.stem.trim(),
+      options: Array.isArray(qData.options) ? qData.options : [],
+      answer: typeof qData.answer === 'number' ? qData.answer : 0,
+      hint: qData.hint || '掌握題幹關鍵條件，依循定義推導。',
+      explanation: qData.explanation || '依據題意與核心觀念解題。',
+      school: qData.school || '學生拍照上傳考題',
+      source: qData.source || 'image_upload',
+      createdAt: qData.createdAt || new Date().toISOString(),
+      vector: vector || null,
+      cloudSynced: false
+    };
+
+    if (existingIdx >= 0) {
+      // 更新既有題目（保留原有 vector 若新 vector 為空）
+      if (!newQuestion.vector && customList[existingIdx].vector) {
+        newQuestion.vector = customList[existingIdx].vector;
+      }
+      customList[existingIdx] = newQuestion;
+    } else {
+      customList.unshift(newQuestion);
+    }
+
+    this.saveCustomQuestions(customList);
+
+    // 🚀 即時非同步同步至 Firebase Firestore 雲端知識庫
+    if (typeof window !== 'undefined' && window.FirebaseService && window.FirebaseService.isAvailable()) {
+      try {
+        const u = user || (window.FirebaseService.currentUser ? window.FirebaseService.currentUser : null);
+        const cloudSaved = await window.FirebaseService.saveRagQuestion(newQuestion, u);
+        if (cloudSaved) {
+          newQuestion.cloudSynced = true;
+          const updatedList = this.getCustomQuestions().map(q => q.id === newQuestion.id ? { ...q, cloudSynced: true } : q);
+          this.saveCustomQuestions(updatedList);
+        }
+      } catch (cloudErr) {
+        console.warn('⚠️ 上傳雲端 Firestore 題庫失敗 (已保存在本機):', cloudErr);
+      }
+    }
+
+    return newQuestion;
+  }
+
+  /**
+   * 刪除指定 ID 的自訂 RAG 考題（本地＋雲端同步刪除）
+   */
+  static async deleteCustomQuestion(id) {
+    const list = this.getCustomQuestions().filter(q => q.id !== id);
+    this.saveCustomQuestions(list);
+
+    // 同步自雲端 Firestore 刪除
+    if (typeof window !== 'undefined' && window.FirebaseService && window.FirebaseService.isAvailable()) {
+      try {
+        await window.FirebaseService.deleteCloudRagQuestion(id);
+      } catch (err) {
+        console.warn('⚠️ 自雲端刪除考題失敗:', err);
+      }
+    }
+    return list;
+  }
+
+  /**
+   * 取得自訂 RAG 考題總數（本地去重結合雲端）
+   */
+  static getCustomQuestionsCount() {
+    const local = this.getCustomQuestions();
+    const cloud = this._cloudQuestionsCache || [];
+    const stems = new Set(local.map(q => q.stem ? q.stem.trim() : ''));
+    let total = local.length;
+    cloud.forEach(cq => {
+      if (cq.stem && !stems.has(cq.stem.trim())) {
+        stems.add(cq.stem.trim());
+        total++;
+      }
+    });
+    return total;
+  }
+
+  /**
+   * 取得現有向量題庫清單（自動合併「學生拍照上傳考題」、「Firebase 雲端題庫」與「靜態全真段考題庫」）
    */
   static getEmbeddings() {
+    let base = [];
     if (typeof window !== 'undefined' && Array.isArray(window.QUESTION_EMBEDDINGS)) {
-      return window.QUESTION_EMBEDDINGS;
+      base = window.QUESTION_EMBEDDINGS;
     }
-    return [];
+    const custom = this.getCustomQuestions();
+    const cloud = this._cloudQuestionsCache || [];
+
+    // 合併 custom 與 cloud（以 stem 為 key 去重）
+    const combinedCustom = [...custom];
+    const customStems = new Set(custom.map(q => q.stem ? q.stem.trim() : ''));
+    cloud.forEach(cq => {
+      if (cq.stem && !customStems.has(cq.stem.trim())) {
+        combinedCustom.push(cq);
+        customStems.add(cq.stem.trim());
+      }
+    });
+
+    // 自動合併 REAL_EXAM_QUESTIONS 中所有真題
+    const realExamPool = (typeof window !== 'undefined' && Array.isArray(window.REAL_EXAM_QUESTIONS)) ? window.REAL_EXAM_QUESTIONS : [];
+    const baseStems = new Set(base.map(q => q.stem ? q.stem.trim() : ''));
+    const unindexedReal = realExamPool.filter(q => q.stem && !baseStems.has(q.stem.trim()));
+
+    return [...combinedCustom, ...base, ...unindexedReal];
   }
 
   /**
@@ -129,6 +334,12 @@ export class RagEngine {
         let score = 0;
         if (Array.isArray(q.vector) && q.vector.length === queryVector.length) {
           score = this.cosineSimilarity(queryVector, q.vector);
+        } else {
+          const qText = `${q.concept || ''} ${q.stem || ''}`.toLowerCase();
+          const cleanQ = (query || '').toLowerCase();
+          if (cleanQ && qText.includes(cleanQ)) {
+            score = 0.70;
+          }
         }
 
         // 科目吻合加權 (Domain Prior)
@@ -136,7 +347,7 @@ export class RagEngine {
           score += 0.08;
         }
         // 年級相近微調加權
-        if (grade && q.grade === String(grade)) {
+        if (grade && grade !== 'all' && q.grade === String(grade)) {
           score += 0.03;
         }
 
@@ -183,7 +394,7 @@ export class RagEngine {
       if (subject && subject !== 'auto' && q.subject === subject) {
         score += 5;
       }
-      if (grade && q.grade === String(grade)) {
+      if (grade && grade !== 'all' && q.grade === String(grade)) {
         score += 2;
       }
 

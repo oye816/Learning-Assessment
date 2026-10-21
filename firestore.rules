@@ -11,8 +11,7 @@ service cloud.firestore {
       allow read: if request.auth != null && (
         resource.data.userId == request.auth.uid ||
         request.auth.token.email in [
-          "oye816@gmail.com",
-          "admin@gmail.com"
+          "oye816@gmail.com"
         ]
       );
 
@@ -25,9 +24,28 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
       // 管理者可讀取學員角色資料
       allow read: if request.auth != null && request.auth.token.email in [
-        "oye816@gmail.com",
-        "admin@gmail.com"
+        "oye816@gmail.com"
       ];
+    }
+
+    // RAG 自訂考題庫 (學生拍照分析上傳與全域雲端共享)
+    match /rag_custom_questions/{questionId} {
+      // 全體學員與訪客皆可讀取雲端題庫，供 AI 弱點出題與段考特訓使用
+      allow read: if true;
+
+      // 登入學員皆可上傳考題至雲端知識庫
+      allow create: if request.auth != null &&
+        request.resource.data.stem is string &&
+        request.resource.data.stem.size() > 0;
+
+      // 上傳者本人或系統管理員可更新或刪除考題
+      allow update, delete: if request.auth != null && (
+        resource.data.uploaderUid == request.auth.uid ||
+        request.auth.token.email in [
+          "oye816@gmail.com"
+        ]
+      );
     }
   }
 }
+

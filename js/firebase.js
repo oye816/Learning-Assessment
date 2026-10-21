@@ -25,6 +25,8 @@ import {
   query, 
   where, 
   orderBy, 
+  limit,
+  deleteDoc,
   getDocs, 
   serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -623,6 +625,95 @@ export class FirebaseService {
       console.warn("讀取雲端勇者狀態失敗:", e);
     }
     return null;
+  }
+
+  /**
+   * 將學生拍照辨識出或自訂的考題同步儲存至 Firebase Firestore 雲端知識庫
+   * @param {Object} qData 題目資料物件
+   * @param {Object} [user] 當前登入的使用者資訊
+   */
+  static async saveRagQuestion(qData, user = null) {
+    if (!this.isAvailable() || !qData || !qData.stem) return null;
+    try {
+      const qId = qData.id || `cloud-rag-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+      const docData = {
+        id: qId,
+        stem: qData.stem.trim(),
+        options: Array.isArray(qData.options) ? qData.options : [],
+        answer: typeof qData.answer === 'number' ? qData.answer : 0,
+        concept: qData.concept || '考點解析',
+        subject: qData.subject || 'math',
+        grade: String(qData.grade || '8'),
+        hint: qData.hint || '掌握題幹關鍵條件，依循定義推導。',
+        explanation: qData.explanation || '依據題意與核心觀念解題。',
+        school: qData.school || '學生拍照上傳考題',
+        source: qData.source || 'image_upload',
+        vector: Array.isArray(qData.vector) ? qData.vector : null,
+        uploaderUid: user?.uid || (auth?.currentUser?.uid || 'guest'),
+        uploaderEmail: user?.email || (auth?.currentUser?.email || ''),
+        uploaderName: user?.displayName || (auth?.currentUser?.displayName || '熱心同學'),
+        updatedAt: serverTimestamp(),
+        createdAt: serverTimestamp()
+      };
+
+      await setDoc(doc(db, "rag_custom_questions", qId), docData, { merge: true });
+      console.log(`☁️ 考題已成功同步至 Firestore 雲端知識庫 [ID: ${qId}]`);
+      return { ...docData, id: qId };
+    } catch (err) {
+      console.warn("⚠️ 同步至 Firestore 雲端 RAG 失敗 (仍保留本機儲存):", err);
+      return null;
+    }
+  }
+
+  /**
+   * 從 Firebase Firestore 載入全校/共用雲端 RAG 題庫
+   * @param {number} [limitCount=200] 最多載入筆數
+   */
+  static async fetchCloudRagQuestions(limitCount = 200) {
+    if (!this.isAvailable()) return [];
+    try {
+      let snap;
+      try {
+        const q = query(
+          collection(db, "rag_custom_questions"),
+          orderBy("createdAt", "desc"),
+          limit(limitCount)
+        );
+        snap = await getDocs(q);
+      } catch (orderErr) {
+        // 若缺少索引或欄位尚未建立，降級為無排序查詢
+        const fallbackQ = collection(db, "rag_custom_questions");
+        snap = await getDocs(fallbackQ);
+      }
+
+      if (!snap || snap.empty) return [];
+      return snap.docs.map(d => {
+        const item = d.data();
+        return {
+          ...item,
+          id: d.id,
+          cloudDocId: d.id,
+          createdAt: item.createdAt?.toDate ? item.createdAt.toDate().toISOString() : (item.createdAt || new Date().toISOString())
+        };
+      });
+    } catch (err) {
+      console.warn("⚠️ 讀取 Firestore 雲端 RAG 題庫失敗:", err);
+      return [];
+    }
+  }
+
+  /**
+   * 刪除指定 ID 的雲端 RAG 考題（限上傳者或管理員）
+   */
+  static async deleteCloudRagQuestion(questionId) {
+    if (!this.isAvailable() || !questionId) return false;
+    try {
+      await deleteDoc(doc(db, "rag_custom_questions", questionId));
+      return true;
+    } catch (err) {
+      console.warn("⚠️ 刪除雲端 RAG 題庫失敗:", err);
+      return false;
+    }
   }
 }
 
