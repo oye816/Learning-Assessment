@@ -1081,8 +1081,13 @@
             <span id="qGradeBadge" class="px-3 py-1 rounded-lg bg-slate-800 text-slate-300 text-xs sm:text-sm font-semibold">八年級</span>
             <span id="qSchoolBadge" class="hidden px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs sm:text-sm font-bold">🏫 段考真題</span>
             <span id="qConceptBadge" class="px-3 py-1 rounded-lg bg-amber-500/15 text-amber-300 border border-amber-500/30 text-xs sm:text-sm font-semibold">核心考點</span>
+            <span id="qRepairedBadge" class="hidden px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs sm:text-sm font-bold">🛠️ AI 已校正</span>
           </div>
-          <div class="flex items-center gap-2.5 sm:gap-3">
+          <div class="flex items-center gap-2.5 sm:gap-3 flex-wrap">
+            <!-- 測驗作答 AI 題目修正按鈕 -->
+            <button type="button" id="btnRepairBattleQuestion" onclick="openBattleQuestionRepairModal()" class="px-2.5 py-1 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-amber-200 text-xs font-bold transition-all active:scale-95 flex items-center gap-1 shadow-sm" title="若發現本題描述、選項或排版有疑問，可召喚 AI 修正重構">
+              <span>🔧</span> <span>AI 修正</span>
+            </button>
             <!-- 英文語音朗讀播放按鈕 (TTS) -->
             <button type="button" id="btnSpeakEnglish" onclick="toggleSpeakQuestion()" class="hidden px-2.5 py-1 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 border border-sky-400/40 text-sky-200 text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5 shadow-sm" title="朗讀英文題目與選項（支援標準美式英語語音合成）">
               <span id="speakIcon">🔊</span> <span id="speakText">朗讀英文</span>
@@ -1128,6 +1133,14 @@
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div id="feedbackTitle" class="font-black text-lg sm:text-xl flex items-center gap-2"></div>
             <div class="flex flex-wrap items-center gap-2">
+              <button type="button" onclick="openBattleQuestionRepairModal()" class="px-3 py-2 rounded-xl bg-amber-950/40 hover:bg-amber-900/50 border border-amber-800/50 text-amber-300 hover:text-amber-200 text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-colors" title="使用 AI 修正重構本題">
+                <span>🔧</span>
+                <span>AI 修正此題</span>
+              </button>
+              <button type="button" id="btnBattleSaveToRag" onclick="saveCurrentBattleQuestionToRag()" class="px-3 py-2 rounded-xl bg-indigo-950/50 hover:bg-indigo-900/50 border border-indigo-700/50 text-indigo-300 hover:text-indigo-200 text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-colors" title="將此題收錄至 RAG 典範庫">
+                <span>📥</span>
+                <span>納入 RAG</span>
+              </button>
               <button type="button" onclick="generateSimilarFromCurrentBattleQuestion()" class="px-3.5 py-2 rounded-xl bg-fuchsia-600/30 hover:bg-fuchsia-600/50 border border-fuchsia-400/50 text-fuchsia-200 text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-colors">
                 <span>⚗️</span>
                 <span>這題不熟？立即生成 4 道同型練習題</span>
@@ -3610,21 +3623,30 @@
 
     // ==================== AI 題目修正工作台 (AI Repair Workbench) ====================
     let currentRepairContext = {
-      targetIdx: -1, // 指向 appState.alchemyCurrentPack.questions[idx]
-      anomalyId: null, // 若從異常清單開啟
+      sourceType: 'alchemy', // 'alchemy' | 'battle' | 'mistake' | 'general'
+      targetIdx: -1,
+      sourceId: null,
+      anomalyId: null,
       faultyQuestion: null,
       repairedQuestion: null,
       subject: 'math',
       grade: '8'
     };
 
-    function openQuestionRepairModal(idxOrObject, errorReason = '', anomalyId = null) {
+    function openQuestionRepairModal(idxOrObject, errorReason = '', anomalyId = null, sourceType = 'alchemy', sourceId = null) {
       let targetQ = null;
       let targetIdx = -1;
       let sub = 'math';
       let grd = '8';
 
-      if (typeof idxOrObject === 'number') {
+      if (sourceType === 'battle') {
+        if (appState.battle && appState.battle.questions && appState.battle.questions[appState.battle.currentIndex]) {
+          targetQ = appState.battle.questions[appState.battle.currentIndex];
+          targetIdx = appState.battle.currentIndex;
+          sub = targetQ.subject || appState.battle.subject || 'math';
+          grd = targetQ.grade || '8';
+        }
+      } else if (typeof idxOrObject === 'number') {
         targetIdx = idxOrObject;
         if (appState.alchemyCurrentPack && appState.alchemyCurrentPack.questions[targetIdx]) {
           targetQ = appState.alchemyCurrentPack.questions[targetIdx];
@@ -3635,6 +3657,7 @@
         targetQ = idxOrObject;
         sub = targetQ.subject || 'math';
         grd = targetQ.grade || '8';
+        targetIdx = typeof sourceId === 'number' ? sourceId : -1;
       }
 
       if (!targetQ) {
@@ -3643,7 +3666,9 @@
       }
 
       currentRepairContext = {
+        sourceType: sourceType || 'alchemy',
         targetIdx,
+        sourceId,
         anomalyId,
         faultyQuestion: JSON.parse(JSON.stringify(targetQ)),
         repairedQuestion: null,
@@ -3655,9 +3680,18 @@
       // 渲染原始題目預覽
       const origBox = document.getElementById('repairOriginalQuestionBox');
       if (origBox) {
+        const sourceLabels = {
+          battle: '⚔️ 正在進行的測驗題目',
+          alchemy: '⚗️ AI 試題包練習題',
+          mistake: '📖 錯題本收錄題',
+          history: '📋 評量歷史明細題',
+          anomaly: '⚠️ 生題異常記錄題',
+          general: '📋 評量題目'
+        };
+        const srcLabel = sourceLabels[sourceType] || '題目';
         origBox.innerHTML = `
           <div class="flex items-center justify-between text-xs text-slate-400">
-            <span class="font-bold text-amber-300">【考點：${escapeHtml(targetQ.concept || '觀念')}】</span>
+            <span class="font-bold text-amber-300">【${srcLabel}・考點：${escapeHtml(targetQ.concept || '觀念')}】</span>
             <span>${escapeHtml(sub)}・${escapeHtml(grd)}年級</span>
           </div>
           <p class="font-bold text-white text-sm sm:text-base leading-relaxed">${escapeHtml(targetQ.stem || '(題幹為空或異常)')}</p>
@@ -3667,8 +3701,28 @@
               ${targetQ.options.map(opt => `<div class="p-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-300">${escapeHtml(opt)}</div>`).join('')}
             </div>
           ` : '<div class="text-rose-400 text-xs">⚠️ 選項缺失或非陣列</div>'}
-          ${errorReason ? `<div class="text-rose-400 font-bold text-xs">異常摘要：${escapeHtml(errorReason)}</div>` : ''}
+          ${errorReason ? `<div class="text-rose-400 font-bold text-xs">修正焦點：${escapeHtml(errorReason)}</div>` : ''}
         `;
+      }
+
+      // 動態更新替換按鈕文字
+      const applyBtn = document.getElementById('btnApplyRepairedToPack');
+      if (applyBtn) {
+        if (sourceType === 'battle') {
+          applyBtn.textContent = '✅ 替換至當前測驗題目';
+          applyBtn.style.display = 'inline-flex';
+        } else if (sourceType === 'mistake') {
+          applyBtn.textContent = '✅ 更新至我的錯題本';
+          applyBtn.style.display = 'inline-flex';
+        } else if (sourceType === 'history') {
+          applyBtn.textContent = '✅ 更新至歷史紀錄題目';
+          applyBtn.style.display = 'inline-flex';
+        } else if (sourceType === 'alchemy' && targetIdx >= 0) {
+          applyBtn.textContent = '✅ 替換至當前試題包';
+          applyBtn.style.display = 'inline-flex';
+        } else {
+          applyBtn.style.display = 'none';
+        }
       }
 
       // 重設輸入框與結果區
@@ -3678,13 +3732,155 @@
       const resBox = document.getElementById('repairedResultContainer');
       if (resBox) resBox.classList.add('hidden');
 
-      const applyPackBtn = document.getElementById('btnApplyRepairedToPack');
-      if (applyPackBtn) {
-        applyPackBtn.style.display = targetIdx >= 0 ? 'inline-flex' : 'none';
-      }
-
       const modal = document.getElementById('questionRepairModal');
       if (modal) modal.classList.remove('hidden');
+    }
+
+    function openBattleQuestionRepairModal() {
+      const b = appState.battle;
+      if (!b || !b.questions || !b.questions[b.currentIndex]) {
+        showToast('目前無進行中的測驗題目', 'warning');
+        return;
+      }
+      const curQ = b.questions[b.currentIndex];
+      openQuestionRepairModal(curQ, '測驗作答題目內容優化', null, 'battle', b.currentIndex);
+    }
+
+    function openMistakeQuestionRepairModal(mistakeId) {
+      const m = appState.mistakes.find(item => item.id === mistakeId);
+      if (!m) return;
+      openQuestionRepairModal(m, '錯題本題目優化與排版修復', null, 'mistake', mistakeId);
+    }
+
+    async function saveCurrentBattleQuestionToRag() {
+      const b = appState.battle;
+      if (!b || !b.questions || !b.questions[b.currentIndex]) return;
+      const q = b.questions[b.currentIndex];
+      if (!window.RagEngine) return;
+
+      const btn = document.getElementById('btnBattleSaveToRag');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳</span> <span>收錄中...</span>';
+      }
+
+      try {
+        const apiKey = window.GeminiService ? window.GeminiService.getApiKey() : '';
+        await window.RagEngine.addCustomQuestion({
+          ...q,
+          subject: q.subject || b.subject || 'math',
+          grade: q.grade || '8',
+          school: q.school || (q.isRepaired ? 'AI 測驗修正題型' : 'AI 測驗精選典範'),
+          source: q.isRepaired ? 'ai_repaired' : 'ai_curated'
+        }, apiKey, appState.currentUser);
+
+        updateCustomRagCountBadge();
+        showToast('✨ 測驗題目已成功收錄至 RAG 典範題庫！未來出題將自動參考此題型！', 'success');
+
+        if (btn) {
+          btn.className = 'px-3 py-2 rounded-xl bg-emerald-950/70 border border-emerald-600/70 text-emerald-300 text-xs sm:text-sm font-bold flex items-center gap-1.5';
+          btn.innerHTML = '<span>✓</span> <span>已為 RAG 典範</span>';
+        }
+      } catch (err) {
+        console.error('收錄 RAG 失敗:', err);
+        showToast('❌ 收錄 RAG 失敗: ' + (err.message || '請稍後再試'), 'danger');
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<span>📥</span> <span>納入 RAG</span>';
+        }
+      }
+    }
+
+    async function saveMistakeQuestionToRag(mistakeId) {
+      const m = appState.mistakes.find(item => item.id === mistakeId);
+      if (!m || !window.RagEngine) return;
+
+      const btn = document.getElementById(`btnMistakeSaveToRag-${mistakeId}`);
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳</span> <span>收錄中...</span>';
+      }
+
+      try {
+        const apiKey = window.GeminiService ? window.GeminiService.getApiKey() : '';
+        await window.RagEngine.addCustomQuestion({
+          ...m,
+          school: m.school || (m.isRepaired ? 'AI 錯題修正題型' : 'AI 錯題典範'),
+          source: m.isRepaired ? 'ai_repaired' : 'ai_curated'
+        }, apiKey, appState.currentUser);
+
+        updateCustomRagCountBadge();
+        showToast('✨ 錯題已成功收錄至 RAG 典範題庫！未來生題將自動參考此題型！', 'success');
+
+        if (btn) {
+          btn.className = 'px-2.5 py-1.5 rounded-xl bg-emerald-950/70 border border-emerald-600/70 text-emerald-300 text-xs font-bold flex items-center gap-1';
+          btn.innerHTML = '<span>✓</span> <span>已為 RAG 典範</span>';
+        }
+      } catch (err) {
+        console.error('錯題收錄 RAG 失敗:', err);
+        showToast('❌ 收錄 RAG 失敗: ' + (err.message || '請稍後再試'), 'danger');
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<span>📥</span> <span>納入 RAG</span>';
+        }
+      }
+    }
+
+    function openHistoryQuestionRepairModal(type, recordIdx, qIdx) {
+      const records = (type === 'admin') ? (appState.adminRecords || []) : (appState.personalRecords || []);
+      const record = records[recordIdx];
+      if (!record || !record.details || !record.details[qIdx]) {
+        showToast('找不到該筆歷史評量題目', 'warning');
+        return;
+      }
+      const q = record.details[qIdx];
+      const formattedQ = {
+        ...q,
+        subject: q.subject || record.subject || 'math',
+        grade: q.grade || record.grade || '8',
+        answer: (q.correctAnswer !== undefined) ? q.correctAnswer : (q.answer !== undefined ? q.answer : 0)
+      };
+      openQuestionRepairModal(formattedQ, '歷史評量題目優化與排版修復', null, 'history', { type, recordIdx, qIdx });
+    }
+
+    async function saveHistoryQuestionToRag(type, recordIdx, qIdx) {
+      const records = (type === 'admin') ? (appState.adminRecords || []) : (appState.personalRecords || []);
+      const record = records[recordIdx];
+      if (!record || !record.details || !record.details[qIdx]) return;
+      const q = record.details[qIdx];
+      if (!window.RagEngine) return;
+
+      const btn = document.getElementById(`btnHistorySaveToRag-${recordIdx}-${qIdx}`);
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳</span> <span>收錄中...</span>';
+      }
+
+      try {
+        const apiKey = window.GeminiService ? window.GeminiService.getApiKey() : '';
+        await window.RagEngine.addCustomQuestion({
+          ...q,
+          subject: q.subject || record.subject || 'math',
+          grade: q.grade || record.grade || '8',
+          school: q.school || (q.isRepaired ? 'AI 歷史修正題型' : 'AI 歷史評量典範'),
+          source: q.isRepaired ? 'ai_repaired' : 'ai_curated'
+        }, apiKey, appState.currentUser);
+
+        updateCustomRagCountBadge();
+        showToast('✨ 歷史題目已成功收錄至 RAG 典範題庫！未來出題將自動參考此題型！', 'success');
+
+        if (btn) {
+          btn.className = 'px-2.5 py-1.5 rounded-xl bg-emerald-950/70 border border-emerald-600/70 text-emerald-300 text-xs font-bold flex items-center gap-1';
+          btn.innerHTML = '<span>✓</span> <span>已為 RAG 典範</span>';
+        }
+      } catch (err) {
+        console.error('收錄 RAG 失敗:', err);
+        showToast('❌ 收錄 RAG 失敗: ' + (err.message || '請稍後再試'), 'danger');
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<span>📥</span> <span>納入 RAG</span>';
+        }
+      }
     }
 
     function closeQuestionRepairModal() {
@@ -3718,7 +3914,7 @@
         };
       }
 
-      openQuestionRepairModal(targetQ, item.errorReason, anomalyId);
+      openQuestionRepairModal(targetQ, item.errorReason, anomalyId, 'anomaly');
     }
 
     async function executeQuestionRepair() {
@@ -3812,17 +4008,67 @@
 
     function applyRepairedQuestionToPack() {
       const rep = currentRepairContext.repairedQuestion;
-      const tIdx = currentRepairContext.targetIdx;
-      if (!rep || tIdx < 0 || !appState.alchemyCurrentPack || !appState.alchemyCurrentPack.questions[tIdx]) {
-        showToast('無法套用至當前試題包', 'warning');
+      if (!rep) {
+        showToast('尚無修復後的題目資料', 'warning');
         return;
       }
-
       rep.isRepaired = true;
-      appState.alchemyCurrentPack.questions[tIdx] = rep;
-      renderAlchemyPackOutput(appState.alchemyCurrentPack);
+
+      // 依來源分支更新
+      if (currentRepairContext.sourceType === 'battle') {
+        const b = appState.battle;
+        if (b && b.questions && b.questions[b.currentIndex]) {
+          b.questions[b.currentIndex] = rep;
+          // 若本題尚未作答，重設刪去秘藥與選項
+          b.disabledOptions = [];
+          renderBattleState();
+          closeQuestionRepairModal();
+          showToast('✨ 當前測驗題目已成功修正更新！可直接繼續作答！', 'success');
+          return;
+        }
+      } else if (currentRepairContext.sourceType === 'mistake') {
+        const mId = currentRepairContext.sourceId;
+        const mIdx = appState.mistakes.findIndex(m => m.id === mId);
+        if (mIdx >= 0) {
+          appState.mistakes[mIdx] = { ...appState.mistakes[mIdx], ...rep, id: mId };
+          renderMistakes();
+          saveState();
+          closeQuestionRepairModal();
+          showToast('✨ 錯題本題目已成功更新！', 'success');
+          return;
+        }
+      } else if (currentRepairContext.sourceType === 'history') {
+        const hInfo = currentRepairContext.sourceId; // { type, recordIdx, qIdx }
+        if (hInfo) {
+          const records = (hInfo.type === 'admin') ? (appState.adminRecords || []) : (appState.personalRecords || []);
+          const record = records[hInfo.recordIdx];
+          if (record && record.details && record.details[hInfo.qIdx]) {
+            record.details[hInfo.qIdx] = {
+              ...record.details[hInfo.qIdx],
+              ...rep,
+              correctAnswer: (rep.answer !== undefined ? rep.answer : record.details[hInfo.qIdx].correctAnswer),
+              isRepaired: true
+            };
+            openRecordDetailModal(hInfo.type, hInfo.recordIdx);
+            saveState();
+            closeQuestionRepairModal();
+            showToast('✨ 歷史評量題目已成功修正更新！', 'success');
+            return;
+          }
+        }
+      } else if (currentRepairContext.sourceType === 'alchemy') {
+        const tIdx = currentRepairContext.targetIdx;
+        if (tIdx >= 0 && appState.alchemyCurrentPack && appState.alchemyCurrentPack.questions[tIdx]) {
+          appState.alchemyCurrentPack.questions[tIdx] = rep;
+          renderAlchemyPackOutput(appState.alchemyCurrentPack);
+          closeQuestionRepairModal();
+          showToast(`✨ 第 ${tIdx + 1} 題已成功替換為 AI 修復後的高素養試題！`, 'success');
+          return;
+        }
+      }
+
       closeQuestionRepairModal();
-      showToast(`✨ 第 ${tIdx + 1} 題已成功替換為 AI 修復後的高素養試題！`, 'success');
+      showToast('✨ 題目已成功修正！', 'success');
     }
 
     async function applyRepairedQuestionAndSaveToRag() {
@@ -3832,34 +4078,31 @@
         return;
       }
 
-      // 若在試題包中，同步替換
-      if (currentRepairContext.targetIdx >= 0 && appState.alchemyCurrentPack && appState.alchemyCurrentPack.questions[currentRepairContext.targetIdx]) {
-        rep.isRepaired = true;
-        appState.alchemyCurrentPack.questions[currentRepairContext.targetIdx] = rep;
-        renderAlchemyPackOutput(appState.alchemyCurrentPack);
-      }
+      // 替換當前來源
+      applyRepairedQuestionToPack();
 
       if (window.RagEngine) {
         try {
           const apiKey = window.GeminiService ? window.GeminiService.getApiKey() : '';
+          const schoolTag = currentRepairContext.sourceType === 'battle' ? 'AI 測驗修正題型' : 
+                            (currentRepairContext.sourceType === 'history' ? 'AI 歷史紀錄修正題型' : 
+                            (currentRepairContext.sourceType === 'mistake' ? 'AI 錯題修正題型' : 'AI 修正題型典範'));
           await window.RagEngine.addCustomQuestion({
             ...rep,
             subject: rep.subject || currentRepairContext.subject,
             grade: rep.grade || currentRepairContext.grade,
-            school: 'AI 修正題型典範',
+            school: schoolTag,
             source: 'ai_repaired',
             repairNote: rep.repairNote || 'AI 題目修正工作台精修題型'
           }, apiKey, appState.currentUser);
 
           updateCustomRagCountBadge();
-          showToast('📥 題目已成功收錄至 RAG 典範庫！未來同考點生題將自動參考此題型！', 'success');
+          showToast('📥 題目已替換並成功收錄至 RAG 典範庫！未來同考點生題將自動參考此題型！', 'success');
         } catch (ragErr) {
           console.warn('收錄 RAG 失敗:', ragErr);
           showToast('收錄 RAG 失敗: ' + ragErr.message, 'danger');
         }
       }
-
-      closeQuestionRepairModal();
     }
 
     async function saveAlchemyQuestionToRag(idx) {
@@ -4771,6 +5014,23 @@
           schoolBadge.classList.add('hidden');
         }
       }
+
+      const repairedBadge = document.getElementById('qRepairedBadge');
+      if (repairedBadge) {
+        if (q.isRepaired) {
+          repairedBadge.classList.remove('hidden');
+        } else {
+          repairedBadge.classList.add('hidden');
+        }
+      }
+
+      const btnRag = document.getElementById('btnBattleSaveToRag');
+      if (btnRag) {
+        btnRag.disabled = false;
+        btnRag.className = 'px-3 py-2 rounded-xl bg-indigo-950/50 hover:bg-indigo-900/50 border border-indigo-700/50 text-indigo-300 hover:text-indigo-200 text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-colors';
+        btnRag.innerHTML = '<span>📥</span> <span>納入 RAG</span>';
+      }
+
       document.getElementById('qConceptBadge').textContent = window.humanizeMath ? window.humanizeMath(q.concept || '') : (q.concept || '');
       document.getElementById('qStemText').textContent = window.humanizeMath ? window.humanizeMath(q.stem || '') : (q.stem || '');
 
@@ -5165,13 +5425,21 @@
                 <span class="text-xs font-bold text-amber-300">${m.concept}</span>
                 <span class="text-[11px] px-2 py-0.5 rounded bg-rose-500/20 text-rose-300">累計失誤 ${m.wrongCount || 1} 次</span>
               </div>
-              <div class="flex flex-wrap items-center gap-2">
+              <div class="flex flex-wrap items-center gap-1.5">
+                <button type="button" onclick="openMistakeQuestionRepairModal('${m.id}')" class="px-2.5 py-1.5 rounded-xl bg-amber-950/40 hover:bg-amber-900/50 border border-amber-800/50 text-amber-300 hover:text-amber-200 text-xs font-bold flex items-center gap-1 transition-colors" title="使用 AI 修正重構此錯題">
+                  <span>🔧</span>
+                  <span>AI 修正</span>
+                </button>
+                <button type="button" id="btnMistakeSaveToRag-${m.id}" onclick="saveMistakeQuestionToRag('${m.id}')" class="px-2.5 py-1.5 rounded-xl bg-indigo-950/50 hover:bg-indigo-900/50 border border-indigo-700/50 text-indigo-300 hover:text-indigo-200 text-xs font-bold flex items-center gap-1 transition-colors" title="收錄至 RAG 典範庫">
+                  <span>📥</span>
+                  <span>納入 RAG</span>
+                </button>
                 <button type="button" onclick="alchemyFromGrimoire('${m.id}')" class="px-3 py-1.5 rounded-xl bg-fuchsia-600 hover:bg-fuchsia-500 text-white text-xs font-bold flex items-center gap-1 shadow">
                   <span>💡</span>
-                  <span>AI 生成 4 道延伸練習題</span>
+                  <span>AI 生成 4 道延伸題</span>
                 </button>
                 <button type="button" onclick="masterAndRemoveMistake('${m.id}')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white text-xs font-semibold transition-colors">
-                  ✅ 已熟練・移出錯題本
+                  ✅ 已熟練
                 </button>
               </div>
             </div>
@@ -5944,10 +6212,23 @@
           
           return `
           <div class="p-5 sm:p-6 rounded-2xl bg-slate-900 border ${borderColor} space-y-4">
-            <div class="flex items-center justify-between">
-              <span class="text-base sm:text-lg font-extrabold ${statusColor}">
-                第 ${qIdx + 1} 題：${statusText} (${q.concept || '核心觀念'})
-              </span>
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <div class="flex items-center gap-2">
+                <span class="text-base sm:text-lg font-extrabold ${statusColor}">
+                  第 ${qIdx + 1} 題：${statusText} (${q.concept || '核心觀念'})
+                </span>
+                ${q.isRepaired ? '<span class="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">🛠️ AI 已校正</span>' : ''}
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="openHistoryQuestionRepairModal('${type}', ${index}, ${qIdx})" class="px-2.5 py-1.5 rounded-xl bg-amber-950/40 hover:bg-amber-900/50 border border-amber-800/50 text-amber-300 hover:text-amber-200 text-xs font-bold flex items-center gap-1 transition-colors" title="使用 AI 修正重構此歷史評量題目">
+                  <span>🔧</span>
+                  <span>AI 修正</span>
+                </button>
+                <button type="button" id="btnHistorySaveToRag-${index}-${qIdx}" onclick="saveHistoryQuestionToRag('${type}', ${index}, ${qIdx})" class="px-2.5 py-1.5 rounded-xl bg-indigo-950/50 hover:bg-indigo-900/50 border border-indigo-700/50 text-indigo-300 hover:text-indigo-200 text-xs font-bold flex items-center gap-1 transition-colors" title="收錄至 RAG 典範庫">
+                  <span>📥</span>
+                  <span>納入 RAG</span>
+                </button>
+              </div>
             </div>
             <p class="q-stem-scalable font-bold text-white leading-relaxed tracking-wide">${escapeHtml(q.stem || '')}</p>
             ${(q.diagramSvg && typeof window.renderSafeSvg === 'function') ? window.renderSafeSvg(q.diagramSvg, '考題圖解') : ''}
@@ -6114,6 +6395,12 @@
     window.applyRepairedQuestionToPack = applyRepairedQuestionToPack;
     window.applyRepairedQuestionAndSaveToRag = applyRepairedQuestionAndSaveToRag;
     window.saveAlchemyQuestionToRag = saveAlchemyQuestionToRag;
+    window.openBattleQuestionRepairModal = openBattleQuestionRepairModal;
+    window.saveCurrentBattleQuestionToRag = saveCurrentBattleQuestionToRag;
+    window.openMistakeQuestionRepairModal = openMistakeQuestionRepairModal;
+    window.saveMistakeQuestionToRag = saveMistakeQuestionToRag;
+    window.openHistoryQuestionRepairModal = openHistoryQuestionRepairModal;
+    window.saveHistoryQuestionToRag = saveHistoryQuestionToRag;
 
     // ==================== 12. INITIALIZATION ====================
     window.onload = function () {

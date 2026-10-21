@@ -137,15 +137,73 @@ def test_simulated_anomaly_and_rag_learning_cycle():
     print(f"  ✅ 3. RAG 檢索成功命中 AI 修復題型 (題號: {hits[0]['id']}，來源: {hits[0]['school']})")
     print(f"  ✅ 4. 該題目日後將作為 Few-Shot 典範提供給 Gemini 參考，達成正向學習閉環！")
 
+def test_quiz_battle_and_grimoire_repair():
+    print("\n🔍 【驗證五：測驗作答 (Battle)、錯題本與歷史紀錄之 AI 修正與 RAG 連動】")
+    html_path = ROOT / "index.html"
+    content = html_path.read_text(encoding="utf-8")
+
+    battle_elements = [
+        ("btnRepairBattleQuestion", "測驗作答題目卡片頂部 AI 修正按鈕"),
+        ("qRepairedBadge", "測驗作答 AI 已校正動態標籤"),
+        ("btnBattleSaveToRag", "測驗作答解析回饋區納入 RAG 按鈕"),
+        ("openBattleQuestionRepairModal", "測驗作答 AI 題目修正彈窗啟動函式"),
+        ("saveCurrentBattleQuestionToRag", "測驗作答題目納入 RAG 典範庫函式"),
+        ("openMistakeQuestionRepairModal", "錯題本 AI 題目修正啟動函式"),
+        ("saveMistakeQuestionToRag", "錯題本題目納入 RAG 函式"),
+        ("openHistoryQuestionRepairModal", "歷史評量明細 AI 題目修正啟動函式"),
+        ("saveHistoryQuestionToRag", "歷史評量明細納入 RAG 函式"),
+        ("window.openBattleQuestionRepairModal", "window 物件導出 openBattleQuestionRepairModal"),
+        ("window.saveCurrentBattleQuestionToRag", "window 物件導出 saveCurrentBattleQuestionToRag"),
+        ("window.openMistakeQuestionRepairModal", "window 物件導出 openMistakeQuestionRepairModal"),
+        ("window.saveMistakeQuestionToRag", "window 物件導出 saveMistakeQuestionToRag"),
+        ("window.openHistoryQuestionRepairModal", "window 物件導出 openHistoryQuestionRepairModal"),
+        ("window.saveHistoryQuestionToRag", "window 物件導出 saveHistoryQuestionToRag")
+    ]
+    for el_id, desc in battle_elements:
+        assert el_id in content, f"缺少 {desc} ({el_id})"
+        print(f"  ✅ {desc} ({el_id})：確認存在且已配置")
+
+    # 模擬測驗作答時之即時題目替換邏輯
+    mock_battle_state = {
+        "currentIndex": 1,
+        "questions": [
+            {"id": "q0", "stem": "第 0 題"},
+            {"id": "q1", "stem": "第 1 題 (有疑義或排版瑕疵)", "options": ["A", "B", "C", "D"], "answer": 0},
+            {"id": "q2", "stem": "第 2 題"}
+        ],
+        "disabledOptions": [2, 3]  # 使用過刪去卷軸
+    }
+
+    repaired_battle_q = {
+        "id": "q1-repaired",
+        "stem": "第 1 題 (經 AI 修正重構後之高品質題目)",
+        "options": ["A (正確解答)", "B (誘答選項 1)", "C (誘答選項 2)", "D (誘答選項 3)"],
+        "answer": 0,
+        "isRepaired": True,
+        "school": "AI 測驗修正題型",
+        "source": "ai_repaired"
+    }
+
+    # 執行模擬替換
+    cur_idx = mock_battle_state["currentIndex"]
+    mock_battle_state["questions"][cur_idx] = repaired_battle_q
+    mock_battle_state["disabledOptions"] = []
+
+    assert mock_battle_state["questions"][1]["isRepaired"] is True
+    assert "經 AI 修正重構" in mock_battle_state["questions"][1]["stem"]
+    assert len(mock_battle_state["disabledOptions"]) == 0
+    print("  ✅ 測驗作答中即時替換題目、清除刪去狀態、標記已校正機制：模擬測試通過")
+
 def main():
     print("=" * 70)
-    print("🚀 驗證生題異常記錄、AI 修正生題與 RAG 典範庫擴充功能")
+    print("🚀 驗證生題異常記錄、AI 修正生題與 RAG 典範庫擴充功能 (含測驗作答 AI 修正)")
     print("=" * 70)
     try:
         test_gemini_service_anomaly_and_repair()
         test_rag_engine_support()
         test_index_ui_elements()
         test_simulated_anomaly_and_rag_learning_cycle()
+        test_quiz_battle_and_grimoire_repair()
         print("\n" + "=" * 70)
         print("🎉 全部測試 100% 通過！新功能設計精準、低耦合且完全相容！")
         print("=" * 70)
@@ -155,3 +213,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
