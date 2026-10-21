@@ -2514,6 +2514,13 @@
       }
     };
 
+    let examStageState = {
+      semester: '1',        // '1': 第一學期(上學期), '2': 第二學期(下學期)
+      stage: '2',           // '1': 第一次段考, '2': 第二次段考, '3': 第三次段考(期末)
+      grade: 'all',         // 'all', '7', '8', '9'
+      selectedSubject: 'all' // 'all', 'chinese', 'english', 'math', 'science', 'social'
+    };
+
     function getStorageKey() {
       return appState.currentUser ? ('jh_quest_state_' + appState.currentUser.uid) : 'jh_quest_state_guest';
     }
@@ -2545,6 +2552,20 @@
           if (parsed && parsed.gradeFilter && ['all', '7', '8', '9'].includes(parsed.gradeFilter)) {
             appState.gradeFilter = parsed.gradeFilter;
           }
+          if (parsed && parsed.examFilter) {
+            appState.examFilter = parsed.examFilter;
+          }
+          if (parsed && parsed.examStageState) {
+            if (['1', '2'].includes(parsed.examStageState.semester)) {
+              examStageState.semester = parsed.examStageState.semester;
+            }
+            if (['1', '2', '3'].includes(parsed.examStageState.stage)) {
+              examStageState.stage = parsed.examStageState.stage;
+            }
+            if (parsed.examStageState.selectedSubject) {
+              examStageState.selectedSubject = parsed.examStageState.selectedSubject;
+            }
+          }
         } else {
           appState.player = getFreshPlayerState();
           appState.mistakes = [];
@@ -2556,16 +2577,43 @@
         appState.dailyQuests = getFreshDailyQuests();
       }
 
-      // 讀取全域獨立持久化年級偏好（跨訪客/登入狀態無縫繼承）
+      // 讀取全域獨立持久化年級、學期、段考次數、考試範圍與科目標籤（跨訪客/登入狀態無縫繼承，確保 reload page 完全保持）
       try {
         const savedPref = localStorage.getItem('star_user_grade_preference');
         if (savedPref && ['all', '7', '8', '9'].includes(savedPref)) {
           appState.gradeFilter = savedPref;
         }
       } catch (e) {}
-      if (typeof examStageState !== 'undefined') {
-        examStageState.grade = appState.gradeFilter || 'all';
-      }
+
+      try {
+        const savedSem = localStorage.getItem('star_user_semester_preference');
+        if (savedSem && ['1', '2'].includes(savedSem)) {
+          examStageState.semester = savedSem;
+        }
+      } catch (e) {}
+
+      try {
+        const savedStage = localStorage.getItem('star_user_stage_preference');
+        if (savedStage && ['1', '2', '3'].includes(savedStage)) {
+          examStageState.stage = savedStage;
+        }
+      } catch (e) {}
+
+      try {
+        const savedExam = localStorage.getItem('star_user_exam_filter_preference');
+        if (savedExam) {
+          appState.examFilter = savedExam;
+        }
+      } catch (e) {}
+
+      try {
+        const savedSub = localStorage.getItem('star_user_exam_subject_preference');
+        if (savedSub) {
+          examStageState.selectedSubject = savedSub;
+        }
+      } catch (e) {}
+
+      examStageState.grade = appState.gradeFilter || 'all';
     }
 
     function saveState() {
@@ -2574,7 +2622,14 @@
           player: appState.player,
           mistakes: appState.mistakes,
           dailyQuests: appState.dailyQuests,
-          gradeFilter: appState.gradeFilter
+          gradeFilter: appState.gradeFilter,
+          examFilter: appState.examFilter,
+          examStageState: {
+            semester: examStageState.semester,
+            stage: examStageState.stage,
+            grade: examStageState.grade,
+            selectedSubject: examStageState.selectedSubject
+          }
         }));
       } catch (e) {
         // Ignore storage restrictions
@@ -2582,6 +2637,18 @@
       try {
         if (appState.gradeFilter) {
           localStorage.setItem('star_user_grade_preference', appState.gradeFilter);
+        }
+        if (examStageState.semester) {
+          localStorage.setItem('star_user_semester_preference', examStageState.semester);
+        }
+        if (examStageState.stage) {
+          localStorage.setItem('star_user_stage_preference', examStageState.stage);
+        }
+        if (appState.examFilter) {
+          localStorage.setItem('star_user_exam_filter_preference', appState.examFilter);
+        }
+        if (examStageState.selectedSubject) {
+          localStorage.setItem('star_user_exam_subject_preference', examStageState.selectedSubject);
         }
       } catch (e) {}
       // 同步勇者雲端存檔（包含經驗值、星幣、每日任務進度）
@@ -2813,12 +2880,6 @@
     }
 
     // ==================== 名校段考分類與試卷生成器（依學期、段考次數分） ====================
-    let examStageState = {
-      semester: '1',        // '1': 第一學期(上學期), '2': 第二學期(下學期)
-      stage: '2',           // '1': 第一次段考, '2': 第二次段考, '3': 第三次段考(期末)
-      grade: 'all',         // 'all', '7', '8', '9'
-      selectedSubject: 'all' // 'all', 'chinese', 'english', 'math', 'science', 'social'
-    };
 
     /**
      * 純文字試題自給自足性安全檢查
@@ -2937,13 +2998,20 @@
       }
     }
 
-    function setExamSemesterFilter(sem) {
-      playSoundEffect('click');
-      examStageState.semester = sem;
+    function setExamSemesterFilter(sem, playSound = true, logAction = true) {
+      if (playSound) playSoundEffect('click');
+      const validSem = ['1', '2'].includes(String(sem)) ? String(sem) : '1';
+      examStageState.semester = validSem;
+
+      try {
+        localStorage.setItem('star_user_semester_preference', validSem);
+      } catch (e) {}
+      saveState();
+
       ['1', '2'].forEach(s => {
         const btn = document.getElementById('btnExamSem-' + s);
         if (!btn) return;
-        if (s === sem) {
+        if (s === validSem) {
           btn.className = 'px-2.5 py-1 rounded-lg font-bold transition-all bg-amber-500 text-slate-950 shadow';
         } else {
           btn.className = 'px-2.5 py-1 rounded-lg font-semibold transition-all text-slate-400 hover:text-white';
@@ -2953,29 +3021,38 @@
       renderExamStageCards();
       renderExamStageConceptChips();
 
-      // 記錄學期點選事件至 Firebase (當 Firebase 可用時)
-      const fbService = (typeof window !== 'undefined' && window.FirebaseService) ? window.FirebaseService : (typeof FirebaseService !== 'undefined' ? FirebaseService : null);
-      if (fbService && typeof fbService.logFilterSelection === 'function') {
-        const semLabelMap = {
-          '1': '第一學期 (上)',
-          '2': '第二學期 (下)'
-        };
-        fbService.logFilterSelection('semester', sem, semLabelMap[sem] || sem, {
-          grade: appState.gradeFilter,
-          semester: sem,
-          stage: examStageState.stage,
-          stageTitle: (typeof getExamStageTitle === 'function') ? getExamStageTitle(sem, examStageState.stage) : `第${sem}學期`
-        }).catch(() => {});
+      // 記錄學期點選事件至 Firebase (當 Firebase 可用且由使用者主動點選時)
+      if (logAction) {
+        const fbService = (typeof window !== 'undefined' && window.FirebaseService) ? window.FirebaseService : (typeof FirebaseService !== 'undefined' ? FirebaseService : null);
+        if (fbService && typeof fbService.logFilterSelection === 'function') {
+          const semLabelMap = {
+            '1': '第一學期 (上)',
+            '2': '第二學期 (下)'
+          };
+          fbService.logFilterSelection('semester', validSem, semLabelMap[validSem] || validSem, {
+            grade: appState.gradeFilter,
+            semester: validSem,
+            stage: examStageState.stage,
+            stageTitle: (typeof getExamStageTitle === 'function') ? getExamStageTitle(validSem, examStageState.stage) : `第${validSem}學期`
+          }).catch(() => {});
+        }
       }
     }
 
-    function setExamStageOrderFilter(stg) {
-      playSoundEffect('click');
-      examStageState.stage = stg;
+    function setExamStageOrderFilter(stg, playSound = true, logAction = true) {
+      if (playSound) playSoundEffect('click');
+      const validStg = ['1', '2', '3'].includes(String(stg)) ? String(stg) : '2';
+      examStageState.stage = validStg;
+
+      try {
+        localStorage.setItem('star_user_stage_preference', validStg);
+      } catch (e) {}
+      saveState();
+
       ['1', '2', '3'].forEach(s => {
         const btn = document.getElementById('btnExamStage-' + s);
         if (!btn) return;
-        if (s === stg) {
+        if (s === validStg) {
           btn.className = 'px-2.5 py-1 rounded-lg font-bold transition-all bg-amber-500 text-slate-950 shadow';
         } else {
           btn.className = 'px-2.5 py-1 rounded-lg font-semibold transition-all text-slate-400 hover:text-white';
@@ -2985,20 +3062,22 @@
       renderExamStageCards();
       renderExamStageConceptChips();
 
-      // 記錄段考次數點選事件至 Firebase (當 Firebase 可用時)
-      const fbService = (typeof window !== 'undefined' && window.FirebaseService) ? window.FirebaseService : (typeof FirebaseService !== 'undefined' ? FirebaseService : null);
-      if (fbService && typeof fbService.logFilterSelection === 'function') {
-        const stageLabelMap = {
-          '1': '第一次段考',
-          '2': '第二次段考',
-          '3': '第三次段考 (期末)'
-        };
-        fbService.logFilterSelection('stage', stg, stageLabelMap[stg] || stg, {
-          grade: appState.gradeFilter,
-          semester: examStageState.semester,
-          stage: stg,
-          stageTitle: (typeof getExamStageTitle === 'function') ? getExamStageTitle(examStageState.semester, stg) : `第${stg}次段考`
-        }).catch(() => {});
+      // 記錄段考次數點選事件至 Firebase (當 Firebase 可用且由使用者主動點選時)
+      if (logAction) {
+        const fbService = (typeof window !== 'undefined' && window.FirebaseService) ? window.FirebaseService : (typeof FirebaseService !== 'undefined' ? FirebaseService : null);
+        if (fbService && typeof fbService.logFilterSelection === 'function') {
+          const stageLabelMap = {
+            '1': '第一次段考',
+            '2': '第二次段考',
+            '3': '第三次段考 (期末)'
+          };
+          fbService.logFilterSelection('stage', validStg, stageLabelMap[validStg] || validStg, {
+            grade: appState.gradeFilter,
+            semester: examStageState.semester,
+            stage: validStg,
+            stageTitle: (typeof getExamStageTitle === 'function') ? getExamStageTitle(examStageState.semester, validStg) : `第${validStg}次段考`
+          }).catch(() => {});
+        }
       }
     }
 
@@ -3006,9 +3085,13 @@
       setGradeFilter(grade);
     }
 
-    function selectExamSubjectTab(subId) {
-      playSoundEffect('click');
+    function selectExamSubjectTab(subId, playSound = true) {
+      if (playSound) playSoundEffect('click');
       examStageState.selectedSubject = subId;
+      try {
+        localStorage.setItem('star_user_exam_subject_preference', subId);
+      } catch (e) {}
+      saveState();
       renderExamSubjectTabs();
       renderExamStageConceptChips();
     }
@@ -7023,8 +7106,13 @@
         } catch (e) {}
       }
       loadSavedState();
-      // 套用儲存之年級偏好設定（同步 UI 導航按鈕、段考按鈕與 AI 出題下拉選單，載入階段不重複發送紀錄）
+      // 套用儲存之學年、學期、段考次數與科目標籤（載入階段傳入 false, false 確保安靜恢復且不重複送出紀錄）
       setGradeFilter(appState.gradeFilter || 'all', false, false);
+      setExamSemesterFilter(examStageState.semester || '1', false, false);
+      setExamStageOrderFilter(examStageState.stage || '2', false, false);
+      if (examStageState.selectedSubject && typeof selectExamSubjectTab === 'function') {
+        selectExamSubjectTab(examStageState.selectedSubject, false);
+      }
       updateHeaderUI();
       renderDailyQuests();
       renderAlchemyPresets();
