@@ -2617,38 +2617,51 @@
     }
 
     function saveState() {
+      // 優先保留已儲存之偏好，絕不以未初始化之預設值覆蓋既有偏好紀錄
+      const savedGrade = localStorage.getItem('star_user_grade_preference');
+      const savedSem = localStorage.getItem('star_user_semester_preference');
+      const savedStage = localStorage.getItem('star_user_stage_preference');
+      const savedExam = localStorage.getItem('star_user_exam_filter_preference');
+      const savedSub = localStorage.getItem('star_user_exam_subject_preference');
+
+      const currentGrade = (appState.gradeFilter && appState.gradeFilter !== 'all') ? appState.gradeFilter : (savedGrade || appState.gradeFilter || 'all');
+      const currentSem = (examStageState && examStageState.semester) || savedSem || '1';
+      const currentStage = (examStageState && examStageState.stage) || savedStage || '2';
+      const currentExam = appState.examFilter || savedExam || 'stage';
+      const currentSub = (examStageState && examStageState.selectedSubject) || savedSub || 'all';
+
       try {
         localStorage.setItem(getStorageKey(), JSON.stringify({
           player: appState.player,
           mistakes: appState.mistakes,
           dailyQuests: appState.dailyQuests,
-          gradeFilter: appState.gradeFilter,
-          examFilter: appState.examFilter,
+          gradeFilter: currentGrade,
+          examFilter: currentExam,
           examStageState: {
-            semester: examStageState.semester,
-            stage: examStageState.stage,
-            grade: examStageState.grade,
-            selectedSubject: examStageState.selectedSubject
+            semester: currentSem,
+            stage: currentStage,
+            grade: currentGrade,
+            selectedSubject: currentSub
           }
         }));
       } catch (e) {
         // Ignore storage restrictions
       }
       try {
-        if (appState.gradeFilter) {
-          localStorage.setItem('star_user_grade_preference', appState.gradeFilter);
+        if (currentGrade) {
+          localStorage.setItem('star_user_grade_preference', currentGrade);
         }
-        if (examStageState.semester) {
-          localStorage.setItem('star_user_semester_preference', examStageState.semester);
+        if (currentSem) {
+          localStorage.setItem('star_user_semester_preference', currentSem);
         }
-        if (examStageState.stage) {
-          localStorage.setItem('star_user_stage_preference', examStageState.stage);
+        if (currentStage) {
+          localStorage.setItem('star_user_stage_preference', currentStage);
         }
-        if (appState.examFilter) {
-          localStorage.setItem('star_user_exam_filter_preference', appState.examFilter);
+        if (currentExam) {
+          localStorage.setItem('star_user_exam_filter_preference', currentExam);
         }
-        if (examStageState.selectedSubject) {
-          localStorage.setItem('star_user_exam_subject_preference', examStageState.selectedSubject);
+        if (currentSub) {
+          localStorage.setItem('star_user_exam_subject_preference', currentSub);
         }
       } catch (e) {}
       // 同步勇者雲端存檔（包含經驗值、星幣、每日任務進度）
@@ -2656,6 +2669,9 @@
         window.FirebaseService.syncUserProfile(appState.currentUser, appState);
       }
     }
+
+    // 立即於腳本載入階段預載入已儲存之狀態，防止後續非同步驗證或呼叫覆蓋偏好
+    loadSavedState();
 // ==================== 6. UI HEADER & TAB NAVIGATION ====================
     const LEVEL_TITLES = [
       '初心學徒',
@@ -2854,13 +2870,18 @@
           btnStage.className = 'px-2.5 py-1 rounded-lg font-black transition-all bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow flex items-center gap-1';
           btnAll.className = 'px-2.5 py-1 rounded-lg font-semibold transition-all text-slate-400 hover:text-white';
           const stageTitle = getExamStageTitle(examStageState.semester, examStageState.stage);
-          document.getElementById('currentGradeFilterText').textContent = `🎯 名校段考特訓 (${stageTitle})`;
+          const gradeLabelMap = { all: '全學年', '7': '七年級', '8': '八年級', '9': '九年級' };
+          const curGradeLabel = gradeLabelMap[appState.gradeFilter] || '全學年';
+          const curFilterText = document.getElementById('currentGradeFilterText');
+          if (curFilterText) {
+            curFilterText.textContent = `🎯 名校段考特訓 (${stageTitle}・${curGradeLabel})`;
+          }
           const sec = document.getElementById('section-exam-stage') || document.getElementById('section-114-1-2');
-          if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+          if (sec && playSound) sec.scrollIntoView({ behavior: 'smooth' });
         } else {
           btnAll.className = 'px-2.5 py-1 rounded-lg font-semibold transition-all bg-violet-600 text-white';
           btnStage.className = 'px-2.5 py-1 rounded-lg font-semibold transition-all text-amber-300 hover:text-white flex items-center gap-1';
-          setGradeFilter(appState.gradeFilter);
+          setGradeFilter(appState.gradeFilter, false, false);
         }
       }
       renderSubjectDungeons();
@@ -6542,8 +6563,12 @@
           console.warn("載入雲端學員資料失敗:", e);
         }
       }
+      loadSavedState();
       updateHeaderUI();
       renderDailyQuests();
+      setGradeFilter(appState.gradeFilter || 'all', false, false);
+      setExamSemesterFilter(examStageState.semester || '1', false, false);
+      setExamStageOrderFilter(examStageState.stage || '2', false, false);
       saveState();
     }
 
@@ -7097,7 +7122,10 @@
     // ==================== 12. INITIALIZATION ====================
     window.onload = function () {
       initQuestionFontScale();
-      // 1. 立即讀取本機快取使用者，防止非同步認證造成的未登入閃爍
+      // 1. 優先立即載入本機已儲存之學員狀態與篩選偏好（確保登入或重整時偏好不被重置）
+      loadSavedState();
+
+      // 2. 讀取本機快取使用者，防止非同步認證造成的未登入閃爍
       const cachedUserStr = localStorage.getItem('jh_quest_cached_user');
       if (cachedUserStr) {
         try {
@@ -7105,8 +7133,8 @@
           applyUserLoggedIn(cachedUser, cachedUser.isAdmin);
         } catch (e) {}
       }
-      loadSavedState();
-      // 套用儲存之學年、學期、段考次數與科目標籤（載入階段傳入 false, false 確保安靜恢復且不重複送出紀錄）
+
+      // 3. 套用儲存之學年、學期、段考次數與科目標籤（載入階段傳入 false, false 確保安靜恢復且不重複送出紀錄）
       setGradeFilter(appState.gradeFilter || 'all', false, false);
       setExamSemesterFilter(examStageState.semester || '1', false, false);
       setExamStageOrderFilter(examStageState.stage || '2', false, false);

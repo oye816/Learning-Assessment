@@ -46,6 +46,22 @@ service cloud.firestore {
         ]
       );
     }
+
+    // 篩選維度點選日誌 (學年、學期、段考次數統計)
+    match /selection_logs/{logId} {
+      // 允許學員或訪客建立點選紀錄（寫入時驗證必要欄位型態）
+      allow create: if request.resource.data.filterType is string &&
+        request.resource.data.value is string &&
+        request.resource.data.label is string;
+
+      // 僅系統管理者有權讀取點選統計日誌
+      allow read: if request.auth != null && request.auth.token.email in [
+        "oye816@gmail.com"
+      ];
+
+      // 保持日誌客觀歷史性，不允許竄改或刪除
+      allow update, delete: if false;
+    }
   }
 }
 
