@@ -289,6 +289,162 @@ ${JSON.stringify(faultyQuestion, null, 2)}
   }
 
   /**
+   * 使用 Gemini AI 為題目生成生動活潑、趣味生活比喻與深入淺出的名師講解
+   * @param {Object} params
+   * @param {Object} params.question 題目物件 (stem, options, answer, explanation, concept, subject, grade)
+   * @param {number|null} [params.userAnswer] 學生選擇的答案索引 (0~3)
+   * @param {boolean|null} [params.isCorrect] 學生是否答對
+   * @param {string} [params.style] 解說風格 ('magic' | 'tutor' | 'fable')
+   * @param {string} [params.apiKey] 可選 API Key
+   */
+  static async explainQuestionLively({ question, userAnswer = null, isCorrect = null, style = 'magic', apiKey = '' }) {
+    if (!question || !question.stem) {
+      throw new Error('缺少題目內容，無法進行生動解析');
+    }
+
+    const key = apiKey || this.getApiKey();
+    const cleanSubject = question.subject || 'math';
+    const cleanGrade = String(question.grade || '8');
+
+    // 若無 API Key，提供精緻本地備援生動解析，確保離線或無 Key 亦不報錯
+    if (!key) {
+      return this.generateFallbackLivelyExplanation(question, userAnswer, isCorrect, style);
+    }
+
+    const endpoint = this.getApiEndpoint(key);
+
+    const stylePersonas = {
+      magic: '星耀大魔導師（熱血冒險風，將解題比喻為施法破解迷宮或打倒 BOSS，用語充滿驚喜與想像力）',
+      tutor: '幽默明星生活家教（超親切生動風，最擅長用珍珠奶茶、超商買物、逛夜市或手機手遊做神比喻）',
+      fable: '毒舌但超暖心學伴精靈（直擊盲點風，用幽默吐槽揪出出題老師的陷阱心機，給出最易記的避坑指南）'
+    };
+    const personaDesc = stylePersonas[style] || stylePersonas.magic;
+
+    const optionsText = Array.isArray(question.options)
+      ? question.options.map((opt, i) => `  ${i === question.answer ? '★ 正確答案' : '  選項'} [${String.fromCharCode(65 + i)}]: ${opt}`).join('\n')
+      : '無選項';
+
+    let userPerformanceContext = '學生正在查看此題解析。';
+    if (userAnswer !== null && userAnswer !== undefined) {
+      const userOptLetter = String.fromCharCode(65 + userAnswer);
+      const userOptText = (question.options && question.options[userAnswer]) ? question.options[userAnswer] : '';
+      if (isCorrect) {
+        userPerformanceContext = `學生在這次作答中【答對了】！選擇了正確答案 [${userOptLetter}] ${userOptText}。請在講解時給予熱烈讚賞，並強化核心原理與進階延伸思考！`;
+      } else {
+        userPerformanceContext = `學生在這次作答中【答錯了】！選擇了干擾誘答選項 [${userOptLetter}] ${userOptText}。請特別以溫暖、同理且幽默的角度，剖析為什麼學生容易掉進 [${userOptLetter}] 這個陷阱，並點出出題老師的迷惑手法！`;
+      }
+    }
+
+    const prompt = `你是一位深受台灣國中生喜愛的明星導師兼【${personaDesc}】。
+請你針對這道台灣國中評量考題，以【生動活潑、極富趣味生活比喻、深入淺出、口語化且充滿鼓勵】的方式，為國中生講解答案與核心概念！
+
+【題目資訊】
+- 科目領域：${cleanSubject}（國中 ${cleanGrade} 年級）
+- 考點概念：${question.concept || '核心觀念'}
+- 題目題幹：${question.stem}
+${optionsText}
+- 原始參考解析：${question.explanation || '依據定義推導'}
+- 提示線索：${question.hint || '無'}
+- 學生作答情境：${userPerformanceContext}
+
+【生動講解黃金要求】
+1. **趣味生活比喻 (最重要！)**：用國中生生活最熟悉的實例（例如：珍奶半糖微冰、外送手搖飲、手遊抽卡打怪、超商集點、動漫熱血梗等）做神比喻，讓原本抽象的公式或文法立刻活起來！
+2. **直覺步驟推導**：一步步拆解題幹線索，語言生動幽默，告別枯燥背誦。
+3. **避坑陷阱診斷**：點破出題老師最愛埋的誘答地雷，如果是答錯，說明選錯的人通常忽略了哪個關鍵字。
+4. **一秒破題口訣**：量身打造一句押韻、好記、幽默的考點口訣。
+5. **熱血打氣金句**：一句讓學生信心爆棚、想繼續挑戰下一題的溫暖金句。
+6. **完整語音朗讀講稿 (fullSpeech)**：約 150~220 字的完整口語化朗讀詞，語氣親切流暢、節奏明快，可直接使用中文語音合成 (TTS) 朗讀給學生聽。
+
+請務必輸出標準 JSON 物件，結構如下：
+{
+  "title": "生動趣味標題（繁體中文，如：🧙‍♂️ 魔導師秘笈：為什麼用珍奶就能秒殺聯立方程式？）",
+  "persona": "${style}",
+  "analogy": "生活趣味比喻（約 80~150 字）",
+  "stepByStep": "生動拆解推導（約 100~180 字，條列或自然段落說明正確答案）",
+  "trapAnalysis": "避坑陷阱分析（約 60~120 字，揭露干擾選項的心機）",
+  "mnemonic": "一秒破題口訣（簡潔押韻或好記的一句話）",
+  "cheer": "熱血打氣金句（一句溫暖鼓勵）",
+  "fullSpeech": "完整口語化朗讀講稿（約 150~220 字，純口語，適合繁體中文 TTS 朗讀）"
+}`;
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          generationConfig: {
+            responseMimeType: 'application/json',
+            temperature: 0.65
+          }
+        })
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        console.warn('Gemini 生動解析 API 異常，啟動備援解析:', err);
+        return this.generateFallbackLivelyExplanation(question, userAnswer, isCorrect, style);
+      }
+
+      const data = await response.json();
+      const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!rawText) return this.generateFallbackLivelyExplanation(question, userAnswer, isCorrect, style);
+
+      const parsed = JSON.parse(rawText);
+      parsed.title = humanizeMath(parsed.title || '');
+      parsed.analogy = humanizeMath(parsed.analogy || '');
+      parsed.stepByStep = humanizeMath(parsed.stepByStep || '');
+      parsed.trapAnalysis = humanizeMath(parsed.trapAnalysis || '');
+      parsed.mnemonic = humanizeMath(parsed.mnemonic || '');
+      parsed.cheer = humanizeMath(parsed.cheer || '');
+      parsed.fullSpeech = humanizeMath(parsed.fullSpeech || '');
+      return parsed;
+    } catch (err) {
+      console.warn('調用 Gemini 生動解析失敗，啟用備援解析:', err);
+      return this.generateFallbackLivelyExplanation(question, userAnswer, isCorrect, style);
+    }
+  }
+
+  /**
+   * 當無 API Key 或網路異常時，根據題目已有欄位提供生動活潑的本機結構化備援解析
+   */
+  static generateFallbackLivelyExplanation(question, userAnswer = null, isCorrect = null, style = 'magic') {
+    const concept = question.concept || '本題考點';
+    const ansLetter = (question.answer !== undefined && question.answer !== null) ? String.fromCharCode(65 + question.answer) : '正確選項';
+    const correctOptText = (question.options && question.options[question.answer]) ? question.options[question.answer] : '';
+    const rawExp = question.explanation || question.hint || '按照定義逐步推算即可求得答案。';
+
+    let userNote = '';
+    if (userAnswer !== null && userAnswer !== undefined) {
+      if (isCorrect) {
+        userNote = `太神啦！你一眼就鎖定了關鍵解答【${ansLetter}】！代表你對「${concept}」的直覺非常敏銳！`;
+      } else {
+        const wrongLetter = String.fromCharCode(65 + userAnswer);
+        userNote = `別氣餒！很多同學在做「${concept}」時，也會不小心被選項【${wrongLetter}】的表面條件迷惑，關鍵在於題幹的核心陷阱！`;
+      }
+    } else {
+      userNote = `掌握「${concept}」的核心思考脈絡，任何變化的題型都能迎刃而解！`;
+    }
+
+    const titleMap = {
+      magic: `🧙‍♂️ 星耀魔導師解密：【${concept}】破題大公開！`,
+      tutor: `🧑‍🏫 明星名師生活說法：秒懂【${concept}】！`,
+      fable: `🐱 學伴精靈直擊盲點：【${concept}】避坑指南！`
+    };
+
+    return {
+      title: titleMap[style] || titleMap.magic,
+      persona: style,
+      analogy: `想像這道題目就像是在遊戲中組隊打怪，題幹給的線索就是我們的裝備清單。我們要善用【${concept}】這把關鍵武器，把複雜問題化簡為生活小事！`,
+      stepByStep: `① 觀察題目的已知條件：先找出題目要問的本質。\n② 關鍵推導：${rawExp}\n③ 驗證答案：確認只有選項【${ansLetter}】${correctOptText ? `（${correctOptText}）` : ''} 完全符合題意！`,
+      trapAnalysis: `出題老師最喜歡在計算步驟或文字定義中偷換概念！解題時務必先把關鍵條件圈起來，不要被看起來很像的誘答選項帶風向喔！`,
+      mnemonic: `「鎖定考點不慌張，條件列出見真章；選項【${ansLetter}】是正解，穩拿滿分不踩雷！」`,
+      cheer: isCorrect ? `✨ 表現太亮眼了！連擊手感火燙，繼續保持這股氣勢通關！` : `💪 失敗是升級的最佳經驗值！搞懂這題的關鍵點，下次段考你就無敵了！`,
+      fullSpeech: `嗨，冒險者同學！這道題目的核心觀念是${concept}。${userNote}正確答案是選項${ansLetter}。${rawExp.slice(0, 80)}。記住我們的口訣：鎖定考點不慌張，條件列出見真章！繼續加油，我們下一題見！`
+    };
+  }
+
+  /**
    * 測試 API Key 與所選模型連線狀態
    */
   static async testConnection(key) {

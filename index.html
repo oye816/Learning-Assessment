@@ -1151,6 +1151,42 @@
             </div>
           </div>
           <p id="feedbackExplanationText" class="q-exp-scalable text-slate-200 leading-relaxed font-medium"></p>
+
+          <!-- AI 生動活潑名師解析區塊 (Lively Explanation) -->
+          <div id="battleLivelyContainer" class="pt-3 border-t border-slate-700/60 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2.5 bg-slate-950/60 border border-amber-500/30 rounded-2xl p-3 sm:p-4">
+              <div class="flex items-center gap-2.5">
+                <span class="text-2xl sm:text-3xl animate-bounce">🧙‍♂️</span>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-extrabold text-amber-300 text-sm sm:text-base">AI 名師生動講解</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-200 border border-amber-500/30 font-bold">生活比喻・秒懂心法</span>
+                  </div>
+                  <p class="text-xs text-slate-400 mt-0.5">用珍奶、遊戲打怪與日常幽默情境，生動拆解為什麼選這個答案！</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <select id="battleLivelyStyleSelect" onchange="changeBattleLivelyStyle()" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-xl px-2.5 py-1.5 font-bold focus:ring-1 focus:ring-amber-400 outline-none">
+                  <option value="magic">🧙‍♂️ 星耀大魔導師（冒險解謎風）</option>
+                  <option value="tutor">🧑‍🏫 幽默生活名師（珍奶生活風）</option>
+                  <option value="fable">🐱 毒舌暖心學伴（直擊盲點風）</option>
+                </select>
+                <button type="button" id="btnTriggerBattleLively" onclick="triggerBattleLivelyExplanation()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xs flex items-center gap-1.5 shadow-md transition-all active:scale-95">
+                  <span id="btnBattleLivelyIcon">🪄</span>
+                  <span id="btnBattleLivelyText">AI 生動講解此題</span>
+                </button>
+                <button type="button" id="btnSpeakBattleLively" onclick="toggleSpeakBattleLively()" class="hidden px-2.5 py-1.5 rounded-xl bg-sky-950/60 hover:bg-sky-900/60 border border-sky-600/60 text-sky-300 hover:text-sky-200 text-xs font-bold flex items-center gap-1 transition-all active:scale-95" title="朗讀名師生動口語講稿">
+                  <span id="speakBattleLivelyIcon">🔊</span>
+                  <span id="speakBattleLivelyText">語音聽講解</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 動態渲染生動解析卡片區塊 (預設收合，點擊後展開) -->
+            <div id="battleLivelyCardBox" class="hidden rounded-2xl bg-slate-950/80 border border-amber-500/40 p-4 sm:p-5 space-y-3.5 shadow-xl transition-all">
+              <!-- Populated by JS -->
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1764,6 +1800,57 @@
               <span>📥</span> 套用並收錄至 RAG 典範庫
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== MODAL: AI LIVELY EXPLANATION (AI 生動活潑名師解析工作台) ==================== -->
+    <div id="aiLivelyExplanationModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
+      <div class="rpg-card rounded-3xl p-6 sm:p-8 max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-amber-500/40 shadow-2xl relative space-y-4">
+        <button type="button" onclick="closeLivelyExplanationModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg font-bold">✕</button>
+        <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 pr-8 gap-2">
+          <div class="flex items-center gap-2.5">
+            <span class="text-3xl animate-bounce">🧙‍♂️</span>
+            <div>
+              <h3 id="modalLivelyMainTitle" class="text-lg sm:text-xl font-black text-white">AI 星耀名師・生動活潑趣味解析</h3>
+              <p class="text-xs text-slate-400">用生活趣味比喻、遊戲打怪思維與秒殺口訣，深入淺出拆解考題核心概念！</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <select id="modalLivelyStyleSelect" onchange="changeModalLivelyStyle()" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-xl px-2.5 py-1.5 font-bold focus:ring-1 focus:ring-amber-400 outline-none">
+              <option value="magic">🧙‍♂️ 星耀大魔導師（冒險解謎風）</option>
+              <option value="tutor">🧑‍🏫 幽默生活名師（珍奶生活風）</option>
+              <option value="fable">🐱 毒舌暖心學伴（直擊盲點風）</option>
+            </select>
+            <button type="button" id="btnSpeakModalLively" onclick="toggleSpeakModalLively()" class="hidden px-2.5 py-1.5 rounded-xl bg-sky-950/60 hover:bg-sky-900/60 border border-sky-600/60 text-sky-300 hover:text-sky-200 text-xs font-bold flex items-center gap-1 transition-all active:scale-95" title="朗讀名師生動口語講稿">
+              <span id="speakModalLivelyIcon">🔊</span>
+              <span id="speakModalLivelyText">語音聽講解</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 原始題目概要區 -->
+        <div id="modalLivelyQuestionSummaryBox" class="bg-slate-900/80 rounded-2xl p-4 border border-slate-800 space-y-2 text-xs sm:text-sm">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- 載入中骨架屏 -->
+        <div id="modalLivelyLoadingBox" class="hidden text-center py-10 space-y-3">
+          <div class="text-4xl animate-spin inline-block">🪄</div>
+          <p class="text-sm font-bold text-amber-300">星耀 AI 名師正在為您構思生動趣味的生活比喻與秒殺口訣...</p>
+          <p class="text-xs text-slate-400">（結合日常情境、直覺步驟推導與考點避坑指南）</p>
+        </div>
+
+        <!-- 生動解析卡片展示區 -->
+        <div id="modalLivelyCardContentBox" class="space-y-3.5">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- 底部關閉按鈕 -->
+        <div class="flex justify-end pt-3 border-t border-slate-800">
+          <button type="button" onclick="closeLivelyExplanationModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition-all">
+            關閉生動解析
+          </button>
         </div>
       </div>
     </div>
@@ -4445,6 +4532,10 @@
                 ${q.isRepaired ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">🛠️ AI 校正修復</span>' : ''}
               </div>
               <div class="flex items-center gap-1.5 flex-wrap">
+                <button type="button" onclick="openAlchemyLivelyExplanation(${idx})" class="text-xs text-violet-300 hover:text-violet-200 font-bold px-2.5 py-1 rounded-xl bg-violet-950/50 hover:bg-violet-900/50 border border-violet-700/50 transition-all flex items-center gap-1 shadow-sm" title="AI 名師生動講解此題">
+                  <span>🪄</span>
+                  <span>AI 生動講解</span>
+                </button>
                 <button type="button" onclick="openQuestionRepairModal(${idx})" class="text-xs text-amber-300 hover:text-amber-200 font-bold px-2.5 py-1 rounded-xl bg-amber-950/40 hover:bg-amber-900/50 border border-amber-800/50 transition-all flex items-center gap-1 shadow-sm" title="召喚 AI 修正、美化或調整此題目">
                   <span>🔧</span>
                   <span>AI 修正</span>
@@ -4896,6 +4987,7 @@
         } catch (e) {}
       }
       isSpeaking = false;
+      stopLivelySpeaking();
       const icon = document.getElementById('speakIcon');
       const txt = document.getElementById('speakText');
       if (icon) icon.textContent = '🔊';
@@ -4960,6 +5052,375 @@
       };
 
       window.speechSynthesis.speak(utterance);
+    }
+
+    // ==================== AI 生動活潑名師解析系統 (Lively Explanation Engine) ====================
+    let currentBattleLivelyData = null;
+    let currentModalLivelyContext = null;
+    let currentModalLivelyData = null;
+    let isSpeakingLively = false;
+    let currentLivelySpeechText = '';
+
+    function buildLivelyCardHtml(data) {
+      if (!data) return '';
+      const { title, analogy, stepByStep, trapAnalysis, mnemonic, cheer } = data;
+      return `
+        <div class="space-y-3">
+          <div class="flex items-center justify-between border-b border-amber-500/30 pb-2">
+            <h4 class="font-extrabold text-amber-300 text-sm sm:text-base flex items-center gap-2">
+              <span>✨</span>
+              <span>${escapeHtml(title || 'AI 名師生動講解')}</span>
+            </h4>
+          </div>
+
+          ${analogy ? `
+            <div class="rounded-2xl bg-amber-950/30 border border-amber-500/40 p-4 space-y-1.5 shadow-sm">
+              <div class="flex items-center gap-2 text-xs font-black text-amber-300">
+                <span class="text-base">🧋</span>
+                <span>【生活神比喻・秒懂核心】</span>
+              </div>
+              <p class="text-xs sm:text-sm text-amber-100 leading-relaxed font-medium">${escapeHtml(analogy).replace(/\n/g, '<br/>')}</p>
+            </div>
+          ` : ''}
+
+          ${stepByStep ? `
+            <div class="rounded-2xl bg-slate-900/90 border border-slate-800 p-4 space-y-1.5">
+              <div class="flex items-center gap-2 text-xs font-black text-emerald-400">
+                <span class="text-base">🎯</span>
+                <span>【風趣步驟拆解・正確答案這樣看】</span>
+              </div>
+              <p class="text-xs sm:text-sm text-slate-200 leading-relaxed font-medium">${escapeHtml(stepByStep).replace(/\n/g, '<br/>')}</p>
+            </div>
+          ` : ''}
+
+          ${trapAnalysis ? `
+            <div class="rounded-2xl bg-rose-950/30 border border-rose-500/30 p-4 space-y-1.5">
+              <div class="flex items-center gap-2 text-xs font-black text-rose-300">
+                <span class="text-base">🪤</span>
+                <span>【避坑陷阱診斷・出題老師的心機】</span>
+              </div>
+              <p class="text-xs sm:text-sm text-rose-100/90 leading-relaxed font-medium">${escapeHtml(trapAnalysis).replace(/\n/g, '<br/>')}</p>
+            </div>
+          ` : ''}
+
+          ${mnemonic ? `
+            <div class="rounded-2xl bg-gradient-to-r from-violet-950/70 via-indigo-950/70 to-purple-950/70 border border-violet-500/50 p-4 text-center space-y-1 shadow-md">
+              <div class="text-xs font-black text-violet-300 flex items-center justify-center gap-1.5">
+                <span>📜</span>
+                <span>【一秒破題記憶口訣】</span>
+              </div>
+              <p class="text-sm sm:text-base font-extrabold text-amber-200 tracking-wider">${escapeHtml(mnemonic)}</p>
+            </div>
+          ` : ''}
+
+          ${cheer ? `
+            <div class="flex items-center justify-between text-xs text-slate-300 bg-slate-900/60 rounded-xl px-3.5 py-2.5 border border-slate-800">
+              <span class="text-amber-400 font-bold flex items-center gap-1.5">
+                <span>💖</span>
+                <span>名師悄悄話：</span>
+              </span>
+              <span class="font-medium text-slate-200">${escapeHtml(cheer)}</span>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    function stopLivelySpeaking() {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        try {
+          window.speechSynthesis.cancel();
+        } catch (e) {}
+      }
+      isSpeakingLively = false;
+      const bIcon = document.getElementById('speakBattleLivelyIcon');
+      const bTxt = document.getElementById('speakBattleLivelyText');
+      if (bIcon) bIcon.textContent = '🔊';
+      if (bTxt) bTxt.textContent = '語音聽講解';
+
+      const mIcon = document.getElementById('speakModalLivelyIcon');
+      const mTxt = document.getElementById('speakModalLivelyText');
+      if (mIcon) mIcon.textContent = '🔊';
+      if (mTxt) mTxt.textContent = '語音聽講解';
+    }
+
+    function speakLivelyText(text) {
+      if (!('speechSynthesis' in window)) {
+        showToast('您的瀏覽器目前未支援語音朗讀合成功能。', 'warning');
+        return;
+      }
+      stopSpeaking();
+      stopLivelySpeaking();
+
+      if (!text || !text.trim()) return;
+
+      currentLivelySpeechText = text;
+      const cleanText = text.replace(/[\*\#\`\$\~]/g, '');
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.lang = 'zh-TW';
+      utterance.rate = 1.0;
+
+      try {
+        const voices = window.speechSynthesis.getVoices();
+        const zhVoice = voices.find(v => (v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW' || v.lang === 'zh-HK') && (v.name.includes('Yating') || v.name.includes('Mei-Jia') || v.name.includes('Hsiao-Chen') || v.name.includes('Google') || v.name.includes('Natural'))) ||
+                        voices.find(v => v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW') ||
+                        voices.find(v => v.lang.startsWith('zh'));
+        if (zhVoice) utterance.voice = zhVoice;
+      } catch (e) {}
+
+      utterance.onstart = () => {
+        isSpeakingLively = true;
+        const bIcon = document.getElementById('speakBattleLivelyIcon');
+        const bTxt = document.getElementById('speakBattleLivelyText');
+        if (bIcon) bIcon.textContent = '⏹️';
+        if (bTxt) bTxt.textContent = '停止朗讀';
+
+        const mIcon = document.getElementById('speakModalLivelyIcon');
+        const mTxt = document.getElementById('speakModalLivelyText');
+        if (mIcon) mIcon.textContent = '⏹️';
+        if (mTxt) mTxt.textContent = '停止朗讀';
+      };
+
+      utterance.onend = () => {
+        stopLivelySpeaking();
+      };
+
+      utterance.onerror = () => {
+        stopLivelySpeaking();
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function toggleSpeakBattleLively() {
+      if (isSpeakingLively) {
+        stopLivelySpeaking();
+      } else if (currentBattleLivelyData && currentBattleLivelyData.fullSpeech) {
+        speakLivelyText(currentBattleLivelyData.fullSpeech);
+      }
+    }
+
+    function toggleSpeakModalLively() {
+      if (isSpeakingLively) {
+        stopLivelySpeaking();
+      } else if (currentModalLivelyData && currentModalLivelyData.fullSpeech) {
+        speakLivelyText(currentModalLivelyData.fullSpeech);
+      }
+    }
+
+    async function triggerBattleLivelyExplanation(forceRefresh = false) {
+      const b = appState.battle;
+      if (!b || !b.questions || !b.questions[b.currentIndex]) {
+        showToast('目前無進行中的測驗題目', 'warning');
+        return;
+      }
+      const q = b.questions[b.currentIndex];
+      const styleSel = document.getElementById('battleLivelyStyleSelect');
+      const style = styleSel ? styleSel.value : 'magic';
+
+      // 若已有且未要求重載，直接展開
+      const cardBox = document.getElementById('battleLivelyCardBox');
+      const speakBtn = document.getElementById('btnSpeakBattleLively');
+      if (currentBattleLivelyData && !forceRefresh && currentBattleLivelyData.persona === style) {
+        if (cardBox) {
+          cardBox.classList.remove('hidden');
+          cardBox.innerHTML = buildLivelyCardHtml(currentBattleLivelyData);
+        }
+        if (speakBtn && currentBattleLivelyData.fullSpeech) speakBtn.classList.remove('hidden');
+        return;
+      }
+
+      const btn = document.getElementById('btnTriggerBattleLively');
+      const icon = document.getElementById('btnBattleLivelyIcon');
+      const txt = document.getElementById('btnBattleLivelyText');
+      if (btn) btn.disabled = true;
+      if (icon) icon.textContent = '⏳';
+      if (txt) txt.textContent = '名師構思中...';
+
+      if (cardBox) {
+        cardBox.classList.remove('hidden');
+        cardBox.innerHTML = `
+          <div class="text-center py-6 space-y-2">
+            <div class="text-3xl animate-spin inline-block">🪄</div>
+            <p class="text-xs sm:text-sm font-bold text-amber-300">星耀名師正在為您構思生活比喻與秒殺口訣...</p>
+          </div>
+        `;
+      }
+
+      try {
+        const apiKey = window.GeminiService ? window.GeminiService.getApiKey() : '';
+        const livelyData = await window.GeminiService.explainQuestionLively({
+          question: q,
+          userAnswer: b.lastAnswer !== undefined ? b.lastAnswer : null,
+          isCorrect: b.lastIsCorrect !== undefined ? b.lastIsCorrect : null,
+          style,
+          apiKey
+        });
+
+        currentBattleLivelyData = livelyData;
+        if (cardBox) {
+          cardBox.innerHTML = buildLivelyCardHtml(livelyData);
+        }
+        if (speakBtn && livelyData.fullSpeech) {
+          speakBtn.classList.remove('hidden');
+        }
+        showToast('✨ AI 名師生動講解已就緒！', 'success');
+      } catch (err) {
+        console.error('生動講解生成失敗:', err);
+        showToast('生動解析載入失敗，已啟用精選備援解析', 'warning');
+        if (window.GeminiService) {
+          const fallback = window.GeminiService.generateFallbackLivelyExplanation(
+            q,
+            b.lastAnswer !== undefined ? b.lastAnswer : null,
+            b.lastIsCorrect !== undefined ? b.lastIsCorrect : null,
+            style
+          );
+          currentBattleLivelyData = fallback;
+          if (cardBox) cardBox.innerHTML = buildLivelyCardHtml(fallback);
+          if (speakBtn && fallback.fullSpeech) speakBtn.classList.remove('hidden');
+        }
+      } finally {
+        if (btn) btn.disabled = false;
+        if (icon) icon.textContent = '🔄';
+        if (txt) txt.textContent = '更換解析風格';
+      }
+    }
+
+    function changeBattleLivelyStyle() {
+      triggerBattleLivelyExplanation(true);
+    }
+
+    // --- Universal Lively Modal Handlers ---
+    async function openLivelyExplanationModal(question, userAnswer = null, isCorrect = null) {
+      if (!question) return;
+      currentModalLivelyContext = { question, userAnswer, isCorrect };
+      currentModalLivelyData = null;
+
+      stopLivelySpeaking();
+
+      const modal = document.getElementById('aiLivelyExplanationModal');
+      const sumBox = document.getElementById('modalLivelyQuestionSummaryBox');
+      const cardBox = document.getElementById('modalLivelyCardContentBox');
+      const loadingBox = document.getElementById('modalLivelyLoadingBox');
+      const speakBtn = document.getElementById('btnSpeakModalLively');
+
+      if (speakBtn) speakBtn.classList.add('hidden');
+      if (cardBox) cardBox.innerHTML = '';
+      if (loadingBox) loadingBox.classList.remove('hidden');
+
+      if (sumBox) {
+        const subMeta = SUBJECT_META[question.subject] || SUBJECT_META.math;
+        let statusBadge = '';
+        if (userAnswer !== null && userAnswer !== undefined) {
+          statusBadge = isCorrect
+            ? '<span class="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">✅ 學生作答正確</span>'
+            : `<span class="px-2 py-0.5 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">❌ 學生作答選了 [${String.fromCharCode(65 + userAnswer)}]</span>`;
+        }
+
+        sumBox.innerHTML = `
+          <div class="flex items-center justify-between flex-wrap gap-2 text-xs">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded-full font-bold ${subMeta.badgeClass} border">${subMeta.icon} ${subMeta.name}</span>
+              <span class="font-extrabold text-amber-300">【${escapeHtml(question.concept || '核心觀念')}】</span>
+              <span class="text-slate-400 font-medium">${question.grade || '8'} 年級</span>
+            </div>
+            <div>${statusBadge}</div>
+          </div>
+          <p class="font-bold text-white text-xs sm:text-sm leading-relaxed">${escapeHtml(question.stem || '')}</p>
+          ${Array.isArray(question.options) ? `
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
+              ${question.options.map((opt, i) => `
+                <div class="p-2 rounded-xl font-bold border ${i === question.answer ? 'bg-emerald-950/60 border-emerald-500/60 text-emerald-200' : 'bg-slate-950/60 border-slate-800 text-slate-300'}">
+                  ${i === question.answer ? '★ 正確解答：' : ''}${escapeHtml(opt)}
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+        `;
+      }
+
+      if (modal) modal.classList.remove('hidden');
+
+      await fetchAndRenderModalLively();
+    }
+
+    async function fetchAndRenderModalLively() {
+      if (!currentModalLivelyContext || !currentModalLivelyContext.question) return;
+      const { question, userAnswer, isCorrect } = currentModalLivelyContext;
+      const styleSel = document.getElementById('modalLivelyStyleSelect');
+      const style = styleSel ? styleSel.value : 'magic';
+
+      const cardBox = document.getElementById('modalLivelyCardContentBox');
+      const loadingBox = document.getElementById('modalLivelyLoadingBox');
+      const speakBtn = document.getElementById('btnSpeakModalLively');
+
+      if (loadingBox) loadingBox.classList.remove('hidden');
+      if (cardBox) cardBox.innerHTML = '';
+      if (speakBtn) speakBtn.classList.add('hidden');
+
+      try {
+        const apiKey = window.GeminiService ? window.GeminiService.getApiKey() : '';
+        const livelyData = await window.GeminiService.explainQuestionLively({
+          question,
+          userAnswer,
+          isCorrect,
+          style,
+          apiKey
+        });
+        currentModalLivelyData = livelyData;
+
+        if (loadingBox) loadingBox.classList.add('hidden');
+        if (cardBox) cardBox.innerHTML = buildLivelyCardHtml(livelyData);
+        if (speakBtn && livelyData.fullSpeech) speakBtn.classList.remove('hidden');
+      } catch (err) {
+        console.error('生動解析載入失敗:', err);
+        const fallback = window.GeminiService
+          ? window.GeminiService.generateFallbackLivelyExplanation(question, userAnswer, isCorrect, style)
+          : null;
+        currentModalLivelyData = fallback;
+        if (loadingBox) loadingBox.classList.add('hidden');
+        if (cardBox && fallback) cardBox.innerHTML = buildLivelyCardHtml(fallback);
+        if (speakBtn && fallback && fallback.fullSpeech) speakBtn.classList.remove('hidden');
+      }
+    }
+
+    function changeModalLivelyStyle() {
+      fetchAndRenderModalLively();
+    }
+
+    function closeLivelyExplanationModal() {
+      stopLivelySpeaking();
+      const modal = document.getElementById('aiLivelyExplanationModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function openMistakeLivelyExplanation(mistakeId) {
+      const m = appState.mistakes.find(item => item.id === mistakeId);
+      if (!m) return;
+      openLivelyExplanationModal(m, null, false);
+    }
+
+    function openHistoryLivelyExplanation(type, recordIdx, qIdx) {
+      const records = (type === 'admin') ? (appState.adminRecords || []) : (appState.personalRecords || []);
+      const record = records[recordIdx];
+      if (!record || !record.details || !record.details[qIdx]) return;
+      const q = record.details[qIdx];
+      const isCorr = (q.selectedAnswer !== null && q.selectedAnswer !== undefined)
+        ? (q.selectedAnswer === q.correctAnswer)
+        : (q.isCorrect || false);
+      const formattedQ = {
+        ...q,
+        subject: q.subject || record.subject || 'math',
+        grade: q.grade || record.grade || '8',
+        answer: (q.correctAnswer !== undefined) ? q.correctAnswer : (q.answer !== undefined ? q.answer : 0)
+      };
+      openLivelyExplanationModal(formattedQ, q.selectedAnswer, isCorr);
+    }
+
+    function openAlchemyLivelyExplanation(idx) {
+      if (!appState.alchemyCurrentPack || !appState.alchemyCurrentPack.questions[idx]) return;
+      const q = appState.alchemyCurrentPack.questions[idx];
+      openLivelyExplanationModal(q, null, null);
     }
 
     function renderBattleState() {
@@ -5049,6 +5510,23 @@
       document.getElementById('battleFeedbackBox').classList.add('hidden');
       document.getElementById('battleActionBanner').textContent = '請選擇正確咒語發動攻擊！';
 
+      currentBattleLivelyData = null;
+      const bCardBox = document.getElementById('battleLivelyCardBox');
+      if (bCardBox) {
+        bCardBox.classList.add('hidden');
+        bCardBox.innerHTML = '';
+      }
+      const bSpeakBtn = document.getElementById('btnSpeakBattleLively');
+      if (bSpeakBtn) bSpeakBtn.classList.add('hidden');
+      const bLivelyBtn = document.getElementById('btnTriggerBattleLively');
+      if (bLivelyBtn) {
+        bLivelyBtn.disabled = false;
+        const bIcon = document.getElementById('btnBattleLivelyIcon');
+        const bTxt = document.getElementById('btnBattleLivelyText');
+        if (bIcon) bIcon.textContent = '🪄';
+        if (bTxt) bTxt.textContent = 'AI 生動講解此題';
+      }
+
       const optsGrid = document.getElementById('battleOptionsGrid');
       optsGrid.innerHTML = q.options.map((optText, idx) => {
         const safeOptText = escapeHtml(optText);
@@ -5129,6 +5607,9 @@
       if (!b.userAnswers) b.userAnswers = [];
       b.userAnswers[b.currentIndex] = selectedIdx;
       const isCorrect = selectedIdx === q.answer;
+      b.lastAnswer = selectedIdx;
+      b.lastIsCorrect = isCorrect;
+      currentBattleLivelyData = null;
 
       q.options.forEach((_, idx) => {
         const btn = document.getElementById('battleOptBtn-' + idx);
@@ -5146,6 +5627,22 @@
       const fbTitle = document.getElementById('feedbackTitle');
       const fbExp = document.getElementById('feedbackExplanationText');
       fbBox.classList.remove('hidden');
+
+      const bCardBox = document.getElementById('battleLivelyCardBox');
+      if (bCardBox) {
+        bCardBox.classList.add('hidden');
+        bCardBox.innerHTML = '';
+      }
+      const bSpeakBtn = document.getElementById('btnSpeakBattleLively');
+      if (bSpeakBtn) bSpeakBtn.classList.add('hidden');
+      const bLivelyBtn = document.getElementById('btnTriggerBattleLively');
+      if (bLivelyBtn) {
+        bLivelyBtn.disabled = false;
+        const bIcon = document.getElementById('btnBattleLivelyIcon');
+        const bTxt = document.getElementById('btnBattleLivelyText');
+        if (bIcon) bIcon.textContent = '🪄';
+        if (bTxt) bTxt.textContent = 'AI 生動講解此題';
+      }
 
       const btnSettle = document.getElementById('btnSettleBattleEarly');
       if (btnSettle) btnSettle.classList.remove('hidden');
@@ -5426,6 +5923,10 @@
                 <span class="text-[11px] px-2 py-0.5 rounded bg-rose-500/20 text-rose-300">累計失誤 ${m.wrongCount || 1} 次</span>
               </div>
               <div class="flex flex-wrap items-center gap-1.5">
+                <button type="button" onclick="openMistakeLivelyExplanation('${m.id}')" class="px-2.5 py-1.5 rounded-xl bg-violet-950/50 hover:bg-violet-900/50 border border-violet-700/50 text-violet-300 hover:text-violet-200 text-xs font-bold flex items-center gap-1 transition-colors" title="AI 名師生動講解此錯題">
+                  <span>🪄</span>
+                  <span>AI 生動講解</span>
+                </button>
                 <button type="button" onclick="openMistakeQuestionRepairModal('${m.id}')" class="px-2.5 py-1.5 rounded-xl bg-amber-950/40 hover:bg-amber-900/50 border border-amber-800/50 text-amber-300 hover:text-amber-200 text-xs font-bold flex items-center gap-1 transition-colors" title="使用 AI 修正重構此錯題">
                   <span>🔧</span>
                   <span>AI 修正</span>
@@ -6220,6 +6721,10 @@
                 ${q.isRepaired ? '<span class="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">🛠️ AI 已校正</span>' : ''}
               </div>
               <div class="flex items-center gap-2">
+                <button type="button" onclick="openHistoryLivelyExplanation('${type}', ${index}, ${qIdx})" class="px-2.5 py-1.5 rounded-xl bg-violet-950/50 hover:bg-violet-900/50 border border-violet-700/50 text-violet-300 hover:text-violet-200 text-xs font-bold flex items-center gap-1 transition-colors" title="AI 名師生動講解此題目">
+                  <span>🪄</span>
+                  <span>AI 生動講解</span>
+                </button>
                 <button type="button" onclick="openHistoryQuestionRepairModal('${type}', ${index}, ${qIdx})" class="px-2.5 py-1.5 rounded-xl bg-amber-950/40 hover:bg-amber-900/50 border border-amber-800/50 text-amber-300 hover:text-amber-200 text-xs font-bold flex items-center gap-1 transition-colors" title="使用 AI 修正重構此歷史評量題目">
                   <span>🔧</span>
                   <span>AI 修正</span>
@@ -6401,6 +6906,16 @@
     window.saveMistakeQuestionToRag = saveMistakeQuestionToRag;
     window.openHistoryQuestionRepairModal = openHistoryQuestionRepairModal;
     window.saveHistoryQuestionToRag = saveHistoryQuestionToRag;
+    window.triggerBattleLivelyExplanation = triggerBattleLivelyExplanation;
+    window.toggleSpeakBattleLively = toggleSpeakBattleLively;
+    window.changeBattleLivelyStyle = changeBattleLivelyStyle;
+    window.openLivelyExplanationModal = openLivelyExplanationModal;
+    window.closeLivelyExplanationModal = closeLivelyExplanationModal;
+    window.changeModalLivelyStyle = changeModalLivelyStyle;
+    window.toggleSpeakModalLively = toggleSpeakModalLively;
+    window.openMistakeLivelyExplanation = openMistakeLivelyExplanation;
+    window.openHistoryLivelyExplanation = openHistoryLivelyExplanation;
+    window.openAlchemyLivelyExplanation = openAlchemyLivelyExplanation;
 
     // ==================== 12. INITIALIZATION ====================
     window.onload = function () {
