@@ -2693,9 +2693,10 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function setGradeFilter(grade, playSound = true) {
+    function setGradeFilter(grade, playSound = true, logAction = true) {
       if (playSound) playSoundEffect('click');
       const validGrade = ['all', '7', '8', '9'].includes(String(grade)) ? String(grade) : 'all';
+      const prevGrade = appState.gradeFilter;
       appState.gradeFilter = validGrade;
       if (typeof examStageState !== 'undefined') {
         examStageState.grade = validGrade;
@@ -2760,10 +2761,24 @@
       renderSubjectDungeons();
       renderExamStageCards();
       renderExamStageConceptChips();
+
+      // 6. 記錄年級點選事件至 Firebase (當 Firebase 可用時)
+      if (logAction && (prevGrade !== validGrade || playSound)) {
+        const fbService = (typeof window !== 'undefined' && window.FirebaseService) ? window.FirebaseService : (typeof FirebaseService !== 'undefined' ? FirebaseService : null);
+        if (fbService && typeof fbService.logFilterSelection === 'function') {
+          const gradeShortName = { all: '全學年', '7': '七年級', '8': '八年級', '9': '九年級' };
+          fbService.logFilterSelection('grade', validGrade, gradeShortName[validGrade] || validGrade, {
+            grade: validGrade,
+            semester: (typeof examStageState !== 'undefined') ? examStageState.semester : '1',
+            stage: (typeof examStageState !== 'undefined') ? examStageState.stage : '2',
+            examFilter: appState.examFilter
+          }).catch(() => {});
+        }
+      }
     }
 
-    function setExamFilter(exam) {
-      playSoundEffect('click');
+    function setExamFilter(exam, playSound = true, logAction = true) {
+      if (playSound) playSoundEffect('click');
       appState.examFilter = exam;
       const btnAll = document.getElementById('examBtn-all');
       const btnStage = document.getElementById('examBtn-stage');
@@ -2784,6 +2799,17 @@
       renderSubjectDungeons();
       renderExamStageCards();
       renderExamStageConceptChips();
+
+      if (logAction) {
+        const fbService = (typeof window !== 'undefined' && window.FirebaseService) ? window.FirebaseService : (typeof FirebaseService !== 'undefined' ? FirebaseService : null);
+        if (fbService && typeof fbService.logFilterSelection === 'function') {
+          const examLabel = (exam === 'stage' || exam === '114-1-2') ? '名校段考特訓' : '全部範圍題庫';
+          fbService.logFilterSelection('exam_scope', exam, examLabel, {
+            grade: appState.gradeFilter,
+            examFilter: exam
+          }).catch(() => {});
+        }
+      }
     }
 
     // ==================== 名校段考分類與試卷生成器（依學期、段考次數分） ====================
@@ -2926,6 +2952,21 @@
       updateExamStageUIHeader();
       renderExamStageCards();
       renderExamStageConceptChips();
+
+      // 記錄學期點選事件至 Firebase (當 Firebase 可用時)
+      const fbService = (typeof window !== 'undefined' && window.FirebaseService) ? window.FirebaseService : (typeof FirebaseService !== 'undefined' ? FirebaseService : null);
+      if (fbService && typeof fbService.logFilterSelection === 'function') {
+        const semLabelMap = {
+          '1': '第一學期 (上)',
+          '2': '第二學期 (下)'
+        };
+        fbService.logFilterSelection('semester', sem, semLabelMap[sem] || sem, {
+          grade: appState.gradeFilter,
+          semester: sem,
+          stage: examStageState.stage,
+          stageTitle: (typeof getExamStageTitle === 'function') ? getExamStageTitle(sem, examStageState.stage) : `第${sem}學期`
+        }).catch(() => {});
+      }
     }
 
     function setExamStageOrderFilter(stg) {
@@ -2943,6 +2984,22 @@
       updateExamStageUIHeader();
       renderExamStageCards();
       renderExamStageConceptChips();
+
+      // 記錄段考次數點選事件至 Firebase (當 Firebase 可用時)
+      const fbService = (typeof window !== 'undefined' && window.FirebaseService) ? window.FirebaseService : (typeof FirebaseService !== 'undefined' ? FirebaseService : null);
+      if (fbService && typeof fbService.logFilterSelection === 'function') {
+        const stageLabelMap = {
+          '1': '第一次段考',
+          '2': '第二次段考',
+          '3': '第三次段考 (期末)'
+        };
+        fbService.logFilterSelection('stage', stg, stageLabelMap[stg] || stg, {
+          grade: appState.gradeFilter,
+          semester: examStageState.semester,
+          stage: stg,
+          stageTitle: (typeof getExamStageTitle === 'function') ? getExamStageTitle(examStageState.semester, stg) : `第${stg}次段考`
+        }).catch(() => {});
+      }
     }
 
     function setExamGradeFilter(grade) {
@@ -6966,13 +7023,13 @@
         } catch (e) {}
       }
       loadSavedState();
-      // 套用儲存之年級偏好設定（同步 UI 導航按鈕、段考按鈕與 AI 出題下拉選單）
-      setGradeFilter(appState.gradeFilter || 'all', false);
+      // 套用儲存之年級偏好設定（同步 UI 導航按鈕、段考按鈕與 AI 出題下拉選單，載入階段不重複發送紀錄）
+      setGradeFilter(appState.gradeFilter || 'all', false, false);
       updateHeaderUI();
       renderDailyQuests();
       renderAlchemyPresets();
       render114SubjectTabs();
-      setExamFilter(appState.examFilter || 'stage');
+      setExamFilter(appState.examFilter || 'stage', false, false);
 
       updateGeminiKeyUI();
       updateCustomRagCountBadge();

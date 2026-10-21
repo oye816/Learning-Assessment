@@ -750,6 +750,115 @@ export class FirebaseService {
       return false;
     }
   }
+
+  /**
+   * 記錄使用者之維度篩選選取事件（學年、學期、段考次數等）
+   * 當 Firebase 啟用時寫入 Firestore "selection_logs" 集合，並本機雙重備援儲存
+   * @param {string} filterType 'grade' | 'semester' | 'stage' | 'exam_scope'
+   * @param {string} value 選取代碼 ('all', '7', '8', '9', '1', '2', '3')
+   * @param {string} label 標籤名稱 ('全學年', '七年級', '第一學期 (上)', '第二次段考')
+   * @param {object} [extraContext={}] 當前完整維度上下文
+   * @returns {Promise<object>}
+   */
+  static async logFilterSelection(filterType, value, label, extraContext = {}) {
+    const timestampStr = new Date().toISOString();
+    const logItem = {
+      id: 'sel_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8),
+      filterType: String(filterType || 'unknown'),
+      value: String(value || ''),
+      label: String(label || value || ''),
+      extraContext: extraContext || {},
+      timestamp: timestampStr
+    };
+
+    // 1. 本機 localStorage 快取最新 100 筆篩選歷程 (供離線或診斷使用)
+    try {
+      let localLogs = JSON.parse(localStorage.getItem('jh_quest_filter_selection_logs') || '[]');
+      if (!Array.isArray(localLogs)) localLogs = [];
+      localLogs.unshift(logItem);
+      if (localLogs.length > 100) localLogs = localLogs.slice(0, 100);
+      localStorage.setItem('jh_quest_filter_selection_logs', JSON.stringify(localLogs));
+    } catch (localErr) {}
+
+    // 2. 當 Firebase 服務可用時，非同步存入 Firestore "selection_logs" 集合
+    if (this.isAvailable()) {
+      try {
+        const currentUser = auth?.currentUser;
+        let cachedUser = null;
+        try {
+          const cachedUserStr = localStorage.getItem('jh_quest_cached_user');
+          if (cachedUserStr) cachedUser = JSON.parse(cachedUserStr);
+        } catch (e) {}
+
+        const uid = currentUser?.uid || cachedUser?.uid || 'guest';
+        const email = currentUser?.email || cachedUser?.email || 'guest';
+        const displayName = currentUser?.displayName || cachedUser?.displayName || (uid === 'guest' ? '訪客學員' : '學員');
+
+        const payload = {
+          filterType: logItem.filterType,
+          value: logItem.value,
+          label: logItem.label,
+          userId: uid,
+          userEmail: email,
+          userName: displayName,
+          extraContext: extraContext || {},
+          clientTimestamp: Date.now(),
+          createdAt: serverTimestamp()
+        };
+
+        const docRef = await addDoc(collection(db, "selection_logs"), payload);
+        logItem.cloudDocId = docRef.id;
+        return logItem;
+      } catch (cloudErr) {
+        console.warn("⚠️ 記錄篩選選取事件至 Firestore 警告 (不影響使用者操作):", cloudErr);
+      }
+    }
+
+    return logItem;
+  }
+
+  /**
+   * 取得使用者的篩選選取歷史紀錄（優先讀取 Firestore，備援本機快取）
+   * @param {number} [limitCount=50]
+   */
+  static async fetchSelectionLogs(limitCount = 50) {
+    if (this.isAvailable()) {
+      try {
+        let snap;
+        try {
+          const q = query(
+            collection(db, "selection_logs"),
+            orderBy("createdAt", "desc"),
+            limit(limitCount)
+          );
+          snap = await getDocs(q);
+        } catch (orderErr) {
+          const fallbackQ = collection(db, "selection_logs");
+          snap = await getDocs(fallbackQ);
+        }
+
+        if (snap && !snap.empty) {
+          return snap.docs.map(d => {
+            const data = d.data();
+            return {
+              id: d.id,
+              cloudDocId: d.id,
+              ...data,
+              createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : (data.createdAt || new Date().toISOString())
+            };
+          });
+        }
+      } catch (err) {
+        console.warn("讀取雲端篩選選取紀錄失敗，使用本機快取:", err);
+      }
+    }
+
+    try {
+      return JSON.parse(localStorage.getItem('jh_quest_filter_selection_logs') || '[]');
+    } catch (e) {
+      return [];
+    }
+  }
 }
 
 // 掛載至 window

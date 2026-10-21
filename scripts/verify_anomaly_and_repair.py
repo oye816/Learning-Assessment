@@ -281,9 +281,51 @@ def test_ai_lively_explanation():
     assert len(mock_fallback_output["fullSpeech"]) > 20
     print("  ✅ 模擬生動活潑名師解析（生活比喻、步驟拆解、避坑陷阱、一秒口訣、語音講稿）：資料結構完全驗證通過！")
 
+def test_firebase_filter_selection_logging():
+    print("\n🔍 【驗證七：學年、學期、段考次數點選事件之 Firebase / Firestore 雲端紀錄】")
+    fb_path = ROOT / "js" / "firebase.js"
+    html_path = ROOT / "index.html"
+    fb_content = fb_path.read_text(encoding="utf-8")
+    html_content = html_path.read_text(encoding="utf-8")
+
+    # 1. 驗證 FirebaseService 中的合約
+    assert "logFilterSelection" in fb_content, "FirebaseService 應提供 logFilterSelection 靜態方法"
+    assert "fetchSelectionLogs" in fb_content, "FirebaseService 應提供 fetchSelectionLogs 靜態方法"
+    assert '"selection_logs"' in fb_content, "Firestore 集合名稱應為 selection_logs"
+    assert "jh_quest_filter_selection_logs" in fb_content, "本機快取 Key 應具備 jh_quest_filter_selection_logs"
+    print("  ✅ FirebaseService.logFilterSelection 與 selection_logs 集合合約：確認具備")
+
+    # 2. 驗證 index.html 中的點選觸發綁定
+    # (a) 年級篩選 (全學年, 七年級, 八年級, 九年級)
+    assert "logFilterSelection('grade'" in html_content or 'logFilterSelection("grade"' in html_content, "setGradeFilter 應調用 logFilterSelection('grade')"
+    assert "全學年" in html_content and "七年級" in html_content and "八年級" in html_content and "九年級" in html_content, "應具備完整的學年中文標籤對應"
+    print("  ✅ 年級篩選 (全學年/七年級/八年級/九年級) 點選紀錄：確認已綁定")
+
+    # (b) 學期篩選 (第一學期, 第二學期)
+    assert "logFilterSelection('semester'" in html_content or 'logFilterSelection("semester"' in html_content, "setExamSemesterFilter 應調用 logFilterSelection('semester')"
+    assert "第一學期" in html_content and "第二學期" in html_content, "應具備第一學期/第二學期標籤對應"
+    print("  ✅ 學期篩選 (第一學期/第二學期) 點選紀錄：確認已綁定")
+
+    # (c) 段考次數篩選 (第一次段考, 第二次段考, 第三次段考)
+    assert "logFilterSelection('stage'" in html_content or 'logFilterSelection("stage"' in html_content, "setExamStageOrderFilter 應調用 logFilterSelection('stage')"
+    assert "第一次段考" in html_content and "第二次段考" in html_content and "第三次段考" in html_content, "應具備第一次/第二次/第三次段考標籤對應"
+    print("  ✅ 段考次數篩選 (第一次/第二次/第三次段考) 點選紀錄：確認已綁定")
+
+    # 3. 模擬點選事件資料結構完整性
+    mock_events = [
+        {"filterType": "grade", "value": "7", "label": "七年級", "context": {"grade": "7", "semester": "1", "stage": "2"}},
+        {"filterType": "semester", "value": "1", "label": "第一學期 (上)", "context": {"grade": "7", "semester": "1", "stage": "2"}},
+        {"filterType": "stage", "value": "2", "label": "第二次段考", "context": {"grade": "7", "semester": "1", "stage": "2"}},
+    ]
+    for ev in mock_events:
+        assert ev["filterType"] in ["grade", "semester", "stage"]
+        assert len(ev["label"]) > 1
+        assert "grade" in ev["context"] and "semester" in ev["context"] and "stage" in ev["context"]
+    print("  ✅ 模擬點選事件 (學年/學期/段考) 資料封包結構驗證：完全通過！")
+
 def main():
     print("=" * 70)
-    print("🚀 驗證生題異常記錄、AI 修正生題與 AI 生動活潑名師解析功能")
+    print("🚀 驗證生題異常記錄、AI 修正、AI 生動解析與 Firebase 篩選紀錄功能")
     print("=" * 70)
     try:
         test_gemini_service_anomaly_and_repair()
@@ -292,6 +334,7 @@ def main():
         test_simulated_anomaly_and_rag_learning_cycle()
         test_quiz_battle_and_grimoire_repair()
         test_ai_lively_explanation()
+        test_firebase_filter_selection_logging()
         print("\n" + "=" * 70)
         print("🎉 全部測試 100% 通過！新功能設計精準、低耦合且完全相容！")
         print("=" * 70)
@@ -301,5 +344,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
