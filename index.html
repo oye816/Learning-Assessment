@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>星耀國中冒險學院｜遊戲化複習評量 ＆ 錯題煉金工坊</title>
+  <title>星耀國中學習評量系統｜國中五科段考題庫 ＆ AI 弱點出題</title>
   <script>
     // 依據執行環境動態標註網頁標題
     (function updateEnvironmentTitle() {
@@ -409,14 +409,14 @@
     <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3">
       <!-- Brand + Player Avatar -->
       <div class="flex items-center gap-3">
-        <div class="relative group cursor-pointer" onclick="switchTab('stats')" title="查看勇者能力雷達">
-          <img src="images/hero-avatar.jpg" alt="勇者頭像" class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl object-cover border-2 border-amber-400 shadow-md max-w-full h-auto" />
+        <div class="relative group cursor-pointer" onclick="switchTab('stats')" title="查看五科學力分析">
+          <img src="images/hero-avatar.jpg" alt="學習頭像" class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl object-cover border-2 border-amber-400 shadow-md max-w-full h-auto" />
           <span id="headerLevelBadge" class="absolute -bottom-1 -right-1 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 text-[11px] font-black px-1.5 py-0.5 rounded-md shadow">Lv.3</span>
         </div>
         <div>
           <div class="flex items-center gap-2">
             <h1 class="text-sm sm:text-base font-extrabold tracking-tight bg-gradient-to-r from-amber-200 via-violet-200 to-cyan-200 bg-clip-text text-transparent">
-              星耀國中冒險學院
+              星耀國中學習評量
             </h1>
             <span id="playerTitleBadge" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30">
               初心學徒
@@ -451,13 +451,13 @@
         </div>
 
         <!-- Gold Coins -->
-        <div class="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 rounded-xl text-xs font-bold text-amber-300" title="星幣：可用於購買輔助秘藥">
+        <div class="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 rounded-xl text-xs font-bold text-amber-300" title="星幣：完成測驗獲得，可用於兌換答題道具">
           <span>🪙</span>
           <span id="goldCountDisplay">0</span>
         </div>
 
         <!-- Combo Streak -->
-        <div class="flex items-center gap-1.5 bg-orange-500/10 border border-orange-500/30 px-2.5 py-1 rounded-xl text-xs font-bold text-orange-300" title="目前最高連勝紀錄">
+        <div class="flex items-center gap-1.5 bg-orange-500/10 border border-orange-500/30 px-2.5 py-1 rounded-xl text-xs font-bold text-orange-300" title="目前連續答對題數">
           <span>🔥</span>
           <span id="streakCountDisplay">連勝 0</span>
         </div>
@@ -548,7 +548,7 @@
     <section id="view-hub" class="space-y-6">
       <!-- Hero Banner Card (大廳精選橫幅) -->
       <div class="relative rounded-3xl overflow-hidden border border-violet-500/30 shadow-2xl">
-        <img src="images/banner.jpg" alt="星耀國中冒險學院橫幅" class="w-full h-48 sm:h-64 object-cover object-center brightness-75 max-w-full" />
+        <img src="images/banner.jpg" alt="星耀國中學習評量橫幅" class="w-full h-48 sm:h-64 object-cover object-center brightness-75 max-w-full" />
         <div class="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/75 to-transparent flex flex-col justify-center p-5 sm:p-8 max-w-2xl">
           <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-500/20 border border-violet-400/40 text-violet-200 text-xs font-bold w-fit mb-2">
             <span>✨ 國中五科段考 ＆ 教育會考自主評量系統</span>
@@ -592,16 +592,16 @@
         <div class="rpg-card rpg-glow-border rounded-2xl p-5 flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/30">💡 快速出題</span>
-              <span class="text-xs text-slate-400">AI 智慧分析</span>
+              <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/30">💡 AI 快速弱點出題</span>
+              <span class="text-xs text-slate-400">智慧分析</span>
             </div>
             <h3 class="font-extrabold text-base text-white mt-2">遇到不會的考題？</h3>
-            <p class="text-xs text-slate-300 mt-1">輸入題目或卡關觀念，1 秒生成解題關鍵與同型練習題！</p>
+            <p class="text-xs text-slate-300 mt-1">輸入題目或卡關觀念，即時剖析核心概念並生成同型練習題！</p>
           </div>
           <div class="mt-3 flex gap-2">
             <input id="quickHubMistakeInput" type="text" placeholder="例：一元一次方程式打折問題、凸透鏡成像..." class="flex-1 bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-fuchsia-400" />
             <button type="button" onclick="quickJumpToAlchemy()" class="px-3.5 py-2 rounded-xl bg-fuchsia-600 hover:bg-fuchsia-500 text-white text-xs font-bold whitespace-nowrap transition-colors">
-              變題練習 →
+              AI 出題 →
             </button>
           </div>
         </div>
@@ -739,7 +739,14 @@
               貼上平時小考、段考或作業中不會的題目或觀念，系統將剖析解題重點，並即時生成 <span class="text-amber-300 font-bold">4 道循序漸進的同型練習題</span>！
             </p>
           </div>
-          <div class="flex items-center gap-2 self-start lg:self-center">
+          <div class="flex flex-wrap items-center gap-2 self-start lg:self-center">
+            <!-- 題目字級即時微調 -->
+            <div class="flex items-center gap-1.5 bg-slate-900/90 border border-slate-700/80 px-2.5 py-1.5 rounded-xl text-xs shadow-inner">
+              <span class="text-slate-400 font-semibold mr-0.5">字級</span>
+              <button type="button" onclick="changeQuestionFontSize(-1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-violet-600 text-white font-bold flex items-center justify-center transition-all active:scale-95" title="縮小字型">A-</button>
+              <span class="fontScaleDisplayAlchemy px-1.5 text-amber-300 font-bold font-mono">放大</span>
+              <button type="button" onclick="changeQuestionFontSize(1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-violet-600 text-white font-bold flex items-center justify-center transition-all active:scale-95" title="放大字型">A+</button>
+            </div>
             <button type="button" onclick="randomizeGeneratedNumbers()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-bold text-cyan-300 flex items-center gap-1.5 transition-colors">
               <span>🎲</span>
               <span>重新換數再生</span>
@@ -917,7 +924,7 @@
           <!-- Boss Side (Right 5 cols) -->
           <div id="bossCardContainer" class="md:col-span-5 bg-slate-900/80 border border-rose-500/30 rounded-2xl p-4 flex items-center gap-4">
             <div class="relative">
-              <img id="bossAvatarImg" src="images/boss-avatar.jpg" alt="試煉魔王立繪" class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border-2 border-rose-500 shadow-lg animate-float max-w-full h-auto" />
+              <img id="bossAvatarImg" src="images/boss-avatar.jpg" alt="關卡守門者立繪" class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border-2 border-rose-500 shadow-lg animate-float max-w-full h-auto" />
               <span id="bossDamageFloating" class="hidden absolute -top-3 left-1/2 -translate-x-1/2 bg-rose-600 text-white text-xs font-black px-2 py-0.5 rounded-full shadow-lg">
                 -25 HP!
               </span>
@@ -929,7 +936,7 @@
               </div>
               <p id="bossWeaknessText" class="text-[11px] text-slate-400 mt-0.5">弱點屬性：邏輯推演與精準判讀</p>
               <div class="flex items-center justify-between mt-2">
-                <span class="text-[11px] text-rose-300 font-semibold">魔王生命值</span>
+                <span class="text-[11px] text-rose-300 font-semibold">關卡挑戰體力</span>
                 <span id="bossHpText" class="text-xs font-mono font-bold text-rose-400">100 / 100 HP</span>
               </div>
               <div class="w-full h-3.5 bg-slate-950 rounded-full overflow-hidden border border-rose-900/60 mt-1">
@@ -1011,12 +1018,12 @@
           S
         </div>
         <div>
-          <h3 id="summaryHeadline" class="text-2xl font-black text-white">試煉大捷！成功擊破守門魔王</h3>
+          <h3 id="summaryHeadline" class="text-2xl font-black text-white">測驗完成！成績結算</h3>
           <p id="summarySubtext" class="text-sm text-slate-300 mt-1"></p>
         </div>
         <div class="grid grid-cols-3 gap-3 max-w-md mx-auto">
           <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3">
-            <div class="text-xs text-slate-400">答對率</div>
+            <div class="text-xs text-slate-400">正確率</div>
             <div id="summaryAccuracy" class="text-lg font-black text-emerald-400 mt-0.5">100%</div>
           </div>
           <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3">
@@ -1030,13 +1037,13 @@
         </div>
         <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
           <button type="button" onclick="restartCurrentBattle()" class="px-5 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-sm">
-            ⚔️ 再戰一局
+            🔄 再測驗一次
           </button>
           <button type="button" onclick="switchTab('history')" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold text-sm shadow-lg shadow-cyan-600/20">
-            📜 查看個人學習歷程
+            📜 查看測驗紀錄
           </button>
           <button type="button" onclick="switchTab('alchemy')" class="px-5 py-2.5 rounded-xl bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold text-sm">
-            ⚗️ 前往錯題煉金工坊
+            💡 前往 AI 弱點出題
           </button>
           <button type="button" onclick="switchTab('grimoire')" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/40 font-bold text-sm">
             📖 檢視錯題本
@@ -1052,13 +1059,20 @@
           <div>
             <h2 class="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
               <span>📖</span>
-              <span>我的錯題本（個人弱點庫）</span>
+              <span>我的錯題本（個人弱點題庫）</span>
             </h2>
             <p class="text-xs sm:text-sm text-slate-300 mt-1">
-              所有在測驗中答錯的題目都會自動收錄在此。可直接點擊「<span class="text-fuchsia-300 font-bold">💡 生成延伸練習</span>」，讓 AI 針對該錯題衍生 4 道題目徹底搞懂！
+              所有在測驗中答錯的題目都會自動收錄在此。可直接點擊「<span class="text-fuchsia-300 font-bold">💡 AI 生成延伸練習</span>」，讓 AI 針對該錯題衍生 4 道題目徹底搞懂！
             </p>
           </div>
           <div class="flex flex-wrap items-center gap-2">
+            <!-- 題目字級即時微調 -->
+            <div class="flex items-center gap-1.5 bg-slate-900/90 border border-slate-700/80 px-2.5 py-1.5 rounded-xl text-xs shadow-inner">
+              <span class="text-slate-400 font-semibold mr-0.5">字級</span>
+              <button type="button" onclick="changeQuestionFontSize(-1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-violet-600 text-white font-bold flex items-center justify-center transition-all active:scale-95" title="縮小字型">A-</button>
+              <span class="fontScaleDisplayGrimoire px-1.5 text-amber-300 font-bold font-mono">放大</span>
+              <button type="button" onclick="changeQuestionFontSize(1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-violet-600 text-white font-bold flex items-center justify-center transition-all active:scale-95" title="放大字型">A+</button>
+            </div>
             <select id="grimoireSubjectFilter" onchange="renderMistakeGrimoire()" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
               <option value="all">全部科目錯題</option>
               <option value="chinese">📜 國文科</option>
@@ -1068,7 +1082,7 @@
               <option value="social">🌍 社會科</option>
             </select>
             <button type="button" onclick="battleAllMistakes()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-orange-600 hover:from-rose-500 hover:to-orange-500 text-white text-xs font-bold shadow-lg">
-              📝 開始錯題重測
+              📝 開始錯題複習測驗
             </button>
           </div>
         </div>
@@ -1112,7 +1126,7 @@
             <div class="flex items-center justify-between mb-3">
               <h3 class="text-base sm:text-lg font-black text-white flex items-center gap-2">
                 <span>🏪</span>
-                <span>答題輔助道具屋</span>
+                <span>答題輔助道具兌換</span>
               </h3>
               <span class="text-xs font-bold text-amber-300 bg-amber-500/15 px-2.5 py-1 rounded-lg border border-amber-500/30">
                 持有星幣：<span id="shopGoldDisplay">280</span> 🪙
@@ -1126,7 +1140,7 @@
                   <span class="text-2xl">🧪</span>
                   <div>
                     <div class="text-xs sm:text-sm font-bold text-white">刪去錯誤秘藥 (50/50)</div>
-                    <div class="text-[11px] text-slate-400">戰鬥中隨機封印 2 個錯誤選項</div>
+                    <div class="text-[11px] text-slate-400">測驗中隨機刪除 2 個錯誤選項</div>
                   </div>
                 </div>
                 <button type="button" onclick="buyShopItem('fifty', 50)" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs whitespace-nowrap">
@@ -1138,8 +1152,8 @@
                 <div class="flex items-center gap-3">
                   <span class="text-2xl">💡</span>
                   <div>
-                    <div class="text-xs sm:text-sm font-bold text-white">大魔導師破題卷軸</div>
-                    <div class="text-[11px] text-slate-400">戰鬥中顯示該題關鍵公式與口訣</div>
+                    <div class="text-xs sm:text-sm font-bold text-white">關鍵破題卷軸</div>
+                    <div class="text-[11px] text-slate-400">測驗中顯示該題破題關鍵提示與解法</div>
                   </div>
                 </div>
                 <button type="button" onclick="buyShopItem('hint', 40)" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs whitespace-nowrap">
@@ -1151,8 +1165,8 @@
                 <div class="flex items-center gap-3">
                   <span class="text-2xl">🛡️</span>
                   <div>
-                    <div class="text-xs sm:text-sm font-bold text-white">星光免傷聖盾</div>
-                    <div class="text-[11px] text-slate-400">抵擋一次答錯時的魔王反擊傷害</div>
+                    <div class="text-xs sm:text-sm font-bold text-white">答錯免傷聖盾</div>
+                    <div class="text-[11px] text-slate-400">抵擋一次答錯時的挑戰體力扣除</div>
                   </div>
                 </div>
                 <button type="button" onclick="buyShopItem('shield', 60)" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs whitespace-nowrap">
@@ -1166,7 +1180,7 @@
           <div class="rpg-card rounded-3xl p-5">
             <h3 class="text-sm sm:text-base font-black text-white mb-3 flex items-center gap-2">
               <span>🏆</span>
-              <span>榮譽徽章殿堂</span>
+              <span>學習成就徽章</span>
             </h3>
             <div id="achievementBadgesGrid" class="grid grid-cols-2 gap-2.5">
               <!-- Populated by JS -->
@@ -1182,26 +1196,26 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
           <div>
             <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 text-xs font-bold mb-2">
-              <span>📜 勇者冒險編年史</span>
+              <span>📜 測驗紀錄與歷程明細</span>
             </div>
-            <h2 class="text-xl sm:text-2xl font-black text-white">個人學習歷程與試煉戰果</h2>
+            <h2 class="text-xl sm:text-2xl font-black text-white">個人測驗紀錄與學習歷程</h2>
             <p class="text-xs sm:text-sm text-slate-300 mt-1">
-              紀錄您在星耀學院完成的所有地下城試煉、Boss 決戰與 AI 衍生題評量成績。登入 Google 帳號後將自動即時同步至雲端！
+              完整記錄你在系統中完成的所有段考真題、單元評量與 AI 延伸練習成績。登入 Google 帳號後將自動同步至雲端！
             </p>
           </div>
           <button type="button" onclick="loadMyHistory()" class="self-start sm:self-center px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-200 flex items-center gap-1.5 transition-colors">
-            <span>🔄</span> <span>重新整理紀錄</span>
+            <span>🔄</span> <span>重新整理測驗紀錄</span>
           </button>
         </div>
 
         <!-- Personal Summary Metrics -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
           <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 text-center">
-            <span class="text-xs text-slate-400 font-semibold">總試煉次數</span>
+            <span class="text-xs text-slate-400 font-semibold">總測驗次數</span>
             <h3 id="histTotalCount" class="text-2xl font-black text-white mt-1">0</h3>
           </div>
           <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 text-center">
-            <span class="text-xs text-slate-400 font-semibold">平均答對率</span>
+            <span class="text-xs text-slate-400 font-semibold">平均正確率</span>
             <h3 id="histAvgAccuracy" class="text-2xl font-black text-emerald-400 mt-1">0%</h3>
           </div>
           <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 text-center">
@@ -1219,7 +1233,7 @@
           <table class="w-full text-left text-xs sm:text-sm">
             <thead class="text-[11px] text-slate-400 uppercase bg-slate-900/90 border-b border-slate-800">
               <tr>
-                <th class="px-4 py-3 rounded-l-xl">試煉項目 / 關卡</th>
+                <th class="px-4 py-3 rounded-l-xl">測驗科目與單元</th>
                 <th class="px-4 py-3">科目領域</th>
                 <th class="px-4 py-3 text-center">得分 / 總題數</th>
                 <th class="px-4 py-3 text-center">正確率</th>
@@ -1462,7 +1476,7 @@
           <div class="flex items-center gap-2.5">
             <span class="text-2xl">📋</span>
             <div>
-              <h3 id="modalDetailTitle" class="text-xl font-black text-white">試煉答題明細</h3>
+              <h3 id="modalDetailTitle" class="text-xl font-black text-white">測驗答題明細</h3>
               <span id="modalDetailSubtitle" class="text-xs sm:text-sm text-slate-400"></span>
             </div>
           </div>
@@ -2098,9 +2112,9 @@
 
     function getFreshDailyQuests() {
       return [
-        { id: 'dq-1', title: '完成 1 次錯題煉金生成', desc: '在錯題煉金工坊生成專屬練習題', progress: 0, target: 1, rewardGold: 60, rewardExp: 80, claimed: false },
-        { id: 'dq-2', title: '在魔王試煉答對 3 題', desc: '於任一科目競技場累計答對 3 題', progress: 0, target: 3, rewardGold: 80, rewardExp: 100, claimed: false },
-        { id: 'dq-3', title: '達成 3 連擊 Combo', desc: '在單場試煉中連續答對 3 題不中斷', progress: 0, target: 3, rewardGold: 100, rewardExp: 120, claimed: false }
+        { id: 'dq-1', title: '完成 1 次 AI 弱點出題', desc: '使用 AI 弱點出題生成專屬延伸練習', progress: 0, target: 1, rewardGold: 60, rewardExp: 80, claimed: false },
+        { id: 'dq-2', title: '在測驗中答對 3 題', desc: '於任一科目測驗中累計答對 3 題', progress: 0, target: 3, rewardGold: 80, rewardExp: 100, claimed: false },
+        { id: 'dq-3', title: '達成 3 題連續答對', desc: '在單場測驗中連續答對 3 題不中斷', progress: 0, target: 3, rewardGold: 100, rewardExp: 120, claimed: false }
       ];
     }
 
@@ -2942,7 +2956,11 @@
       }
 
       renderAlchemyPackOutput(pack);
-      showToast('✨ 煉金成功！已為你剖析考點並生成 4 道同型練習題！', 'success');
+      showToast('✨ 出題成功！已為你生成 4 道同型延伸練習題！', 'success');
+      const resContainer = document.getElementById('alchemyResultContainer');
+      if (resContainer) {
+        resContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
 
     function randomizeGeneratedNumbers() {
@@ -3008,7 +3026,7 @@
                 <span class="text-xs sm:text-sm font-bold text-amber-300">${escapeHtml(q.concept)}</span>
               </div>
               <button type="button" onclick="saveQuestionToGrimoireFromAlchemy(${idx})" class="text-xs sm:text-sm text-slate-400 hover:text-amber-300 font-semibold">
-                📌 收錄至錯題封印書
+                📌 收錄至錯題本
               </button>
             </div>
             <p class="q-stem-scalable text-lg sm:text-xl md:text-2xl font-bold text-white leading-relaxed">${escapeHtml(q.stem)}</p>
@@ -3021,8 +3039,10 @@
       }).join('');
 
       container.innerHTML = `
-        <div class="rpg-card alchemy-glow rounded-3xl p-5 sm:p-6 border border-fuchsia-500/50 space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-3">
+        <!-- 【第一順位：AI 生成的 4 道練習題】 -->
+        <div class="space-y-4">
+          <!-- 頂部資訊與行動工具列 -->
+          <div class="rpg-card alchemy-glow rounded-3xl p-5 sm:p-6 border border-fuchsia-500/50 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-2.5">
               <span class="text-2xl">${subMeta.icon}</span>
               <div>
@@ -3033,12 +3053,41 @@
                 <h3 class="text-lg sm:text-xl font-black text-white mt-0.5">${escapeHtml(pack.topicTitle)}</h3>
               </div>
             </div>
-            <button type="button" onclick="startAlchemyBossBattle()" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500 hover:brightness-110 text-slate-950 font-black text-xs sm:text-sm shadow-xl flex items-center gap-2 transition-transform active:scale-95">
-              <span>⚔️ 帶著這 4 道衍生題進入「心魔魔王戰」！</span>
-            </button>
+            <div class="flex flex-wrap items-center gap-2.5">
+              <!-- 題目字級即時微調 -->
+              <div class="flex items-center gap-1.5 bg-slate-900/90 border border-slate-700/80 px-2.5 py-1 rounded-xl text-xs shadow-inner">
+                <span class="text-slate-400 font-semibold mr-0.5">字級</span>
+                <button type="button" onclick="changeQuestionFontSize(-1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-violet-600 text-white font-bold flex items-center justify-center transition-all active:scale-95" title="縮小字型">A-</button>
+                <span class="fontScaleDisplayAlchemy px-1.5 text-amber-300 font-bold font-mono">放大</span>
+                <button type="button" onclick="changeQuestionFontSize(1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-violet-600 text-white font-bold flex items-center justify-center transition-all active:scale-95" title="放大字型">A+</button>
+              </div>
+              <button type="button" onclick="startAlchemyBossBattle()" class="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500 hover:brightness-110 text-slate-950 font-black text-xs sm:text-sm shadow-xl flex items-center gap-2 transition-transform active:scale-95">
+                <span>⚔️ 進入測驗作答室</span>
+              </button>
+            </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+          <!-- 題目列表標題 -->
+          <div class="flex items-center justify-between px-1">
+            <h4 class="text-sm sm:text-base font-black text-white flex items-center gap-2">
+              <span>🃏</span>
+              <span>已為你生成的 4 道階梯式同型練習題（可直接在下方點擊選項作答）：</span>
+            </h4>
+          </div>
+
+          <!-- 題目列表 Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            ${questionsHtml}
+          </div>
+        </div>
+
+        <!-- 【第二順位：核心觀念拆解、常考陷阱與秒殺口訣】 -->
+        <div class="rpg-card rounded-3xl p-5 sm:p-6 border border-slate-800 space-y-3">
+          <h4 class="text-sm sm:text-base font-black text-cyan-300 flex items-center gap-2">
+            <span>🎯</span>
+            <span>解題重點與觀念解析（作答參考）：</span>
+          </h4>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5">
               <div class="text-xs font-extrabold text-cyan-300 mb-1">🎯 核心觀念拆解</div>
               <p class="text-xs text-slate-300 leading-relaxed">${escapeHtml(pack.coreConcept)}</p>
@@ -3054,20 +3103,11 @@
           </div>
         </div>
 
+        <!-- 【第三順位：RAG 真題典範展示】 -->
         ${ragSectionHtml}
-
-        <div class="space-y-3">
-          <div class="flex items-center justify-between">
-            <h4 class="text-sm sm:text-base font-black text-white flex items-center gap-2">
-              <span>🃏</span>
-              <span>已為你生成的 4 道階梯式練習題（可直接點擊作答，或點擊上方按鈕進入 RPG 魔王戰）：</span>
-            </h4>
-          </div>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            ${questionsHtml}
-          </div>
-        </div>
       `;
+      // 確保新渲染的字級標籤同步為當前設定
+      applyQuestionFontScale();
     }
 
     function checkAlchemyInlineAnswer(qIdx, selectedOptIdx) {
@@ -3118,7 +3158,7 @@
 
           if (window.FirebaseService) {
             window.FirebaseService.saveAssessmentRecord(appState.currentUser, {
-              title: `⚗️ 錯題煉金特訓：${pack.topicTitle}`,
+              title: `💡 AI 弱點特訓：${pack.topicTitle}`,
               subject: pack.subject,
               score: correctCount,
               total: totalQ,
@@ -3139,7 +3179,7 @@
                 };
               })
             }).then(() => {
-              showToast('📜 煉金工坊 4 題特訓成果已自動登錄至個人學習歷程！', 'success');
+              showToast('📜 AI 弱點 4 題特訓成果已自動登錄至個人測驗紀錄！', 'success');
             }).catch(e => console.warn(e));
           }
         }
@@ -3152,7 +3192,7 @@
       if (!q) return;
       addMistakeRecord(q);
       playSoundEffect('click');
-      showToast('📓 已將此題收錄至「錯題封印書」！', 'success');
+      showToast('📓 已將此題收錄至「錯題本」！', 'success');
     }
 
     function startAlchemyBossBattle() {
@@ -3161,8 +3201,8 @@
       }
       const pack = appState.alchemyCurrentPack;
       launchBattleSession(
-        `⚗️ 錯題心魔副本：${pack.topicTitle}`,
-        '錯題心魔幻影・阿爾克',
+        `💡 AI 弱點延伸測驗：${pack.topicTitle}`,
+        'AI 弱點強化守門者',
         pack.questions.map(q => shuffleQuestion(q))
       );
     }
@@ -3265,7 +3305,7 @@
       ];
 
       const selected = filterUnseenCandidates(allCandidates, 5);
-      launchBattleSession(`${subMeta.icon} ${subMeta.name}地下城`, subMeta.bossName, selected);
+      launchBattleSession(`${subMeta.icon} ${subMeta.name}單元測驗`, `${subMeta.name}考點守門者`, selected);
     }
 
     function startQuickMixedBattle() {
@@ -3297,7 +3337,7 @@
       });
 
       const finalShuffled = mixedQuestions.sort(() => Math.random() - 0.5);
-      launchBattleSession('⚡ 五科綜合試煉地下城', '星界試煉巨像・奧米加', finalShuffled);
+      launchBattleSession('⚡ 五科綜合模擬考', '五科會考守門者', finalShuffled);
     }
 
     function launchBattleSession(title, bossName, questionsList) {
@@ -3601,10 +3641,10 @@
         dmgFloat.classList.remove('hidden');
         setTimeout(() => dmgFloat.classList.add('hidden'), 1100);
 
-        document.getElementById('battleActionBanner').textContent = `⚡ 魔法爆擊命中！對魔王造成 ${dmg} 點傷害！`;
+        document.getElementById('battleActionBanner').textContent = `⚡ 答對了！精準破題！（對手體力 -${dmg} HP）`;
         fbBox.className = 'rounded-2xl p-4 sm:p-5 border transition-all space-y-3 bg-emerald-950/50 border-emerald-500/50';
         fbTitle.className = 'font-black text-base flex items-center gap-2 text-emerald-300';
-        fbTitle.innerHTML = `<span>✨ 吟唱成功！連擊 Combo x${b.combo}（+25 EXP, +15 🪙）</span>`;
+        fbTitle.innerHTML = `<span>✨ 答對了！連續答對 x${b.combo} 題（+25 EXP, +15 🪙）</span>`;
         fbExp.textContent = q.explanation;
 
         addPlayerReward(25, 15);
@@ -3622,15 +3662,15 @@
         if (b.shieldActive) {
           b.shieldActive = false;
           document.getElementById('shieldActiveBadge').classList.add('hidden');
-          document.getElementById('battleActionBanner').textContent = '🛡️ 聖盾成功抵擋了魔王的反擊傷害！';
+          document.getElementById('battleActionBanner').textContent = '🛡️ 護盾生效！成功抵擋了答錯扣血！';
         } else {
           b.heroHp = Math.max(0, b.heroHp - 25);
-          document.getElementById('battleActionBanner').textContent = '💥 咒語失誤！遭到魔王反擊損失 25 HP！';
+          document.getElementById('battleActionBanner').textContent = '💥 答錯了！受到失誤扣血損失 25 HP！';
         }
 
         fbBox.className = 'rounded-2xl p-4 sm:p-5 border transition-all space-y-3 bg-rose-950/50 border-rose-500/50';
         fbTitle.className = 'font-black text-base flex items-center gap-2 text-rose-300';
-        fbTitle.innerHTML = `<span>❌ 咒語失誤！已自動收錄至「錯題封印書」</span>`;
+        fbTitle.innerHTML = `<span>❌ 答錯了！已自動收錄至「錯題本」</span>`;
         fbExp.innerHTML = `<strong>💡 破題提示：</strong>${q.hint}<br/><strong>📖 完整解析：</strong>${q.explanation}`;
 
         addMistakeRecord(q);
@@ -3644,9 +3684,9 @@
 
       const nextBtn = document.getElementById('nextBattleQuestionBtn');
       if (b.currentIndex + 1 >= b.questions.length || b.heroHp <= 0) {
-        nextBtn.textContent = '查看試煉結算 🏆';
+        nextBtn.textContent = '查看測驗結果 🏆';
       } else {
-        nextBtn.textContent = '下一回合 →';
+        nextBtn.textContent = '下一題 →';
       }
       updateHeaderUI();
       saveState();
@@ -3679,16 +3719,16 @@
       const total = b.questions.length;
       const acc = Math.round((b.correctCount / total) * 100);
       let rank = 'B';
-      let headline = '試煉完成！持續鍛鍊必能突破極限';
+      let headline = '測驗完成！持續練習必能更上一層樓！';
       if (acc >= 90) {
         rank = 'S';
-        headline = '🏆 傳說級大捷！完美擊破守門魔王！';
+        headline = '🏆 滿分大捷！全數答對展現頂尖實力！';
       } else if (acc >= 75) {
         rank = 'A';
-        headline = '✨ 試煉過關！展現優秀的知識魔導力！';
+        headline = '✨ 測驗優秀！展現了扎實的概念理解！';
       } else if (acc < 50) {
         rank = 'C';
-        headline = '💪 雖敗猶榮！快用「錯題煉金工坊」補強弱點！';
+        headline = '💪 雖敗猶榮！快用「AI 弱點出題」補強觀念！';
       }
 
       const bonusExp = b.correctCount * 30 + (acc >= 80 ? 50 : 20);
@@ -3696,7 +3736,7 @@
 
       document.getElementById('summaryRankBadge').textContent = rank;
       document.getElementById('summaryHeadline').textContent = headline;
-      document.getElementById('summarySubtext').textContent = `你在「${b.title}」共答對 ${b.correctCount} / ${total} 題，錯題已自動收錄至封印書。`;
+      document.getElementById('summarySubtext').textContent = `你在「${b.title}」共答對 ${b.correctCount} / ${total} 題，錯題已自動收錄至錯題本。`;
       document.getElementById('summaryAccuracy').textContent = `${acc}%`;
       document.getElementById('summaryExpEarned').textContent = `+${bonusExp} EXP`;
       document.getElementById('summaryGoldEarned').textContent = `+${bonusGold} 🪙`;
@@ -3824,8 +3864,8 @@
         container.innerHTML = `
           <div class="text-center py-12 bg-slate-900/50 rounded-2xl border border-slate-800">
             <div class="text-4xl mb-2">🎉</div>
-            <h3 class="text-base font-bold text-white">目前此分類沒有待解封的錯題！</h3>
-            <p class="text-xs text-slate-400 mt-1">前往「冒險大廳」挑戰地下城，或到「錯題煉金工坊」生成新練習題吧！</p>
+            <h3 class="text-base font-bold text-white">目前此分類沒有待複習的錯題！</h3>
+            <p class="text-xs text-slate-400 mt-1">前往「測驗大廳」進行測驗，或到「AI 弱點出題」生成練習題吧！</p>
           </div>
         `;
         return;
@@ -3843,11 +3883,11 @@
               </div>
               <div class="flex flex-wrap items-center gap-2">
                 <button type="button" onclick="alchemyFromGrimoire('${m.id}')" class="px-3 py-1.5 rounded-xl bg-fuchsia-600 hover:bg-fuchsia-500 text-white text-xs font-bold flex items-center gap-1 shadow">
-                  <span>⚗️</span>
-                  <span>生成 4 道同型練習題</span>
+                  <span>💡</span>
+                  <span>AI 生成 4 道延伸練習題</span>
                 </button>
                 <button type="button" onclick="masterAndRemoveMistake('${m.id}')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white text-xs font-semibold transition-colors">
-                  ✅ 已學會・解除封印
+                  ✅ 已熟練・移出錯題本
                 </button>
               </div>
             </div>
@@ -3884,18 +3924,18 @@
       appState.mistakes = appState.mistakes.filter(item => item.id !== mistakeId);
       playSoundEffect('correct');
       addPlayerReward(20, 15);
-      showToast('✨ 成功解除錯題封印！獲得 +20 EXP 與 +15 星幣！', 'success');
+      showToast('✨ 成功熟練掌握錯題！獲得 +20 EXP 與 +15 星幣！', 'success');
       renderMistakeGrimoire();
       updateHeaderUI();
     }
 
     function battleAllMistakes() {
       if (appState.mistakes.length === 0) {
-        showToast('目前沒有錯題可挑戰，先為你開啟五科隨機魔王戰！', 'info');
+        showToast('目前沒有錯題，先為你開啟五科綜合模擬考！', 'info');
         startQuickMixedBattle();
         return;
       }
-      launchBattleSession('📓 錯題封印清剿戰', '往昔錯題心魔領主', appState.mistakes.slice(0, 6));
+      launchBattleSession('📖 錯題複習特訓', '錯題弱點守門者', appState.mistakes.slice(0, 6));
     }
 
     // ==================== 11. STATS, RADAR CHART & MAGIC SHOP ====================
@@ -3927,10 +3967,10 @@
       const badgesGrid = document.getElementById('achievementBadgesGrid');
       if (badgesGrid) {
         const badges = [
-          { icon: '⚗️', name: '錯題煉金術士', desc: '使用錯題工坊生成練習題', unlocked: true },
-          { icon: '🔥', name: '連擊魔導師', desc: '達成 3 連勝以上紀錄', unlocked: appState.player.bestStreak >= 3 || appState.player.streak >= 3 },
-          { icon: '🗡️', name: '封印破除者', desc: '累計答對超過 10 道考題', unlocked: appState.player.totalCorrect >= 10 },
-          { icon: '👑', name: '會考制霸勇者', desc: '勇者等級達到 Lv.5', unlocked: appState.player.level >= 5 }
+          { icon: '💡', name: '弱點診斷大師', desc: '使用 AI 弱點出題生成延伸練習', unlocked: true },
+          { icon: '🔥', name: '連勝衝刺王', desc: '達成連續答對 3 題以上紀錄', unlocked: appState.player.bestStreak >= 3 || appState.player.streak >= 3 },
+          { icon: '🎯', name: '破題專家', desc: '累計答對超過 10 道考題', unlocked: appState.player.totalCorrect >= 10 },
+          { icon: '👑', name: '會考制霸之星', desc: '學員等級達到 Lv.5', unlocked: appState.player.level >= 5 }
         ];
         badgesGrid.innerHTML = badges.map(b => `
           <div class="p-3 rounded-2xl border ${b.unlocked ? 'bg-slate-900/90 border-amber-500/40' : 'bg-slate-950/50 border-slate-800 opacity-50'} flex items-center gap-2.5">
@@ -4006,7 +4046,7 @@
     function buyShopItem(itemKey, price) {
       if (appState.player.gold < price) {
         playSoundEffect('wrong');
-        showToast('🪙 星幣不足！快去挑戰地下城或完成懸賞任務賺取星幣！', 'warning');
+        showToast('🪙 星幣不足！快去完成測驗或今日練習任務賺取星幣！', 'warning');
         return;
       }
       appState.player.gold -= price;
@@ -4014,8 +4054,8 @@
       playSoundEffect('correct');
       updateHeaderUI();
       saveState();
-      const nameMap = { fifty: '刪去錯誤秘藥', hint: '大魔導師破題卷軸', shield: '星光免傷聖盾' };
-      showToast(`🛍️ 購買成功！獲得 1 個「${nameMap[itemKey]}」（目前持有 ${appState.player.items[itemKey]} 個）`, 'success');
+      const nameMap = { fifty: '刪去錯誤秘藥', hint: '關鍵破題卷軸', shield: '答錯免傷聖盾' };
+      showToast(`🛍️ 兌換成功！獲得 1 個「${nameMap[itemKey]}」（目前持有 ${appState.player.items[itemKey]} 個）`, 'success');
     }
 
 
@@ -4139,8 +4179,13 @@
         playSoundEffect('levelup');
         const ragCount = (pack.ragExemplars && pack.ragExemplars.length > 0) ? pack.ragExemplars.length : 0;
         showToast(ragCount > 0 
-          ? `✨ RAG 向量增強成功！已檢索 ${ragCount} 道真題典範並生成 4 道變體練習題！` 
-          : '✨ Gemini AI 魔法出題成功！已生成 4 道高階練習題！', 'success');
+          ? `✨ RAG 向量增強成功！已檢索 ${ragCount} 道真題典範並生成 4 道專屬練習題！` 
+          : '✨ Gemini AI 智慧出題成功！已生成 4 道專屬練習題！', 'success');
+
+        const resContainer = document.getElementById('alchemyResultContainer');
+        if (resContainer) {
+          resContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
 
         const dq1 = appState.dailyQuests.find(q => q.id === 'dq-1');
         if (dq1 && dq1.progress < dq1.target) {
@@ -4352,11 +4397,11 @@
         tbody.innerHTML = `
           <tr>
             <td colspan="7" class="text-center py-8 text-slate-400">
-              <p class="text-base font-bold text-slate-300">尚無評量紀錄</p>
-              <p class="text-xs text-slate-500 mt-1">前往「五科地下城」挑戰或在「錯題煉金」完成題組練習後，成效將自動記錄在此！</p>
+              <p class="text-base font-bold text-slate-300">尚無測驗紀錄</p>
+              <p class="text-xs text-slate-500 mt-1">前往「測驗大廳」完成試卷或在「AI 弱點出題」完成練習後，紀錄將自動呈現在此！</p>
               <div class="mt-3">
-                <button type="button" onclick="switchTab('battle')" class="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-xs shadow-md">
-                  ⚔️ 前往地下城挑戰
+                <button type="button" onclick="switchTab('hub')" class="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-xs shadow-md">
+                  📝 前往測驗大廳
                 </button>
               </div>
             </td>
@@ -4376,7 +4421,7 @@
         return `
           <tr class="hover:bg-slate-900/60 transition-colors">
             <td class="px-4 py-3 font-semibold text-white flex items-center gap-1.5">
-              <span>${subMeta.icon}</span> <span>${r.title || '一般試煉'}</span>
+              <span>${subMeta.icon}</span> <span>${r.title || '一般測驗'}</span>
             </td>
             <td class="px-4 py-3 text-slate-300">${subMeta.name}</td>
             <td class="px-4 py-3 text-center font-mono font-bold">${r.score} / ${r.total}</td>
@@ -4476,7 +4521,7 @@
                 </div>
               </div>
             </td>
-            <td class="px-4 py-3 font-semibold text-slate-200">${r.title || '一般試煉'}</td>
+            <td class="px-4 py-3 font-semibold text-slate-200">${r.title || '一般測驗'}</td>
             <td class="px-4 py-3 text-slate-300">${subMeta.name}</td>
             <td class="px-4 py-3 text-center font-mono font-bold">${r.score} / ${r.total}</td>
             <td class="px-4 py-3 text-center font-bold ${r.accuracy >= 80 ? 'text-emerald-400' : 'text-amber-300'}">${r.accuracy}%</td>
@@ -4681,8 +4726,9 @@
       document.documentElement.style.setProperty('--q-font-scale', current.scale);
       const display = document.getElementById('fontScaleDisplay');
       if (display) display.textContent = current.label;
-      const modalDisplays = document.querySelectorAll('.fontScaleDisplayModal');
-      modalDisplays.forEach(el => { el.textContent = current.label; });
+      document.querySelectorAll('.fontScaleDisplayModal, .fontScaleDisplayAlchemy, .fontScaleDisplayGrimoire, .fontScaleDisplayLabel').forEach(el => {
+        el.textContent = current.label;
+      });
     }
 
     function changeQuestionFontSize(delta) {
