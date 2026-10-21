@@ -240,13 +240,21 @@ def test_ai_lively_explanation():
         "window.toggleSpeakModalLively",
         "window.openMistakeLivelyExplanation",
         "window.openHistoryLivelyExplanation",
-        "window.openAlchemyLivelyExplanation"
+        "window.openAlchemyLivelyExplanation",
+        "window.getMandarinVoice"
     ]
     for exp in window_exports:
         assert exp in html_content, f"缺少 window 導出: {exp}"
         print(f"  ✅ {exp}：全域導出確認正常")
 
-    # 4. 模擬生動活潑解析資料結構與備援生成邏輯
+    # 4. 驗證標準臺灣國語 (zh-TW) 朗讀設定
+    assert "getMandarinVoice" in html_content, "應具備 getMandarinVoice 國語語音獲取函式"
+    assert "zh-TW" in html_content, "語音合成語言應設定為繁體國語 zh-TW"
+    assert "國語朗讀" in html_content, "題目卡片應具備國語朗讀按鈕"
+    assert "isCantonese" in html_content, "國語語音檢索應嚴格排除粵語"
+    print("  ✅ 標準臺灣國語 (zh-TW) 語音庫獲取 (排除粵語，支援 Mei-Jia/Yating/Google 國語)：確認就緒")
+
+    # 5. 模擬生動活潑解析資料結構與備援生成邏輯
     mock_question = {
         "concept": "二元一次聯立方程式",
         "stem": "大雄買了 3 杯珍珠奶茶與 2 個菠蘿麵包共花 210 元，若珍奶比麵包貴 20 元，請問珍奶一杯多少元？",

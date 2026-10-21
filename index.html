@@ -1088,9 +1088,9 @@
             <button type="button" id="btnRepairBattleQuestion" onclick="openBattleQuestionRepairModal()" class="px-2.5 py-1 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-amber-200 text-xs font-bold transition-all active:scale-95 flex items-center gap-1 shadow-sm" title="若發現本題描述、選項或排版有疑問，可召喚 AI 修正重構">
               <span>🔧</span> <span>AI 修正</span>
             </button>
-            <!-- 英文語音朗讀播放按鈕 (TTS) -->
-            <button type="button" id="btnSpeakEnglish" onclick="toggleSpeakQuestion()" class="hidden px-2.5 py-1 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 border border-sky-400/40 text-sky-200 text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5 shadow-sm" title="朗讀英文題目與選項（支援標準美式英語語音合成）">
-              <span id="speakIcon">🔊</span> <span id="speakText">朗讀英文</span>
+            <!-- 國語語音朗讀播放按鈕 (TTS) -->
+            <button type="button" id="btnSpeakEnglish" onclick="toggleSpeakQuestion()" class="px-2.5 py-1 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 border border-sky-400/40 text-sky-200 text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5 shadow-sm" title="以標準臺灣國語朗讀題目與選項內容">
+              <span id="speakIcon">🔊</span> <span id="speakText">國語朗讀</span>
             </button>
             <!-- 題目字級即時微調 -->
             <div class="flex items-center gap-1.5 bg-slate-900/90 border border-slate-700/80 px-2.5 py-1 rounded-xl text-xs shadow-inner">
@@ -4977,8 +4977,53 @@
       launchBattleSession(appState.battle.title, appState.battle.bossName, appState.battle.questions);
     }
 
-    // ==================== 英文語音發音朗讀 (Web Speech API) ====================
+    // ==================== 國語語音發音朗讀 (Web Speech API) ====================
     let isSpeaking = false;
+    let cachedVoices = [];
+
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      cachedVoices = window.speechSynthesis.getVoices();
+      window.speechSynthesis.onvoiceschanged = () => {
+        cachedVoices = window.speechSynthesis.getVoices();
+      };
+    }
+
+    /**
+     * 獲取最適宜的標準臺灣國語 (Mandarin zh-TW) 語音合成物件
+     * 嚴格排除粵語 (zh-HK, yue) 與非中文語音
+     */
+    function getMandarinVoice() {
+      if (typeof window === 'undefined' || !('speechSynthesis' in window)) return null;
+      const voices = (cachedVoices && cachedVoices.length > 0) ? cachedVoices : window.speechSynthesis.getVoices();
+      if (!voices || voices.length === 0) return null;
+
+      // 優先順序 1：正統臺灣國語 (zh-TW, cmn-Hant-TW) 知名語音庫 (Mei-Jia, Yating, Hsiao-Chen, Zhiwei, Google 國語, Natural)
+      const twPreferred = voices.find(v => {
+        const lang = (v.lang || '').toLowerCase().replace(/_/g, '-');
+        const name = (v.name || '').toLowerCase();
+        const isTw = lang === 'zh-tw' || lang.startsWith('zh-tw') || lang === 'cmn-hant-tw' || lang === 'cmn-tw';
+        return isTw && (name.includes('mei-jia') || name.includes('yating') || name.includes('hsiao-chen') || name.includes('zhiwei') || name.includes('google') || name.includes('natural'));
+      });
+      if (twPreferred) return twPreferred;
+
+      // 優先順序 2：任一繁體臺灣國語語音 (zh-TW, cmn-Hant-TW)
+      const twAny = voices.find(v => {
+        const lang = (v.lang || '').toLowerCase().replace(/_/g, '-');
+        return lang === 'zh-tw' || lang.startsWith('zh-tw') || lang === 'cmn-hant-tw' || lang === 'cmn-tw';
+      });
+      if (twAny) return twAny;
+
+      // 優先順序 3：通用國語/普通話語音 (zh-CN, cmn-Hans, zh) 並嚴格排除粵語 (zh-HK, yue, Sin-Ji)
+      const zhMandarin = voices.find(v => {
+        const lang = (v.lang || '').toLowerCase().replace(/_/g, '-');
+        const name = (v.name || '').toLowerCase();
+        const isCantonese = lang === 'zh-hk' || lang === 'zh-mo' || lang.includes('yue') || name.includes('cantonese') || name.includes('sin-ji');
+        return (lang.startsWith('zh') || lang.startsWith('cmn')) && !isCantonese;
+      });
+      if (zhMandarin) return zhMandarin;
+
+      return null;
+    }
 
     function stopSpeaking() {
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
@@ -4991,7 +5036,7 @@
       const icon = document.getElementById('speakIcon');
       const txt = document.getElementById('speakText');
       if (icon) icon.textContent = '🔊';
-      if (txt) txt.textContent = '朗讀英文';
+      if (txt) txt.textContent = '國語朗讀';
     }
 
     function toggleSpeakQuestion() {
@@ -5012,28 +5057,30 @@
 
       stopSpeaking();
 
-      // 整理朗讀文本（題幹中的連續底線替換為 blank 以利自然發音）
-      const cleanStem = (q.stem || '').replace(/_{2,}/g, ' blank ');
-      let speechText = `Question. ${cleanStem}. `;
+      // 整理國語朗讀文本（將數學與符號轉為口語化發音）
+      let cleanStem = (q.stem || '').replace(/_{2,}/g, '空格');
+      if (window.humanizeMath) {
+        cleanStem = window.humanizeMath(cleanStem);
+      }
+      cleanStem = cleanStem.replace(/[\*\#\`\$\~]/g, '');
+
+      let speechText = `題目：${cleanStem}。`;
       if (Array.isArray(q.options) && q.options.length > 0) {
-        speechText += ' Options: ' + q.options.map((opt, i) => {
+        speechText += ' 請聽選項：' + q.options.map((opt, i) => {
           const letter = String.fromCharCode(65 + i);
-          const cleanOpt = opt.replace(/^[A-D]\.\s*/, '');
-          return `${letter}, ${cleanOpt}`;
-        }).join('. ') + '.';
+          let cleanOpt = opt.replace(/^[A-D]\.\s*/, '');
+          if (window.humanizeMath) cleanOpt = window.humanizeMath(cleanOpt);
+          cleanOpt = cleanOpt.replace(/[\*\#\`\$\~]/g, '');
+          return `選項 ${letter}，${cleanOpt}`;
+        }).join('。') + '。';
       }
 
       const utterance = new SpeechSynthesisUtterance(speechText);
-      utterance.lang = 'en-US';
-      utterance.rate = 0.92; // 適度微調語速，清晰自然符合國中學生聽力理解速度
+      utterance.lang = 'zh-TW';
+      utterance.rate = 0.98; // 清晰標準的國語語速
 
-      try {
-        const voices = window.speechSynthesis.getVoices();
-        const enVoice = voices.find(v => v.lang === 'en-US' && (v.name.includes('Samantha') || v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('US'))) ||
-                        voices.find(v => v.lang === 'en-US') ||
-                        voices.find(v => v.lang.startsWith('en'));
-        if (enVoice) utterance.voice = enVoice;
-      } catch (e) {}
+      const zhVoice = getMandarinVoice();
+      if (zhVoice) utterance.voice = zhVoice;
 
       utterance.onstart = () => {
         isSpeaking = true;
@@ -5160,13 +5207,8 @@
       utterance.lang = 'zh-TW';
       utterance.rate = 1.0;
 
-      try {
-        const voices = window.speechSynthesis.getVoices();
-        const zhVoice = voices.find(v => (v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW' || v.lang === 'zh-HK') && (v.name.includes('Yating') || v.name.includes('Mei-Jia') || v.name.includes('Hsiao-Chen') || v.name.includes('Google') || v.name.includes('Natural'))) ||
-                        voices.find(v => v.lang === 'zh-TW' || v.lang === 'cmn-Hant-TW') ||
-                        voices.find(v => v.lang.startsWith('zh'));
-        if (zhVoice) utterance.voice = zhVoice;
-      } catch (e) {}
+      const zhVoice = getMandarinVoice();
+      if (zhVoice) utterance.voice = zhVoice;
 
       utterance.onstart = () => {
         isSpeakingLively = true;
@@ -5431,16 +5473,10 @@
       // 換題時自動停止前一題朗讀
       stopSpeaking();
 
-      // 若為英文科或顯著英文內容題目，顯示語音朗讀按鈕
+      // 全學科題目均提供標準臺灣國語朗讀支援
       const btnSpeak = document.getElementById('btnSpeakEnglish');
       if (btnSpeak) {
-        const isEnglish = (q.subject === 'english') || 
-          (/^[A-Za-z0-9\s.,?!'"\-_():;]+$/.test((q.stem || '').replace(/[\u4e00-\u9fa5]/g, '').trim()) && (q.stem || '').length > 10);
-        if (isEnglish) {
-          btnSpeak.classList.remove('hidden');
-        } else {
-          btnSpeak.classList.add('hidden');
-        }
+        btnSpeak.classList.remove('hidden');
       }
 
       document.getElementById('battleDungeonBadge').textContent = b.title;
@@ -6916,6 +6952,7 @@
     window.openMistakeLivelyExplanation = openMistakeLivelyExplanation;
     window.openHistoryLivelyExplanation = openHistoryLivelyExplanation;
     window.openAlchemyLivelyExplanation = openAlchemyLivelyExplanation;
+    window.getMandarinVoice = getMandarinVoice;
 
     // ==================== 12. INITIALIZATION ====================
     window.onload = function () {
