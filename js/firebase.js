@@ -644,10 +644,12 @@ export class FirebaseService {
         concept: qData.concept || '考點解析',
         subject: qData.subject || 'math',
         grade: String(qData.grade || '8'),
+        diagramSvg: (typeof qData.diagramSvg === 'string' && qData.diagramSvg.includes('<svg')) ? qData.diagramSvg.trim() : null,
         hint: qData.hint || '掌握題幹關鍵條件，依循定義推導。',
         explanation: qData.explanation || '依據題意與核心觀念解題。',
-        school: qData.school || '學生拍照上傳考題',
+        school: qData.school || (qData.source === 'ai_repaired' ? 'AI 修正題型典範' : 'AI 精選好題典範'),
         source: qData.source || 'image_upload',
+        repairNote: qData.repairNote || null,
         vector: Array.isArray(qData.vector) ? qData.vector : null,
         uploaderUid: user?.uid || (auth?.currentUser?.uid || 'guest'),
         uploaderEmail: user?.email || (auth?.currentUser?.email || ''),
@@ -662,6 +664,39 @@ export class FirebaseService {
     } catch (err) {
       console.warn("⚠️ 同步至 Firestore 雲端 RAG 失敗 (仍保留本機儲存):", err);
       return null;
+    }
+  }
+
+  /**
+   * 將生題異常紀錄非同步同步至 Firestore 雲端集合以利跨端除錯
+   */
+  static async logAnomalyToCloud(anomaly) {
+    if (!this.isAvailable() || !anomaly) return false;
+    try {
+      const aId = anomaly.id || `anomaly-${Date.now()}`;
+      const payload = {
+        id: aId,
+        timestamp: anomaly.timestamp || new Date().toISOString(),
+        subject: anomaly.subject || 'math',
+        grade: String(anomaly.grade || '8'),
+        style: anomaly.style || 'progressive',
+        inputText: (anomaly.inputText || '').slice(0, 500),
+        hasImage: !!anomaly.hasImage,
+        model: anomaly.model || 'Gemini',
+        stage: anomaly.stage || 'generation',
+        errorReason: anomaly.errorReason || '',
+        rawResponse: (anomaly.rawResponse || '').slice(0, 3000),
+        faultyQuestion: anomaly.faultyQuestion || null,
+        status: anomaly.status || 'unresolved',
+        repairedQuestion: anomaly.repairedQuestion || null,
+        reporterUid: auth?.currentUser?.uid || 'anonymous',
+        createdAt: serverTimestamp()
+      };
+      await setDoc(doc(db, "generation_anomalies", aId), payload, { merge: true });
+      return true;
+    } catch (err) {
+      // 容錯靜默失敗
+      return false;
     }
   }
 

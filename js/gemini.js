@@ -79,6 +79,215 @@ export class GeminiService {
     return !!this.getApiKey();
   }
 
+  static ANOMALY_STORAGE_KEY = 'jh_quest_generation_anomalies';
+
+  /**
+   * 取得所有生題異常紀錄列表 (依時間由新至舊排序)
+   */
+  static getAnomalies() {
+    if (typeof localStorage === 'undefined') return [];
+    try {
+      const raw = localStorage.getItem(this.ANOMALY_STORAGE_KEY);
+      if (!raw) return [];
+      const list = JSON.parse(raw);
+      return Array.isArray(list) ? list : [];
+    } catch (e) {
+      console.warn('⚠️ 讀取生題異常紀錄失敗:', e);
+      return [];
+    }
+  }
+
+  /**
+   * 記錄一筆生題異常紀錄（本機快取＋派發全域更新事件）
+   * @param {Object} anomaly
+   */
+  static logAnomaly(anomaly) {
+    if (!anomaly) return null;
+    const list = this.getAnomalies();
+    const newRecord = {
+      id: anomaly.id || `anomaly-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      timestamp: anomaly.timestamp || new Date().toISOString(),
+      subject: anomaly.subject || 'math',
+      grade: String(anomaly.grade || '8'),
+      style: anomaly.style || 'progressive',
+      inputText: (anomaly.inputText || '').slice(0, 500),
+      hasImage: !!anomaly.hasImage,
+      model: anomaly.model || this.getModel(),
+      stage: anomaly.stage || 'generation', // 'network' | 'json_parse' | 'schema_validation' | 'question_flaw'
+      errorReason: anomaly.errorReason || '出題過程發生未預期異常',
+      rawResponse: (anomaly.rawResponse || '').slice(0, 3000),
+      faultyQuestion: anomaly.faultyQuestion || null,
+      status: anomaly.status || 'unresolved', // 'unresolved' | 'repaired' | 'dismissed'
+      repairedQuestion: anomaly.repairedQuestion || null,
+      repairNote: anomaly.repairNote || ''
+    };
+
+    list.unshift(newRecord);
+    // 最多保留最新 50 筆異常紀錄，避免佔據儲存空間
+    const trimmed = list.slice(0, 50);
+
+    if (typeof localStorage !== 'undefined') {
+      try {
+        localStorage.setItem(this.ANOMALY_STORAGE_KEY, JSON.stringify(trimmed));
+      } catch (e) {
+        console.warn('⚠️ 儲存生題異常紀錄失敗:', e);
+      }
+    }
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('generation-anomaly-logged', { detail: newRecord }));
+    }
+
+    // 若 Firebase Firestore 可用，嘗試非同步安全上報雲端
+    if (typeof window !== 'undefined' && window.FirebaseService && typeof window.FirebaseService.logAnomalyToCloud === 'function') {
+      window.FirebaseService.logAnomalyToCloud(newRecord).catch(() => {});
+    }
+
+    return newRecord;
+  }
+
+  /**
+   * 清空所有生題異常紀錄
+   */
+  static clearAnomalies() {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem(this.ANOMALY_STORAGE_KEY);
+    }
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('generation-anomalies-cleared'));
+    }
+  }
+
+  /**
+   * 刪除單筆生題異常紀錄
+   */
+  static deleteAnomaly(id) {
+    if (!id) return;
+    const list = this.getAnomalies().filter(item => item.id !== id);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(this.ANOMALY_STORAGE_KEY, JSON.stringify(list));
+    }
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('generation-anomaly-deleted', { detail: { id } }));
+    }
+  }
+
+  /**
+   * 更新單筆生題異常紀錄（如 AI 修復成功後更新狀態）
+   */
+  static updateAnomaly(id, patch = {}) {
+    if (!id) return;
+    const list = this.getAnomalies();
+    const idx = list.findIndex(item => item.id === id);
+    if (idx >= 0) {
+      list[idx] = { ...list[idx], ...patch, updatedAt: new Date().toISOString() };
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(this.ANOMALY_STORAGE_KEY, JSON.stringify(list));
+      }
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('generation-anomaly-updated', { detail: list[idx] }));
+      }
+    }
+  }
+
+  /**
+   * 使用 Gemini AI 修正與重構題目（支援自修復與人工指定需求）
+   * @param {Object} params
+   * @param {Object} [params.faultyQuestion] 待修復的題目物件
+   * @param {string} [params.errorReason] 題目發生的錯誤或瑕疵原因
+   * @param {string} [params.userInstruction] 使用者自訂的修復要求 (例如：補全直角三角形 SVG 幾何圖形)
+   * @param {string} [params.subject] 科目 (chinese, english, math, science, social)
+   * @param {string} [params.grade] 年級 (7, 8, 9)
+   * @param {string} [params.apiKey] 可選 API Key
+   */
+  static async repairQuestion({ faultyQuestion = {}, errorReason = '', userInstruction = '', subject = 'math', grade = '8', apiKey = '' }) {
+    const key = apiKey || this.getApiKey();
+    if (!key) {
+      throw new Error('請先輸入 Gemini API Key！');
+    }
+
+    const cleanSubject = subject || faultyQuestion.subject || 'math';
+    const cleanGrade = String(grade || faultyQuestion.grade || '8');
+    const endpoint = this.getApiEndpoint(key);
+
+    const repairPrompt = `你是一位精通台灣國中教育會考與段考命題規範的頂尖名師兼命題修復專家。
+以下有一道國中評量題目存在結構或內容瑕疵，請你依循標準題庫格式進行「精確修正與重構」。
+
+【題目背景】
+- 科目領域：${cleanSubject}
+- 適合學年：國中 ${cleanGrade} 年級
+- 瑕疵/錯誤說明：${errorReason || '題目結構、選項或題幹不符合嚴格規範'}
+- 使用者額外指示：${userInstruction || '請修正所有瑕疵，輸出完美合規的高素養國中題目'}
+
+【待修復題目原始內容】
+\`\`\`json
+${JSON.stringify(faultyQuestion, null, 2)}
+\`\`\`
+
+【嚴格修復準則】
+1. 選項格式：必須「恰好 4 個單選選項」，依序標註為 "A. ...", "B. ...", "C. ...", "D. ..."。
+2. 正確答案：answer 必須為合法整數 (0, 1, 2 或 3)，且必須與題意及 explanation 完全對應。
+3. 數學與符號：嚴禁任何裸露的 LaTeX 標記（如 \\frac{a}{b}、\\times 等），一律使用人類自然易懂排版（如 a / b、x²、√16、×、÷、≤、≥）。
+4. 英文科規範：嚴禁聽力測驗，嚴禁依賴未提供的外部短文，題幹必須自給自足。
+5. 向量圖形 (SVG)：
+   - 若題目為幾何（三角形、坐標、圓）、理化實驗（電路、天平、透鏡）、地科生物圖形，請在 "diagramSvg" 欄位提供完整合法的標準 SVG 代碼（viewBox="0 0 360 220" width="100%"，深色主題高對比配色 stroke="#38bdf8"、文字 fill="#f8fafc"）。
+   - 若為純文字計算題或文法題，不需要圖形時，"diagramSvg" 填 null。
+6. 格式要求：請務必輸出標準 JSON 物件，嚴禁包含 Markdown 標記，結構如下：
+{
+  "concept": "核心考點名稱",
+  "stem": "修復後的完整題幹敘述",
+  "diagramSvg": null, // 或合法的標準 <svg ...>...</svg> 代碼
+  "options": [
+    "A. 選項內容",
+    "B. 選項內容",
+    "C. 選項內容",
+    "D. 選項內容"
+  ],
+  "answer": 0,
+  "hint": "提示引導（不直接說出答案，提示思考方向）",
+  "explanation": "詳細解析與步驟推導",
+  "repairNote": "簡述本次修正了哪些瑕疵與優化重點（繁體中文，50字內）"
+}`;
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [
+          { role: 'user', parts: [{ text: repairPrompt }] }
+        ],
+        generationConfig: {
+          responseMimeType: 'application/json',
+          temperature: 0.4
+        }
+      })
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(`AI 題目修復失敗：${err.error?.message || response.statusText}`);
+    }
+
+    const data = await response.json();
+    const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!rawText) throw new Error('AI 未回傳修復後題目。');
+
+    const repaired = JSON.parse(rawText);
+    repaired.subject = cleanSubject;
+    repaired.grade = cleanGrade;
+    repaired.id = faultyQuestion.id || `repaired-${Date.now()}`;
+    repaired.stem = humanizeMath(repaired.stem || '');
+    if (Array.isArray(repaired.options)) {
+      repaired.options = repaired.options.map(opt => humanizeMath(opt));
+    }
+    if (repaired.hint) repaired.hint = humanizeMath(repaired.hint);
+    if (repaired.explanation) repaired.explanation = humanizeMath(repaired.explanation);
+    if (repaired.concept) repaired.concept = humanizeMath(repaired.concept);
+    repaired.diagramSvg = (typeof repaired.diagramSvg === 'string' && repaired.diagramSvg.includes('<svg')) ? repaired.diagramSvg.trim() : null;
+
+    return repaired;
+  }
+
   /**
    * 測試 API Key 與所選模型連線狀態
    */
@@ -309,12 +518,30 @@ JSON 結構必須精確符合以下規格：
     if (!response.ok) {
       const err = await response.json().catch(() => ({}));
       const msg = err.error?.message || `HTTP ${response.status}`;
+      this.logAnomaly({
+        subject: cleanSubject,
+        grade: grade || '8',
+        style,
+        inputText,
+        hasImage: !!cleanBase64,
+        stage: 'network',
+        errorReason: `Gemini API 網路或金鑰錯誤 (${this.getModel()}): ${msg}`
+      });
       throw new Error(`Gemini AI 出題失敗 (${this.getModel()})：${msg}`);
     }
 
     const data = await response.json();
     const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!rawText) {
+      this.logAnomaly({
+        subject: cleanSubject,
+        grade: grade || '8',
+        style,
+        inputText,
+        hasImage: !!cleanBase64,
+        stage: 'generation',
+        errorReason: 'Gemini API 回應內容為空。'
+      });
       throw new Error('Gemini API 未回傳有效題目內容。');
     }
 
@@ -357,23 +584,76 @@ JSON 結構必須精確符合以下規格：
         throw new Error('回傳之題目列表為空。');
       }
 
-      // 確保每道題皆具備所屬科目與年級，並全面清洗轉換任何潛在的 LaTeX 數學符號為人類直觀格式
-      parsed.questions.forEach((q, idx) => {
-        q.id = `gemini-${Date.now()}-${idx}`;
-        q.subject = cleanSubject;
-        q.grade = grade || '8';
-        if (!q.concept) q.concept = parsed.concept || '核心考點';
-        q.diagramSvg = (typeof q.diagramSvg === 'string' && q.diagramSvg.includes('<svg')) ? q.diagramSvg.trim() : null;
+      // 確保每道題皆具備合法規格；若檢測出格式瑕疵，主動記錄異常並即時召喚 AI 修正
+      const safeQuestions = [];
+      for (let idx = 0; idx < parsed.questions.length; idx++) {
+        let q = parsed.questions[idx];
+        const isFaulty = !q || !q.stem || !Array.isArray(q.options) || q.options.length !== 4 || typeof q.answer !== 'number' || q.answer < 0 || q.answer > 3;
 
-        // 題目文字全面人類化清洗
-        q.stem = humanizeMath(q.stem);
-        if (Array.isArray(q.options)) {
-          q.options = q.options.map(opt => humanizeMath(opt));
+        if (isFaulty) {
+          const flawReason = !q ? '題目物件為空' : (!q.stem ? '題幹為空' : (!Array.isArray(q.options) || q.options.length !== 4 ? `選項數量異常 (${q.options?.length || 0} 個，應為 4 個)` : `答案索引超出範圍 (${q.answer})`));
+
+          const anomalyRecord = this.logAnomaly({
+            subject: cleanSubject,
+            grade: grade || '8',
+            style,
+            inputText,
+            hasImage: !!cleanBase64,
+            stage: 'schema_validation',
+            errorReason: `第 ${idx + 1} 題規格瑕疵：${flawReason}`,
+            rawResponse: rawText,
+            faultyQuestion: q
+          });
+
+          // 🚀 自動呼叫 AI 進行自我修復 (Self-Correction)
+          try {
+            console.warn(`⚠️ 偵測到生題規格瑕疵 (${flawReason})，正在呼叫 AI 自動修復...`);
+            const repaired = await this.repairQuestion({
+              faultyQuestion: q,
+              errorReason: flawReason,
+              subject: cleanSubject,
+              grade: grade || '8',
+              apiKey
+            });
+            if (repaired && repaired.stem && Array.isArray(repaired.options) && repaired.options.length === 4) {
+              q = repaired;
+              q.isRepaired = true;
+              if (anomalyRecord && anomalyRecord.id) {
+                this.updateAnomaly(anomalyRecord.id, {
+                  status: 'repaired',
+                  repairedQuestion: repaired,
+                  repairNote: repaired.repairNote || '生題階段自動校正修復成功'
+                });
+              }
+            }
+          } catch (repairErr) {
+            console.warn('⚠️ AI 自動修正生題失敗:', repairErr);
+          }
         }
-        if (q.hint) q.hint = humanizeMath(q.hint);
-        if (q.explanation) q.explanation = humanizeMath(q.explanation);
-        if (q.concept) q.concept = humanizeMath(q.concept);
-      });
+
+        if (q && q.stem) {
+          q.id = q.id || `gemini-${Date.now()}-${idx}`;
+          q.subject = cleanSubject;
+          q.grade = grade || '8';
+          if (!q.concept) q.concept = parsed.concept || '核心考點';
+          q.diagramSvg = (typeof q.diagramSvg === 'string' && q.diagramSvg.includes('<svg')) ? q.diagramSvg.trim() : null;
+
+          // 題目文字全面人類化清洗
+          q.stem = humanizeMath(q.stem);
+          if (Array.isArray(q.options)) {
+            q.options = q.options.map(opt => humanizeMath(opt));
+          }
+          if (q.hint) q.hint = humanizeMath(q.hint);
+          if (q.explanation) q.explanation = humanizeMath(q.explanation);
+          if (q.concept) q.concept = humanizeMath(q.concept);
+          safeQuestions.push(q);
+        }
+      }
+
+      parsed.questions = safeQuestions;
+      if (parsed.questions.length === 0) {
+        throw new Error('生題結果未包含任何有效題目。');
+      }
 
       // 試題包主旨與解析重點同步人類化
       parsed.topicTitle = humanizeMath(parsed.topicTitle);
@@ -384,6 +664,16 @@ JSON 結構必須精確符合以下規格：
       return parsed;
     } catch (parseError) {
       console.error('JSON Parse Error, Raw:', rawText);
+      this.logAnomaly({
+        subject: cleanSubject,
+        grade: grade || '8',
+        style,
+        inputText,
+        hasImage: !!cleanBase64,
+        stage: 'json_parse',
+        errorReason: `回傳內容非合法 JSON：${parseError.message}`,
+        rawResponse: rawText
+      });
       throw new Error('解析 AI 回傳題目 JSON 失敗，請重試一次。');
     }
   }

@@ -117,18 +117,24 @@ export class RagEngine {
       }
     }
 
+    const defaultSchool = qData.source === 'ai_repaired' 
+      ? 'AI 修正題型典範' 
+      : (qData.source === 'ai_curated' ? 'AI 精選好題典範' : '學生拍照上傳考題');
+
     const newQuestion = {
       id: qData.id || `custom-rag-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
       subject: cleanSubject,
       grade: cleanGrade,
       concept: cleanConcept,
       stem: qData.stem.trim(),
+      diagramSvg: (typeof qData.diagramSvg === 'string' && qData.diagramSvg.includes('<svg')) ? qData.diagramSvg.trim() : null,
       options: Array.isArray(qData.options) ? qData.options : [],
       answer: typeof qData.answer === 'number' ? qData.answer : 0,
       hint: qData.hint || '掌握題幹關鍵條件，依循定義推導。',
       explanation: qData.explanation || '依據題意與核心觀念解題。',
-      school: qData.school || '學生拍照上傳考題',
+      school: qData.school || defaultSchool,
       source: qData.source || 'image_upload',
+      repairNote: qData.repairNote || null,
       createdAt: qData.createdAt || new Date().toISOString(),
       vector: vector || null,
       cloudSynced: false

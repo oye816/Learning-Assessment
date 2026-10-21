@@ -1,5 +1,5 @@
 // 新北升學名校（永和國中、福和國中、海山國中）段考全真題庫
-// 自動彙整全學期三大段考真題，總收錄 3696 題名校純淨自給自足真題
+// 自動彙整全學期三大段考真題，總收錄 3556 題名校純淨自給自足真題
 
 const REAL_EXAM_QUESTIONS = [
   {
@@ -638,26 +638,6 @@ const REAL_EXAM_QUESTIONS = [
     ],
     "answer": 1,
     "explanation": "新北市立永和國中 114-1-2 定期評量七年級國文科第 1 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "yh-11412-chi-3",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "chinese",
-    "grade": "7",
-    "concept": "國文：詞義推敲與一字多義",
-    "stem": "下列「」中的字義，何者兩兩相同？",
-    "options": [
-      "A. 道德「淪」喪／「淪」落街頭",
-      "C. 眼花「撩」亂／姿態「撩」人",
-      "D. 移交「差」使╱參「差」不齊。",
-      "B. 三「省」吾身／晨昏定「省」"
-    ],
-    "answer": 3,
-    "explanation": "新北市立永和國中 114-1-2 定期評量七年級國文科第 3 題真題。",
     "semester": "1",
     "stage": "2",
     "stage_name": "第1學期・第2次段考"
@@ -2358,26 +2338,6 @@ const REAL_EXAM_QUESTIONS = [
     ],
     "answer": 1,
     "explanation": "新北市立永和國中 114-1-2 定期評量七年級社會科第 46 題真題。",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考"
-  },
-  {
-    "id": "yh-11412-soc-49",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "subject": "social",
-    "grade": "7",
-    "concept": "公民：個人與多元家庭型態與親屬權利",
-    "stem": "林老伯創立知名太陽餅店 60 年，他把自己大哥的親生女兒潤娥視為 己出，甚至認她為乾女兒，希望她和兒子柏宏兩人能夠一同經營餅店。但林老伯過世之後，柏宏要求潤娥離開，理 由是「潤娥和林老伯之間並無血親關係」 ，潤娥只好和先生另起爐灶。請問：柏宏所陳述的理由是否符合《民法》對 於血親關係的定義？(L3)",
-    "options": [
-      "A. 符合，因為林老伯並未至法院聲請收養潤娥",
-      "C. 不符合，兩人因婚姻存續而產生血親關係",
-      "B. 符合，因為乾女兒不是法律規定的血親關係",
-      "D. 不符合，兩人是具有血緣關係的旁系血親。"
-    ],
-    "answer": 3,
-    "explanation": "新北市立永和國中 114-1-2 定期評量七年級社會科第 49 題真題。",
     "semester": "1",
     "stage": "2",
     "stage_name": "第1學期・第2次段考"
@@ -8402,27 +8362,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【C】。本題測驗核心為「國文：語文素養與生活閱讀理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "hs-11-9-chi-31",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "chinese",
-    "grade": "9",
-    "concept": "國文：修辭技巧與感官摹寫",
-    "stem": "關於本文的寫作手法，下列敘述何者有誤？",
-    "options": [
-      "A. 首段以層遞法由遠而近鋪寫中央山脈之美",
-      "C. 第三段以擬人法寫活了天、雲、山的倒影",
-      "B. 第二段以譬喻法描繪天空的澄淨透藍",
-      "D. 文末將「天和山」以轉化法掛到犁頭上"
-    ],
-    "answer": 0,
-    "hint": "請回想「國文：修辭技巧與感官摹寫」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「國文：修辭技巧與感官摹寫」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "hs-11-9-chi-32",
     "school": "海山國中",
     "exam": "114學年度第1學期第1次段考",
@@ -8484,27 +8423,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 2,
     "hint": "請回想「國文：語文素養與生活閱讀理解」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【C】。本題測驗核心為「國文：語文素養與生活閱讀理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-11-9-chi-35",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "chinese",
-    "grade": "9",
-    "concept": "國文：語文素養與生活閱讀理解",
-    "stem": "下列哪一個選項的語句，未見異國情調的描寫？",
-    "options": [
-      "A. 用吉力馬札羅山上咖啡豆磨成的飲料",
-      "C. 一枚葉子落下，飄散著香榭麗舍大道的清香",
-      "B. 下車，我走進文藝復興式的藝廊下",
-      "D. 我日日旅行，在我們的城市裡"
-    ],
-    "answer": 3,
-    "hint": "請回想「國文：語文素養與生活閱讀理解」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「國文：語文素養與生活閱讀理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "hs-11-9-chi-36",
@@ -9303,27 +9221,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 1,
     "hint": "請回想「數學：核心概念理解與運算」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【B】。本題測驗核心為「數學：核心概念理解與運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-22-9-mat-20",
-    "school": "海山國中",
-    "exam": "114學年度第2學期第2次段考",
-    "semester": "2",
-    "stage": "2",
-    "stage_name": "第2學期・第2次段考",
-    "subject": "math",
-    "grade": "9",
-    "concept": "數學：核心概念理解與運算",
-    "stem": "若𝑎、𝑏、𝑐為正數，已知𝑎 + 𝑏 + 𝑐 = 12，且 𝑏+𝑐 𝑎 𝑏 𝑐",
-    "options": [
-      "B. 12",
-      "C. 13 + 1 𝑎+𝑐 + 1 𝑎+𝑏 7 = ， 6 + 𝑎+𝑐 + 𝑎+𝑏 =？ 𝑏+𝑐 求",
-      "A. 11",
-      "D. 14 ̅̅̅̅ = 𝐴𝐶 ̅̅̅̅ ，求𝐴𝐵 ̅̅̅̅ 和𝐵𝐶 ̅̅̅̅ 的比值為多少？"
-    ],
-    "answer": 0,
-    "hint": "請回想「數學：核心概念理解與運算」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「數學：核心概念理解與運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "hs-22-9-mat-22",
@@ -10502,27 +10399,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【B】。本題測驗核心為「英文：現在完成式與時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "hs-22-9-eng-29",
-    "school": "海山國中",
-    "exam": "114學年度第2學期第2次段考",
-    "semester": "2",
-    "stage": "2",
-    "stage_name": "第2學期・第2次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：關係代名詞與子句",
-    "stem": "Matt still didn’t get the point ________ his girlfriend was so mad at him. He didn’t notice the mistake ________ he made.",
-    "options": [
-      "A. that; that",
-      "C. that; ╳",
-      "B. why; what",
-      "D. why; ╳"
-    ],
-    "answer": 3,
-    "hint": "請回想「英文：關係代名詞與子句」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「英文：關係代名詞與子句」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "hs-22-9-eng-30",
     "school": "海山國中",
     "exam": "114學年度第2學期第2次段考",
@@ -10626,27 +10502,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 2,
     "hint": "請回想「社會：社會領域核心素養」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【C】。本題測驗核心為「社會：社會領域核心素養」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-12-9-eng-15",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：現在完成式與時態",
-    "stem": "The new MRT stations _______ in two years. It’ll be more convenient for the people in the city.",
-    "options": [
-      "A. are built",
-      "B. are going to build",
-      "C. will be built",
-      "D. have been built 16 I want to know ________"
-    ],
-    "answer": 2,
-    "hint": "請回想「英文：現在完成式與時態」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「英文：現在完成式與時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "hs-12-9-eng-28",
@@ -14093,27 +13948,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【C】。本題測驗核心為「英文：現在完成式與時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "hs-21-9-eng-18",
-    "school": "海山國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：現在完成式與時態",
-    "stem": "Before the big exam, some students stayed up all night to _____ for the history test.",
-    "options": [
-      "A. treat",
-      "B. study",
-      "C. wake",
-      "B. pick"
-    ],
-    "answer": 1,
-    "hint": "請回想「英文：現在完成式與時態」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「英文：現在完成式與時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "hs-21-9-eng-19",
     "school": "海山國中",
     "exam": "114學年度第2學期第1次段考",
@@ -14345,27 +14179,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【D】。本題測驗核心為「英文：情態助動詞用法」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "hs-21-9-eng-30",
-    "school": "海山國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：現在完成式與時態",
-    "stem": "In the science class, all the students _____ to wear glasses to protect their eyes.",
-    "options": [
-      "A. are told",
-      "B. are telling",
-      "C. have told",
-      "D. told (31~33) Dear Kevin, How are you? I hope you are having a great week at school. I am writing to you because I am learning about English proverbs in my English class. Do you know any? My favorite one is “Practice makes perfect.” I think it is very true. When I first started playing the piano, I was not very good. However, I practiced it every day for two years. Now, I can play many beautiful songs. It was hard work, but it was worth it. Another proverb I like is “Actions speak louder than words.” It means that what we do is more important than what we say. If we want to be good friends, we should help others, not just say nice things. Sometimes, I also think of “Where there is a will, there is a way.” When I have a difficult math problem, I remind myself not to give up easily. If I really want to solve it, I will find a way to do it. What about you? Do you have your favorite proverb? I would love to hear your thoughts. Maybe you can share some proverbs in your language, too. Let’s talk more about this when we meet this weekend. Best wishes, Amy  proverb 諺語 ；worth 值得的；will 意志；remind 提醒；suggest 建議"
-    ],
-    "answer": 0,
-    "hint": "請回想「英文：現在完成式與時態」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「英文：現在完成式與時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "hs-21-9-eng-31",
     "school": "海山國中",
     "exam": "114學年度第2學期第1次段考",
@@ -14450,90 +14263,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【C】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "hs-21-7-eng-16",
-    "school": "海山國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：特殊疑問句型與日常問答",
-    "stem": "A: Where an hour",
-    "options": [
-      "B. in; on",
-      "A. never",
-      "D. pianos a bad week.",
-      "B. stand out"
-    ],
-    "answer": 1,
-    "hint": "請回想「英文：特殊疑問句型與日常問答」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「英文：特殊疑問句型與日常問答」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-21-7-eng-18",
-    "school": "海山國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "Rebecca is always happy with her life, but her husband",
-    "options": [
-      "A. is never",
-      "D. always",
-      "B. never does .",
-      "C. does never"
-    ],
-    "answer": 3,
-    "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-21-7-eng-20",
-    "school": "海山國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：關係代名詞與子句",
-    "stem": "Mr. Portman seldom takes a shower in the morning. He usually",
-    "options": [
-      "A. do",
-      "B. takes",
-      "D. goes; check that after dinner.",
-      "C. does"
-    ],
-    "answer": 2,
-    "hint": "請回想「英文：關係代名詞與子句」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「英文：關係代名詞與子句」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-21-7-eng-22",
-    "school": "海山國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：情態助動詞用法",
-    "stem": "Dad: Cody, can you help me",
-    "options": [
-      "D. never is",
-      "D. taking . She is tall and beautiful.",
-      "C. nose; legs",
-      "D. eyes; hair"
-    ],
-    "answer": 3,
-    "hint": "請回想「英文：情態助動詞用法」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「英文：情態助動詞用法」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "hs-21-7-eng-24",
     "school": "海山國中",
     "exam": "114學年度第2學期第1次段考",
@@ -14595,27 +14324,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 1,
     "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【B】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-21-7-eng-27",
-    "school": "海山國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：進行式與過去時態",
-    "stem": "Which(哪一個) is true(正確的)?",
-    "options": [
-      "A. The bus comes every thirty minutes.",
-      "B. Matt doesn’t know the answer of the question.",
-      "C. Who can play piano but can’t play the baseball?",
-      "D. Mandy makes cakes in Sunday mornings."
-    ],
-    "answer": 0,
-    "hint": "請回想「英文：進行式與過去時態」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「英文：進行式與過去時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "hs-21-7-eng-32",
@@ -15563,27 +15271,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【D】。本題測驗核心為「生物：遺傳法則與生物演化」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "hs-21-7-sci-39",
-    "school": "海山國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "自然科學：核心科學觀念理解",
-    "stem": "祖父的耳垂性狀為何？",
-    "options": [
-      "A. 只能是緊貼",
-      "C. 分離、緊貼都可能",
-      "B. 只能是分離",
-      "D. 無法判斷。"
-    ],
-    "answer": 1,
-    "hint": "請回想「自然科學：核心科學觀念理解」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "hs-21-7-sci-40",
     "school": "海山國中",
     "exam": "114學年度第2學期第1次段考",
@@ -16382,27 +16069,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【C】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "hs-13-7-eng-14",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：現在完成式與時態",
-    "stem": "Judy is from lunch. me clean up the house?",
-    "options": [
-      "D. help . Today is a big day for her, and she is on the stage（舞台）. Many people are looking at her.",
-      "A. enough",
-      "B. nervous",
-      "C. tall"
-    ],
-    "answer": 1,
-    "hint": "請回想「英文：現在完成式與時態」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「英文：現在完成式與時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "hs-13-7-eng-15",
     "school": "海山國中",
     "exam": "114學年度第1學期第3次段考",
@@ -16466,27 +16132,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【D】。本題測驗核心為「英文：現在完成式與時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "hs-13-7-eng-19",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "( ( ( ( ( ( ( ( ( is on December 24.",
-    "options": [
-      "A. New Year’s Day",
-      "B. New Year’s Eve",
-      "B. with",
-      "C. Christmas Eve"
-    ],
-    "answer": 2,
-    "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "hs-13-7-eng-20",
     "school": "海山國中",
     "exam": "114學年度第1學期第3次段考",
@@ -16517,7 +16162,7 @@ const REAL_EXAM_QUESTIONS = [
     "subject": "english",
     "grade": "7",
     "concept": "英文：進行式與過去時態",
-    "stem": "The baby elephants are playing their parents.",
+    "stem": "The baby elephants are playing ______ their parents.",
     "options": [
       "A. to",
       "B. with",
@@ -16613,48 +16258,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【D】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "hs-13-7-eng-28",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：現在完成式與時態",
-    "stem": "A: Are there",
-    "options": [
-      "A. some；any ( the gifts on her birthday.",
-      "A. for",
-      "B. to",
-      "D. water books on the desk？ B: Yes, there are _______ books."
-    ],
-    "answer": 1,
-    "hint": "請回想「英文：現在完成式與時態」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「英文：現在完成式與時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-13-7-eng-29",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "Jimmy is studying English",
-    "options": [
-      "A. in",
-      "D. behind; near",
-      "C. on",
-      "C. his；any the desk."
-    ],
-    "answer": 3,
-    "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "hs-13-7-eng-30",
     "school": "海山國中",
     "exam": "114學年度第1學期第3次段考",
@@ -16695,27 +16298,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 2,
     "hint": "請回想「英文：特殊疑問句型與日常問答」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【C】。本題測驗核心為「英文：特殊疑問句型與日常問答」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-13-7-eng-33",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "Thanks to my mother’s help,",
-    "options": [
-      "A. here is one example",
-      "D. the last .",
-      "B. the horses are my favorite animals",
-      "C. lions are the king of animals"
-    ],
-    "answer": 3,
-    "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "hs-13-7-eng-34",
@@ -18083,132 +17665,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【D】。本題測驗核心為「社會：臺灣歷史變遷與發展」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "hs-13-7-mat-4",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "math",
-    "grade": "7",
-    "concept": "數學：核心概念理解與運算",
-    "stem": "下列選項中何者與 −",
-    "options": [
-      "A. 3 2 (−6𝑥 + 8)",
-      "B. 3(−3𝑥 − 4)",
-      "B. 1",
-      "C. 3(−3𝑥 + 4)"
-    ],
-    "answer": 1,
-    "hint": "請回想「數學：核心概念理解與運算」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「數學：核心概念理解與運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-13-7-mat-14",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "math",
-    "grade": "7",
-    "concept": "數學：指數律與科學記號",
-    "stem": "( 5 3 ，則 𝑎 為多少？ 3",
-    "options": [
-      "D. 5 )如果一元一次方程式 4(𝑎𝑥 + 7) − 9 = 15 的解為 𝑥 = − 5 3",
-      "B. 5 3",
-      "C. − 3 5 )綜合水果禮盒一盒和鮮花一束共840元，海山科技公司共買了綜合水果6盒和鮮花2束，合 計3000元，則鮮花一束多少元？",
-      "A. 330"
-    ],
-    "answer": 3,
-    "hint": "請回想「數學：指數律與科學記號」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「數學：指數律與科學記號」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-13-7-mat-16",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "math",
-    "grade": "7",
-    "concept": "數學：指數律與科學記號",
-    "stem": "下列為阿雄解一元一次方程式 𝑥−5 3 − 2𝑥−8 2",
-    "options": [
-      "D. 20 = 10 的過程，哪一個步驟開始出現錯誤？ 步驟二： 2x − 10 − 6x − 24 = 10 步驟三： 4x = 44 步驟四： x = 11",
-      "B. 步驟二",
-      "C. 步驟三",
-      "B. 9"
-    ],
-    "answer": 0,
-    "hint": "請回想「數學：指數律與科學記號」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「數學：指數律與科學記號」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-12-7-eng-13",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "______, Tony.",
-    "options": [
-      "B. sure",
-      "C. free",
-      "D. safe",
-      "C. Take a picture"
-    ],
-    "answer": 3,
-    "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-12-7-eng-16",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：情態助動詞用法",
-    "stem": "A: What day can Mike go swimming?",
-    "options": [
-      "A. Sunday.",
-      "C. on 8:00 p.m.",
-      "D. at 8:00 in the afternoon. B: ______",
-      "B. Tuesdays."
-    ],
-    "answer": 2,
-    "hint": "請回想「英文：情態助動詞用法」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「英文：情態助動詞用法」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-12-7-eng-18",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "A:______ you play basketball well? B: Sure. I am good at it.",
-    "options": [
-      "A. Are",
-      "B. Is",
-      "D. he; he well 很好地",
-      "C. Does"
-    ],
-    "answer": 3,
-    "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "hs-12-7-eng-23",
     "school": "海山國中",
     "exam": "114學年度第1學期第2次段考",
@@ -18249,27 +17705,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 2,
     "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【C】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-12-7-eng-25",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：現在完成式與時態",
-    "stem": "Look! Mike ______ the dog.",
-    "options": [
-      "A. can play",
-      "B. is playing",
-      "A. She is making an online video call to her grandma now.) Dora：Hello, Grandma. Grandma：Hello, sweetie. How (26) your trip? Dora：Great. We have a lot of fun here. But it is so cold in the US",
-      "A. I don’t like it. Grandma：I see. What time is it in the USA? Dora： (27) . And it’s Sunday evening here. Is it seven in Taiwan, too? Grandma：Yes, it is. It’s Monday morning in Taiwan. Dora：Are you (28) breakfast now? Grandma：Yes, I am. Dora：What about Grandpa? (29) is he? Grandma：He is in the bedroom, and he is reading. What are your parents doing? Dora：Mom is cooking dinner in the kitchen, and (30) is making tea. Grandma：OK. Say hi to your parents for me. Goodbye, sweetie. Dora：Bye, Grandma.  trip 旅行 online video call 線上視訊通話 have a lot of fun 玩得很開心 breakfast 早餐"
-    ],
-    "answer": 3,
-    "hint": "請回想「英文：現在完成式與時態」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「英文：現在完成式與時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "hs-12-7-eng-31",
@@ -19908,27 +19343,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 2,
     "hint": "請回想「社會：公民權利、法治與經濟生活」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【C】。本題測驗核心為「社會：公民權利、法治與經濟生活」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-22-7-soc-35",
-    "school": "海山國中",
-    "exam": "114學年度第2學期第2次段考",
-    "semester": "2",
-    "stage": "2",
-    "stage_name": "第2學期・第2次段考",
-    "subject": "social",
-    "grade": "7",
-    "concept": "社會：社會領域核心素養",
-    "stem": "根據文章內容推論，文末的",
-    "options": [
-      "C. 曾文溪",
-      "D. 高屏溪 最可能為下列何者？",
-      "A. 降低農業生產成本",
-      "B. 增加農業機械化程度"
-    ],
-    "answer": 3,
-    "hint": "請回想「社會：社會領域核心素養」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「社會：社會領域核心素養」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "hs-22-7-soc-36",
@@ -21758,27 +21172,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【A】。本題測驗核心為「生物：細胞構造與能量代謝」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "hs-11-7-sci-22",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：細胞構造與能量代謝",
-    "stem": "①紅血球主要運送的物質是甚麼? ②此物質會用甚麼方式進出紅血球細胞?",
-    "options": [
-      "A. ①氧 氣、②甲方式",
-      "B. ①氧",
-      "D. ①氧 氣、②甲、乙方式皆可。 氣、②乙方式",
-      "C. ①二氧化碳、②甲方式"
-    ],
-    "answer": 0,
-    "hint": "請回想「生物：細胞構造與能量代謝」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「生物：細胞構造與能量代謝」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "hs-11-7-sci-23",
     "school": "海山國中",
     "exam": "114學年度第1學期第1次段考",
@@ -21840,27 +21233,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 3,
     "hint": "請回想「自然科學：核心科學觀念理解」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【D】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-11-7-sci-26",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：細胞構造與能量代謝",
-    "stem": "更換為丙鏡頭並重新調整後，可清楚看到細胞，此時視野中的影像會有甚麼變化?",
-    "options": [
-      "A. 可看到的細 胞數目變少",
-      "D. 看到更大的 X 細胞",
-      "C. 可能看到完整的 X 細胞",
-      "D. 只能看到 Y 細胞。"
-    ],
-    "answer": 2,
-    "hint": "請回想「生物：細胞構造與能量代謝」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「生物：細胞構造與能量代謝」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "hs-11-7-sci-27",
@@ -22115,27 +21487,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【B】。本題測驗核心為「英文：現在完成式與時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "hs-23-7-eng-14",
-    "school": "海山國中",
-    "exam": "114學年度第2學期第3次段考",
-    "semester": "2",
-    "stage": "3",
-    "stage_name": "第2學期・第3次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：現在完成式與時態",
-    "stem": "A: Did you _____ last month?",
-    "options": [
-      "A. go for a walk",
-      "D. changes B:Yes, I did. I went to Japan with my family.",
-      "B. go for a ride",
-      "C. fall in love"
-    ],
-    "answer": 3,
-    "hint": "請回想「英文：現在完成式與時態」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「英文：現在完成式與時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "hs-23-7-eng-15",
     "school": "海山國中",
     "exam": "114學年度第2學期第3次段考",
@@ -22155,27 +21506,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 0,
     "hint": "請回想「英文：進行式與過去時態」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【A】。本題測驗核心為「英文：進行式與過去時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-23-7-eng-16",
-    "school": "海山國中",
-    "exam": "114學年度第2學期第3次段考",
-    "semester": "2",
-    "stage": "3",
-    "stage_name": "第2學期・第3次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：進行式與過去時態",
-    "stem": "A: _____ B: They went to the movies this morning.",
-    "options": [
-      "A. Where did they go this morning?",
-      "B. What did they do this morning?",
-      "C. Where were they this morning?",
-      "D. When do they go to the movies?"
-    ],
-    "answer": 1,
-    "hint": "請回想「英文：進行式與過去時態」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「英文：進行式與過去時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "hs-23-7-eng-17",
@@ -22302,27 +21632,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 1,
     "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【B】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-23-7-eng-23",
-    "school": "海山國中",
-    "exam": "114學年度第2學期第3次段考",
-    "semester": "2",
-    "stage": "3",
-    "stage_name": "第2學期・第3次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：關係代名詞與子句",
-    "stem": "A: _____ B: There was a cup of lassi on the table last night.",
-    "options": [
-      "A. What was that on the table last night?",
-      "B. Was there a cup of lassi on the table last night?",
-      "C. How many cups of lassi were there on the table last night?",
-      "D. How much lassi did you want?"
-    ],
-    "answer": 2,
-    "hint": "請回想「英文：關係代名詞與子句」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「英文：關係代名詞與子句」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "hs-23-7-eng-24",
@@ -26042,27 +25351,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【B】。本題測驗核心為「社會：社會領域核心素養」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "hs-23-8-soc-49",
-    "school": "海山國中",
-    "exam": "114學年度第2學期第3次段考",
-    "semester": "2",
-    "stage": "3",
-    "stage_name": "第2學期・第3次段考",
-    "subject": "social",
-    "grade": "8",
-    "concept": "社會：臺灣歷史變遷與發展",
-    "stem": "下方資料是子妍從一本書籍裡面看到的章節，根據章節內容研判，子妍閱讀的書籍標題為何？ 第 1 章 韓戰爆發與北緯 38 度線的劃定 第 2 章 美軍進入中南半島的 20 年戰爭 第 3 章 東南亞公約組織的誕生與創建",
-    "options": [
-      "A. 《日本與大東亞共榮圈》",
-      "C. 《中共與美國的邦交始末》",
-      "B. 《第二次世界大戰的戰局》",
-      "D. 《冷戰時期的反共行動》。"
-    ],
-    "answer": 3,
-    "hint": "請回想「社會：臺灣歷史變遷與發展」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「社會：臺灣歷史變遷與發展」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "hs-23-8-mat-11",
     "school": "海山國中",
     "exam": "114學年度第2學期第3次段考",
@@ -26168,27 +25456,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【C】。本題測驗核心為「數學：核心概念理解與運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "hs-23-8-mat-20",
-    "school": "海山國中",
-    "exam": "114學年度第2學期第3次段考",
-    "semester": "2",
-    "stage": "3",
-    "stage_name": "第2學期・第3次段考",
-    "subject": "math",
-    "grade": "8",
-    "concept": "數學：核心概念理解與運算",
-    "stem": "四邊形ABCD的兩條對角線相交於 O 點，下列四組條件，哪一組無法判斷為平行四邊形？",
-    "options": [
-      "A. ∠A = ∠",
-      "C. ∠B = ∠D",
-      "B. ̅̅̅̅̅ AB = ̅̅̅̅̅ C",
-      "D. ̅̅̅̅ BC = ̅̅̅̅̅ AD"
-    ],
-    "answer": 2,
-    "hint": "請回想「數學：核心概念理解與運算」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「數學：核心概念理解與運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "hs-23-8-mat-21",
     "school": "海山國中",
     "exam": "114學年度第2學期第3次段考",
@@ -26250,27 +25517,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 1,
     "hint": "請回想「數學：核心概念理解與運算」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【B】。本題測驗核心為「數學：核心概念理解與運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-23-8-mat-29",
-    "school": "海山國中",
-    "exam": "114學年度第2學期第3次段考",
-    "semester": "2",
-    "stage": "3",
-    "stage_name": "第2學期・第3次段考",
-    "subject": "math",
-    "grade": "8",
-    "concept": "數學：一元一次方程式應用",
-    "stem": "小勇是一個積極認真的好學生，每天上學都必須想辦法涉水越過小溪，才能到達學校。家人為體恤 小勇辛勞，想搭橋(需垂直小溪的兩岸)讓小勇不用再涉水過溪。已知小勇家座標為(-2 ,0)，學校 學校 座標為(5 ,7)，小溪兩岸的恰好為直線方程式 𝑦 = 2、𝑦 = 4， 試問在考量最短距離前提下，應在何處搭橋？",
-    "options": [
-      "A. ( 4 4 ,2) 至 ( ,4",
-      "C. (1 ,2) 至 (1 ,4)",
-      "B. ( 𝑦 =4 3 3 ,2) 至 ( ,4",
-      "D. (0 ,2) 至 (0 ,4) 小勇家"
-    ],
-    "answer": 0,
-    "hint": "請回想「數學：一元一次方程式應用」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「數學：一元一次方程式應用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "hs-13-8-soc-1",
@@ -27302,27 +26548,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【C】。本題測驗核心為「數學：指數律與科學記號」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "hs-12-8-eng-32",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考",
-    "subject": "english",
-    "grade": "8",
-    "concept": "英文：進行式與過去時態",
-    "stem": "Why did the girls keep practicing?",
-    "options": [
-      "A. Because they loved music.",
-      "C. Because they wanted to be different.",
-      "B. Because their company wanted them to.",
-      "D. Because they were tired. （ ）33 What is the main idea of this reading?"
-    ],
-    "answer": 0,
-    "hint": "請回想「英文：進行式與過去時態」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「英文：進行式與過去時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "hs-12-8-eng-34",
     "school": "海山國中",
     "exam": "114學年度第1學期第2次段考",
@@ -27342,27 +26567,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 2,
     "hint": "請回想「英文：進行式與過去時態」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【C】。本題測驗核心為「英文：進行式與過去時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-12-8-eng-3",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第2次段考",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考",
-    "subject": "english",
-    "grade": "8",
-    "concept": "英文：特殊疑問句型與日常問答",
-    "stem": "Spend the Holiday with Family and Relatives. On Nowruz, people wear new clothes. They visit their relatives and friends. They eat a lot of yummy food and sweets. It is a very happy time. Children often get gifts or money. People say, \"Happy New Year!\" (or \"Sale no  celebrate 慶祝 Iran 伊朗 beginning 開始 mobarak!\"). （ ）37 When does Nowruz usually begin?",
-    "options": [
-      "A. When spring begins.",
-      "C. In September. （ ）38 What do people do before Nowruz?",
-      "A. Sleep late and rest.",
-      "C. Clean their houses and buy new clothes."
-    ],
-    "answer": 2,
-    "hint": "請回想「英文：特殊疑問句型與日常問答」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「英文：特殊疑問句型與日常問答」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "hs-12-8-mat-4",
@@ -27806,27 +27010,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【D】。本題測驗核心為「國文：語文素養與生活閱讀理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "hs-22-8-chi-21",
-    "school": "海山國中",
-    "exam": "114學年度第2學期第2次段考",
-    "semester": "2",
-    "stage": "2",
-    "stage_name": "第2學期・第2次段考",
-    "subject": "chinese",
-    "grade": "8",
-    "concept": "國文：語文素養與生活閱讀理解",
-    "stem": "（一）青少年案件增加，包括經濟富裕國家極為少見──根據美國司法部網站統計，美國每 10 萬 名 10 至 17 歲的少年被逮捕率，近 10 年來減少 57%。英國的情況也是如此，10 至 17 歲的少年被 逮捕件數字 2011 年從 20 萬降至 2021 年的 5 萬，減幅 75%。 （二）臺灣青少年犯罪人口率 8 年攀升 47% 青少年犯罪人口率（嫌疑犯人數／每 10 萬青少年） 註：青少年指 12 歲以上，未滿 24 歲 資料來源：警政署統計室 年 根據（一）文及（二）圖內容，可以明確推論出下列何者？",
-    "options": [
-      "A. 臺灣青少年犯罪模式以模仿歐美國家為多數",
-      "B. 臺灣青少年犯罪未若歐美國家呈現減少的趨勢",
-      "C. 歐美國家屬富裕國家，但臺灣仍是貧窮國家",
-      "D. 歐美國家以法立國，但臺灣卻重視人道精神 你曾在「IKEA」或其他地方買過需要自行組裝的家具嗎?組裝完成後，是否覺得自己很厲害，越看越滿 意?這就是美國行為經濟學家 Dan Ariely 所說的「IKEA 效應」 。 妥善運用「IKEA 效應」 ，能使參與者投入情感，享受過程，獲得成就感，增加凝聚力。例如在社團成果 發表會前，大家花時間布置場地；在親子活動中，讓小孩親手做蛋糕；在銷售遇到瓶頸時，請員工們動腦想 辦法。付出的心血能為事物加值，令我們更加珍惜親力親為的成果。"
-    ],
-    "answer": 1,
-    "hint": "請回想「國文：語文素養與生活閱讀理解」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「國文：語文素養與生活閱讀理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "hs-22-8-chi-24",
     "school": "海山國中",
     "exam": "114學年度第2學期第2次段考",
@@ -28077,27 +27260,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 1,
     "hint": "請回想「英文：進行式與過去時態」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【B】。本題測驗核心為「英文：進行式與過去時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-22-8-eng-15",
-    "school": "海山國中",
-    "exam": "114學年度第2學期第2次段考",
-    "semester": "2",
-    "stage": "2",
-    "stage_name": "第2學期・第2次段考",
-    "subject": "english",
-    "grade": "8",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "David looked out of the balcony window and saw a woman get in his car _______away.",
-    "options": [
-      "C. and drive",
-      "D. and drove",
-      "A. to drive",
-      "B. drove"
-    ],
-    "answer": 2,
-    "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "hs-22-8-eng-16",
@@ -29381,48 +28543,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【A】。本題測驗核心為「英文：現在完成式與時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "hs-11-8-eng-25",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "english",
-    "grade": "8",
-    "concept": "英文：現在完成式與時態",
-    "stem": "the weather in Taipei today?",
-    "options": [
-      "A. How’s",
-      "B. Who’s",
-      "C. Where’s",
-      "D. What’s My aunt ______ the gift me for my birthday."
-    ],
-    "answer": 1,
-    "hint": "請回想「英文：現在完成式與時態」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「英文：現在完成式與時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "hs-11-8-eng-32",
-    "school": "海山國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "english",
-    "grade": "8",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "What kinds of plays DIDN’T Shakespeare write?",
-    "options": [
-      "C. A writer.",
-      "D. A designer.",
-      "A. Real stories.",
-      "B. Interesting plays."
-    ],
-    "answer": 2,
-    "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "hs-11-8-eng-34",
     "school": "海山國中",
     "exam": "114學年度第1學期第1次段考",
@@ -30578,27 +29698,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【C】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "fh-21-9-sci-11",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "science",
-    "grade": "9",
-    "concept": "自然科學：核心科學觀念理解",
-    "stem": "有關保險絲的敘述，下列何者正確？",
-    "options": [
-      "C. 金屬 X、向左偏轉",
-      "A. 保險絲應與被保護的電路並聯 安全容量為 20A，則其適合使用的保險絲規格為 21A 不容易熔斷",
-      "D. 金屬 Y、向左偏轉。",
-      "B. 若延長線的最大電流"
-    ],
-    "answer": 3,
-    "hint": "請回想「自然科學：核心科學觀念理解」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "fh-21-9-sci-12",
     "school": "福和國中",
     "exam": "114學年度第2學期第1次段考",
@@ -30639,27 +29738,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 3,
     "hint": "請回想「自然科學：核心科學觀念理解」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【D】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-21-9-sci-16",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "science",
-    "grade": "9",
-    "concept": "理化：莫耳濃度與化學計量",
-    "stem": "電解硫酸銅溶液時，若正、負極使用銅片為電極，若不考慮水 的蒸發，則下列敘述何者正確？ 炎炎夏日出國…，因為這些低價手提風扇內 裝的電池，內含強酸性腐蝕液體、內部結構不 穩，在高空飛行時極易因碰撞、氣壓變化導致",
-    "options": [
-      "A. 正極產生氧氣",
-      "B. 溶液中的銅離子移向正極",
-      "C. 電解液中銅離子的濃度不變 違規託運恐釀災難勿試",
-      "C. 鹼性電池"
-    ],
-    "answer": 2,
-    "hint": "請回想「理化：莫耳濃度與化學計量」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「理化：莫耳濃度與化學計量」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "fh-21-9-sci-18",
@@ -30704,27 +29782,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【A】。本題測驗核心為「理化：莫耳濃度與化學計量」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "fh-21-9-sci-22",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "science",
-    "grade": "9",
-    "concept": "生物：細胞構造與能量代謝",
-    "stem": "下列何者是大氣的功能？",
-    "options": [
-      "B. 屬於吸熱的化學變化",
-      "C. 屬於放熱的物理變化",
-      "D. 屬於放熱的化學變化 (甲)提供生物呼吸；(乙)植物行光合作用；(丙)調節全球氣候；(丁)維持地表氣溫；(戊)產 生能量；(己)減緩隕石直接撞擊地球。",
-      "A. 僅甲乙丙丁"
-    ],
-    "answer": 3,
-    "hint": "請回想「生物：細胞構造與能量代謝」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「生物：細胞構造與能量代謝」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "fh-21-9-sci-23",
     "school": "福和國中",
     "exam": "114學年度第2學期第1次段考",
@@ -30744,48 +29801,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 1,
     "hint": "請回想「地科：地球構造與天氣大氣現象」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【B】。本題測驗核心為「地科：地球構造與天氣大氣現象」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-21-9-sci-25",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "science",
-    "grade": "9",
-    "concept": "地科：地球構造與天氣大氣現象",
-    "stem": "若空氣中水氣含量不變，下列哪一方式最不可能發生水氣凝結現象？",
-    "options": [
-      "B. 空氣在地面高壓區的上空向下沉",
-      "B. 大氣中含量最多",
-      "D. 影響天氣變化的主要氣體是水氣。",
-      "A. 氣流受到地形抬升，沿著迎風坡爬升"
-    ],
-    "answer": 1,
-    "hint": "請回想「地科：地球構造與天氣大氣現象」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「地科：地球構造與天氣大氣現象」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-21-9-sci-34",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "science",
-    "grade": "9",
-    "concept": "地科：地球構造與天氣大氣現象",
-    "stem": "冬季，新聞播報員說道：「本週受到強烈大陸冷氣團南下影響，各地氣溫驟降，請民眾注意保暖。」關於影響臺灣冬 季天氣的這個氣團，下列描述何者最符合其發源地及性質？",
-    "options": [
-      "A. 發源於青藏高原，乾熱且風沙大 洋副熱帶海面，溫暖潮濕",
-      "C. 發源於西伯利亞及蒙古一帶，寒冷乾燥",
-      "B. 發源於太平",
-      "D. 發源於赤道附近海洋，高溫多雨。"
-    ],
-    "answer": 2,
-    "hint": "請回想「地科：地球構造與天氣大氣現象」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「地科：地球構造與天氣大氣現象」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "fh-21-9-sci-35",
@@ -30933,27 +29948,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 3,
     "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【D】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-21-9-eng-25",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "Jane: Kelly fell in love with another man after her boyfriend worked abroad. Tomas: Out of ______, out of mind.",
-    "options": [
-      "A. sign",
-      "C. language",
-      "B. sight",
-      "D. package"
-    ],
-    "answer": 1,
-    "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "fh-21-9-eng-32",
@@ -32174,27 +31168,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【D】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "fh-13-9-sci-16",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "science",
-    "grade": "9",
-    "concept": "自然科學：核心科學觀念理解",
-    "stem": "太陽系天體彼此之間都有相對運動，例如:地球自轉，同時也會繞著太陽公轉；請由下面現象中，選出哪個是因為星體 自轉所造成？",
-    "options": [
-      "A. 若利用照相機長時間曝光拍照天空，會發現天空中的星星運動軌跡成同心圓 時間為 2061 年",
-      "C. 一年中有四季變化",
-      "B. 哈雷彗星下次在地球上再次看到",
-      "D. 月相呈現週期性的陰晴圓缺變化。"
-    ],
-    "answer": 0,
-    "hint": "請回想「自然科學：核心科學觀念理解」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "fh-13-9-sci-17",
     "school": "福和國中",
     "exam": "114學年度第1學期第3次段考",
@@ -32258,27 +31231,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【B】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "fh-13-9-sci-28",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "science",
-    "grade": "9",
-    "concept": "自然科學：核心科學觀念理解",
-    "stem": "根據文章前後文，請判斷甲敘述與乙敘述應放入那些文字比較正確？ 軸",
-    "options": [
-      "B. 甲敘述：抗力臂，乙敘述：施力臂",
-      "A. 甲敘述：半徑較大的軸，乙敘述：費力的",
-      "C. 甲敘述：大滑輪，乙敘述：小滑輪",
-      "D. 甲敘述：半徑較大的輪，乙 敘述：半徑較小的軸。"
-    ],
-    "answer": 3,
-    "hint": "請回想「自然科學：核心科學觀念理解」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "fh-13-9-sci-30",
     "school": "福和國中",
     "exam": "114學年度第1學期第3次段考",
@@ -32294,27 +31246,6 @@ const REAL_EXAM_QUESTIONS = [
       "B. 金屬球會被吸引而向帶電體移動，接觸後則吸住",
       "C. 金屬球會被排斥推開",
       "D. 金屬球不會被吸 引或排斥。"
-    ],
-    "answer": 0,
-    "hint": "請回想「自然科學：核心科學觀念理解」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-13-9-sci-31",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "science",
-    "grade": "9",
-    "concept": "自然科學：核心科學觀念理解",
-    "stem": "將帶正電帶電體接觸以棉線懸掛的不帶電的輕金屬球，若接著再以手輕觸金屬球使其接地後，金屬球的帶電情形及其 原因最可能為下列何者？ 地球",
-    "options": [
-      "A. 不帶電，因地球的電子經由手流向金屬球",
-      "C. 帶正電，因感應起電後再接地，金屬球的電性不受影響",
-      "B. 不帶電，因金屬球的正電荷經由手流至",
-      "D. 帶負電，因地球的電子經由手流向金屬球，使 金屬球內負電荷總數多於正電荷。"
     ],
     "answer": 0,
     "hint": "請回想「自然科學：核心科學觀念理解」之基礎定義與核心解題步驟。",
@@ -33077,174 +32008,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【D】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "fh-13-7-sci-2",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：人體生理與器官協調",
-    "stem": "接續上題，淋巴循環路徑的順序依序是： 請判斷腦死是指神經系統的何處嚴重受損無法回復？",
-    "options": [
-      "A. 乙→丙→丁",
-      "B. 乙→丁→丙",
-      "C. 丁→丙→乙",
-      "A. 脊髓"
-    ],
-    "answer": 2,
-    "hint": "請回想「生物：人體生理與器官協調」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「生物：人體生理與器官協調」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-13-7-sci-4",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：人體生理與器官協調",
-    "stem": "下列何者不是淋巴系統的功能？",
-    "options": [
-      "A. 是人體防禦的 為神經，是神經系統的基 第一道防線",
-      "B. 防止病原體的擴散",
-      "C. 淋巴結能過濾清 本單位",
-      "B. 脊神經有 31 除病原體或異物"
-    ],
-    "answer": 0,
-    "hint": "請回想「生物：人體生理與器官協調」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「生物：人體生理與器官協調」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-13-7-sci-5",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：細胞構造與能量代謝",
-    "stem": "有關人體的防禦作用與免疫，下列敘述何者錯誤？",
-    "options": [
-      "C. 甲為細胞本體，具有細胞核",
-      "D. 乙為神經纖維，負",
-      "A. 現代人透過接種疫苗來預防疾病，這是因為疫苗中 責神經元的代謝和生長。 含有對抗病菌的專一性抗體",
-      "B. 皮膚與黏膜可阻擋病原 體入侵"
-    ],
-    "answer": 0,
-    "hint": "請回想「生物：細胞構造與能量代謝」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「生物：細胞構造與能量代謝」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-13-7-sci-6",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：人體生理與器官協調",
-    "stem": "下列有關刺激與反應，受器與動器的敘述，何者錯 列敘述何者正 誤？",
-    "options": [
-      "A. 能接受刺激的是受器",
-      "B. 能產生反應的是動器 確？",
-      "A. 此為有",
-      "C. 消化腺、內分泌腺、汗腺、淚腺都能產生反應，所 意識的動作 以都是動器"
-    ],
-    "answer": 3,
-    "hint": "請回想「生物：人體生理與器官協調」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「生物：人體生理與器官協調」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-13-7-sci-8",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：人體生理與器官協調",
-    "stem": "關於神經系統的反射作用，下列何者正確？",
-    "options": [
-      "A. 受 經傳導路徑應該是？",
-      "A. 手→感覺神經元→脊髓→大腦 大腦意識控制",
-      "B. 能爭取時效，快速反應",
-      "C. 可以經由 學習訓練而進步"
-    ],
-    "answer": 1,
-    "hint": "請回想「生物：人體生理與器官協調」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「生物：人體生理與器官協調」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-13-7-sci-9",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：人體生理與器官協調",
-    "stem": "如果將電腦類比為人體的神經系統，那麼滑鼠和鍵 →運動神經元→手和腳",
-    "options": [
-      "B. 手→感覺神經元→脊髓→大 腦→脊髓→運動神經元→手和腳",
-      "C. 手→運動神經元→ 脊髓→大腦→脊髓→感覺神經元→手和腳",
-      "D. 手→感覺 神經元→大腦→脊髓→運動神經元→手和腳。 盤就像是神經系統裡的哪一個部分？",
-      "A. 運動神經元"
-    ],
-    "answer": 3,
-    "hint": "請回想「生物：人體生理與器官協調」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「生物：人體生理與器官協調」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-13-7-sci-23",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：人體生理與器官協調",
-    "stem": "關於動物的行為，下列說法何者錯誤？",
-    "options": [
-      "A. 動物 體各部分的活動。請問：這兩大系統的特徵是？ 的行為完全透過神經系統控制與調節",
-      "B. 學習能力與神",
-      "A. 前者作用較迅速，且對身體的影響通常較持久 經系統的發達程度有關",
-      "C. 導盲犬的工作可以藉由訓練"
-    ],
-    "answer": 0,
-    "hint": "請回想「生物：人體生理與器官協調」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「生物：人體生理與器官協調」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-13-7-sci-26",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：人體生理與器官協調",
-    "stem": "內溫動物能自動調節生理作用，使得體溫保持在 生長激素可以調控 穩定的範圍，請問此種特性稱為？",
-    "options": [
-      "A. 常溫性",
-      "B. 穩定 其他內分泌腺",
-      "D. 性",
-      "C. 平衡性"
-    ],
-    "answer": 3,
-    "hint": "請回想「生物：人體生理與器官協調」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「生物：人體生理與器官協調」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "fh-13-7-sci-27",
     "school": "福和國中",
     "exam": "114學年度第1學期第3次段考",
@@ -33306,69 +32069,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 1,
     "hint": "請回想「生物：人體生理與器官協調」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【B】。本題測驗核心為「生物：人體生理與器官協調」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-13-7-sci-22",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "自然科學：核心科學觀念理解",
-    "stem": "下列有關激素的敘述，何者錯誤？",
-    "options": [
-      "A. 激素的分 ( 特殊蛋白質協助運輸",
-      "C. 擴散作用",
-      "D. 滲透作用。 要、每一種激素都是越早分泌對個體的生長發育越有幫 助",
-      "C. 毛毛蟲變蝴蝶的過程是受到激素的調控"
-    ],
-    "answer": 1,
-    "hint": "請回想「自然科學：核心科學觀念理解」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-13-7-eng-32",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "This is _______ first watch, and I like _______.",
-    "options": [
-      "A. my; it",
-      "B. the; them",
-      "C. it’s; it",
-      "D. X; them Today is _______ June 6, and Dad’s birthday is _______ June"
-    ],
-    "answer": 2,
-    "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-13-7-mat-10",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "math",
-    "grade": "7",
-    "concept": "數學：指數律與科學記號",
-    "stem": "下列是炭智郎和禰荳子兩人化簡一元一次式的過程，對於化簡過程，何者敘述正確? 禰荳子 : 𝑥−2 炭智郎 : −𝑥 + 2 3 3 𝑥−3 2 = 2( −𝑥 + 2 ) 6 − 3( 𝑥 − 3 ) 6 −2𝑥 + 4 − 3𝑥 − 9 6 −5𝑥 − 5 =",
-    "options": [
-      "D. 兩人皆錯誤 6 ) 下列何者為一元一次方程式 𝑥 − 3(𝑥 + 1) = −𝑥 + 5 的解?",
-      "B. -8",
-      "C. -2 ) 下列何者為一元一次方程式 − ) 若 69 3𝑥+7 4 8−4𝑥 3",
-      "B. 𝑥 = −5 5 與"
-    ],
-    "answer": 1,
-    "hint": "請回想「數學：指數律與科學記號」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「數學：指數律與科學記號」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "fh-21-7-soc-18",
@@ -34085,27 +32785,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【D】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "fh-21-7-sci-31",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：細胞構造與能量代謝",
-    "stem": "請問下列敘述，何者正確？",
-    "options": [
-      "A. 愈新鮮的蛋己愈大",
-      "C. 遺傳物質位於戊中",
-      "B. 丙為此卵細胞的細胞核",
-      "D. 庚為蛋殼。(1-3)"
-    ],
-    "answer": 2,
-    "hint": "請回想「生物：細胞構造與能量代謝」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「生物：細胞構造與能量代謝」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "fh-21-7-sci-33",
     "school": "福和國中",
     "exam": "114學年度第2學期第1次段考",
@@ -34272,27 +32951,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 2,
     "hint": "請回想「自然科學：核心科學觀念理解」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【C】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-21-7-mat-11",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "math",
-    "grade": "7",
-    "concept": "數學：一元一次方程式應用",
-    "stem": "烏龜和兔子組隊完成 60 公里接力賽跑，共花 5 小時。兔子的速度為每小時 20 公里，烏龜的速 度為每小時 300 公尺。若兔子跑𝑥公里，烏龜跑𝑦公里，下列二元一次聯立方程式何者正確？  & + %.\" = 60 !%",
-    "options": [
-      "A. : 𝑥+𝑦 =5 𝑥 + 𝑦 = 60 &",
-      "C. : + \"%% = 5 !% ( 20𝑥 + 300𝑦 = 60",
-      "B. C 𝑥+𝑦 =5 𝑥 + 𝑦 = 60 &",
-      "D. : + %.\" = 5 !%"
-    ],
-    "answer": 3,
-    "hint": "請回想「數學：一元一次方程式應用」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「數學：一元一次方程式應用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "fh-21-7-mat-13",
@@ -34673,27 +33331,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【C】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "fh-21-7-eng-22",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：情態助動詞用法",
-    "stem": "The door is very large and strong. Its ______ is 200 centimeters. The little boy cannot touch the top of the door.",
-    "options": [
-      "A. arm",
-      "B. body",
-      "D. height",
-      "C. leg"
-    ],
-    "answer": 3,
-    "hint": "請回想「英文：情態助動詞用法」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「英文：情態助動詞用法」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "fh-21-7-eng-24",
     "school": "福和國中",
     "exam": "114學年度第2學期第1次段考",
@@ -34734,69 +33371,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 1,
     "hint": "請回想「英文：現在完成式與時態」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【B】。本題測驗核心為「英文：現在完成式與時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-21-7-eng-29",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：現在完成式與時態",
-    "stem": "Cathy: Do you have pens in your bag? I need one.",
-    "options": [
-      "A. have",
-      "A. Once or twice.",
-      "C. do",
-      "D. can"
-    ],
-    "answer": 2,
-    "hint": "請回想「英文：現在完成式與時態」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「英文：現在完成式與時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-21-7-eng-30",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "William: How often do you walk your dog?",
-    "options": [
-      "D. do",
-      "B. on",
-      "D. often do Boys: Sorry, Dad.",
-      "C. in"
-    ],
-    "answer": 3,
-    "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-21-7-eng-34",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "Ray: _________ is your favorite basketball player?",
-    "options": [
-      "A. How tall",
-      "B. How long",
-      "D. like Kai: He is 185 centimeters.",
-      "C. How big Ho A: ______."
-    ],
-    "answer": 0,
-    "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "fh-12-7-sci-5",
@@ -35240,69 +33814,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【C】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "fh-12-7-eng-26",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：情態助動詞用法",
-    "stem": "Fion: Mom, can I eat candy?",
-    "options": [
-      "A. or",
-      "D. hand Ben: No, she is sad. Her cat is missing(不見了).",
-      "B. careful Lena: Miss Lin, what is T.G.I.F? Miss Lin: Oh, it is “Thank God; it’s F___.”",
-      "D. times"
-    ],
-    "answer": 0,
-    "hint": "請回想「英文：情態助動詞用法」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「英文：情態助動詞用法」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-12-7-eng-28",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：特殊疑問句型與日常問答",
-    "stem": "Jenny: ____ is Cory’s basketball game?",
-    "options": [
-      "A. What day",
-      "C. is Kevin：On Saturday. It’s my birthday, too.",
-      "B. What time",
-      "C. How much"
-    ],
-    "answer": 0,
-    "hint": "請回想「英文：特殊疑問句型與日常問答」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「英文：特殊疑問句型與日常問答」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-12-7-eng-29",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：現在完成式與時態",
-    "stem": "John: Can I use the bathroom first? I’m in a hurry.",
-    "options": [
-      "A. to",
-      "D. are",
-      "B. for",
-      "D. How old Ben: No, I’m in a hurry, too. Wait ____ your turn."
-    ],
-    "answer": 1,
-    "hint": "請回想「英文：現在完成式與時態」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「英文：現在完成式與時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "fh-12-7-eng-31",
     "school": "福和國中",
     "exam": "114學年度第1學期第2次段考",
@@ -35322,27 +33833,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 3,
     "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【D】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-12-7-eng-33",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "Lois: How about watching a movie this afternoon? It’s ____ 1:30 p.m. ____ 4:30 p.m.",
-    "options": [
-      "A. from; to",
-      "B. at; to",
-      "C. from; and Chris: It’s three hours long.",
-      "D. at; at"
-    ],
-    "answer": 0,
-    "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "fh-12-7-mat-3",
@@ -35469,27 +33959,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 1,
     "hint": "請回想「數學：核心概念理解與運算」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【B】。本題測驗核心為「數學：核心概念理解與運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-12-7-mat-9",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考",
-    "subject": "math",
-    "grade": "7",
-    "concept": "數學：分數的四則運算",
-    "stem": "已知甲為負整數，且 甲 42 為最簡分數，若 29 −84 < 甲 42 <− 【2-4】 【2-3】 2 7 ，則滿足這樣關係的甲數 可能為多少?",
-    "options": [
-      "B. −13",
-      "A. −25",
-      "C. −11",
-      "D. −14"
-    ],
-    "answer": 1,
-    "hint": "請回想「數學：分數的四則運算」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「數學：分數的四則運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "fh-12-7-mat-10",
@@ -36374,27 +34843,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【C】。本題測驗核心為「數學：核心概念理解與運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "fh-22-7-mat-4",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第2次段考",
-    "semester": "2",
-    "stage": "2",
-    "stage_name": "第2學期・第2次段考",
-    "subject": "math",
-    "grade": "7",
-    "concept": "數學：指數律與科學記號",
-    "stem": "坐標平面上，有一個二元一次方程式的圖形，此圖形通過 (－6 , 0 )、( 0 ,－8 )兩點， 判斷此圖形與下列哪一個方程式的圖形的交點在第三象限？",
-    "options": [
-      "A. x＋7＝0",
-      "D. y－7＝0",
-      "B. (－2 , 3)",
-      "C. (－1 , 4)"
-    ],
-    "answer": 2,
-    "hint": "請回想「數學：指數律與科學記號」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「數學：指數律與科學記號」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "fh-22-7-mat-7",
     "school": "福和國中",
     "exam": "114學年度第2學期第2次段考",
@@ -36414,48 +34862,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 3,
     "hint": "請回想「數學：核心概念理解與運算」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【D】。本題測驗核心為「數學：核心概念理解與運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-22-7-mat-9",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第2次段考",
-    "semester": "2",
-    "stage": "2",
-    "stage_name": "第2學期・第2次段考",
-    "subject": "math",
-    "grade": "7",
-    "concept": "數學：核心概念理解與運算",
-    "stem": "若 x、y 為正整數，且 (x－y－1)：(x＋y－4)＝3：2，則滿足這樣的 x、y 有幾組解？",
-    "options": [
-      "A. 無解",
-      "C. 2a＝5b",
-      "B. 1",
-      "C. 2"
-    ],
-    "answer": 1,
-    "hint": "請回想「數學：核心概念理解與運算」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「數學：核心概念理解與運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-22-7-mat-12",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第2次段考",
-    "semester": "2",
-    "stage": "2",
-    "stage_name": "第2學期・第2次段考",
-    "subject": "math",
-    "grade": "7",
-    "concept": "數學：核心概念理解與運算",
-    "stem": "已知 (x＋2) 與 (y－5) 成反比，且當 x＝10 時，y＝8，則當 y＝9，x＝？",
-    "options": [
-      "A. 7 ( 與",
-      "C. 3",
-      "B. 9",
-      "C. 11"
-    ],
-    "answer": 0,
-    "hint": "請回想「數學：核心概念理解與運算」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「數學：核心概念理解與運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "fh-22-7-mat-13",
@@ -36647,48 +35053,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【D】。本題測驗核心為「國文：語文素養與生活閱讀理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "fh-11-7-chi-21",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "chinese",
-    "grade": "7",
-    "concept": "國文：修辭技巧與感官摹寫",
-    "stem": "詩作中，楊喚將「星星」譬喻為「珍珠」，「月亮」譬喻為「銀幣」，下列詮釋，何者 低聲歌唱著溜過彎彎的小橋」。下列何者也是用同樣的表達方式呢?(L1)",
-    "options": [
-      "A. 蟬噪林逾靜，鳥鳴山更幽 最可能為作者試圖營造的夏夜氛圍？",
-      "B. 千山鳥飛絕，萬徑人蹤滅",
-      "A. 生機與希望",
-      "C. 春眠不覺曉，處處聞啼鳥"
-    ],
-    "answer": 1,
-    "hint": "請回想「國文：修辭技巧與感官摹寫」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「國文：修辭技巧與感官摹寫」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-11-7-chi-26",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "chinese",
-    "grade": "7",
-    "concept": "國文：語文素養與生活閱讀理解",
-    "stem": "關於本文的寫作手法分析，下列何者最為恰當？",
-    "options": [
-      "A. 心疼孩子幼年喪父，寵愛有加",
-      "B. 維護自己顏面，絕不讓人看笑話",
-      "A. 以第三人稱寫作，使記述內容客觀公正，還原舊事",
-      "C. 正向管教以身作則，循循善誘"
-    ],
-    "answer": 1,
-    "hint": "請回想「國文：語文素養與生活閱讀理解」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「國文：語文素養與生活閱讀理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "fh-11-7-chi-28",
     "school": "福和國中",
     "exam": "114學年度第1學期第1次段考",
@@ -36710,27 +35074,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【A】。本題測驗核心為「國文：成語運用與語境判斷」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "fh-11-7-chi-30",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "chinese",
-    "grade": "7",
-    "concept": "國文：語文素養與生活閱讀理解",
-    "stem": "對讀(一)、(二)則短文，下列比較何者最為正確？ 短文(一) 夸父、太陽 夸父、后土、信、太陽",
-    "options": [
-      "B. 事件 聚焦於夸父逐日的過程 提及夸父的身世，及死因",
-      "C. 共通處 皆對夸父逐日一事進行「評論」",
-      "D. 相異處 前者有描寫夸父的外貌，後者有說明夸父生活的環境。",
-      "C. 舌是斬身刀"
-    ],
-    "answer": 1,
-    "hint": "請回想「國文：語文素養與生活閱讀理解」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「國文：語文素養與生活閱讀理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "fh-11-7-mat-1",
     "school": "福和國中",
     "exam": "114學年度第1學期第1次段考",
@@ -36750,48 +35093,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 3,
     "hint": "請回想「數學：核心概念理解與運算」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【D】。本題測驗核心為「數學：核心概念理解與運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-11-7-mat-2",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "math",
-    "grade": "7",
-    "concept": "數學：核心概念理解與運算",
-    "stem": "下列各式中，何者正確?",
-    "options": [
-      "A. −23 + 11 = −(23 + 11)。",
-      "C. −68 − 93 = −(68 − 93)。",
-      "B. −45 + (−56) = −(45 + 56)。",
-      "D. 0 − (−83) = 0 − 83。"
-    ],
-    "answer": 1,
-    "hint": "請回想「數學：核心概念理解與運算」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「數學：核心概念理解與運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-11-7-mat-3",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "math",
-    "grade": "7",
-    "concept": "數學：核心概念理解與運算",
-    "stem": "若 A（－3）、B（13）為數線上兩點，則",
-    "options": [
-      "A. B 兩點的中點坐標為何？",
-      "A. 8",
-      "B. 5",
-      "C. －8"
-    ],
-    "answer": 1,
-    "hint": "請回想「數學：核心概念理解與運算」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「數學：核心概念理解與運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "fh-11-7-mat-4",
@@ -37298,27 +35599,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【D】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "fh-11-7-eng-29",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：特殊疑問句型與日常問答",
-    "stem": "A: Where's your pencil case?",
-    "options": [
-      "C. Mag's and Sophie's B: Lisa isn’t, but her sisters _____.",
-      "C. isn't",
-      "B. are",
-      "D. Welcome, Coco."
-    ],
-    "answer": 1,
-    "hint": "請回想「英文：特殊疑問句型與日常問答」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「英文：特殊疑問句型與日常問答」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "fh-11-7-eng-30",
     "school": "福和國中",
     "exam": "114學年度第1學期第1次段考",
@@ -37338,69 +35618,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 1,
     "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【B】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-11-7-eng-31",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "That tall man is Mr. Wang, and this is _____ wife, Mrs. Wang.",
-    "options": [
-      "B. he’s; You’re",
-      "A. his; They’re",
-      "D. their They are next to each other.",
-      "B. Mags’ and Sophies’"
-    ],
-    "answer": 0,
-    "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-11-7-eng-26",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：關係代名詞與子句",
-    "stem": "A: Is Coco in your bedroom? A: _____",
-    "options": [
-      "A. I see.",
-      "C. that _____ English teachers at our school.",
-      "C. her; We’re",
-      "D. she’s; They are"
-    ],
-    "answer": 0,
-    "hint": "請回想「英文：關係代名詞與子句」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「英文：關係代名詞與子句」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-11-7-eng-34",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "Nick: Your new bicycle is very cool.",
-    "options": [
-      "C. It’s; its",
-      "D. We’re; our _____ it a gift from your grandpa? Anna: Yes, _____.",
-      "A. Are; they are",
-      "B. Is; it’s"
-    ],
-    "answer": 3,
-    "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "fh-23-7-sci-1",
@@ -38327,48 +36544,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【B】。本題測驗核心為「英文：祈使句與日常指令」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "fh-23-7-eng-26",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第3次段考",
-    "semester": "2",
-    "stage": "3",
-    "stage_name": "第2學期・第3次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "Rose: Did you __________ the flowers? They are so beautiful.",
-    "options": [
-      "D. died David: Thank you. I watered them this morning, and I’m glad you like them.",
-      "A. plate",
-      "B. practice",
-      "C. plant"
-    ],
-    "answer": 2,
-    "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-23-7-eng-27",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第3次段考",
-    "semester": "2",
-    "stage": "3",
-    "stage_name": "第2學期・第3次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "Jane: Welcome back! What did you do in New York?",
-    "options": [
-      "D. paint Ken: We walked around the city and enjoyed ___________ on the way to the mountains. They are so beautiful.",
-      "A. the sights",
-      "B. the picture",
-      "C. the nature"
-    ],
-    "answer": 0,
-    "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "fh-23-7-eng-28",
     "school": "福和國中",
     "exam": "114學年度第2學期第3次段考",
@@ -38705,69 +36880,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【B】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "fh-23-7-mat-1",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第3次段考",
-    "semester": "2",
-    "stage": "3",
-    "stage_name": "第2學期・第3次段考",
-    "subject": "math",
-    "grade": "7",
-    "concept": "數學：核心概念理解與運算",
-    "stem": "下列哪一個選項中，其「文字敘述」與「不等號」的對應是錯誤的？",
-    "options": [
-      "A. 「超過」⇒「＞」",
-      "C. 2x－1≧－3",
-      "D. －3x－1≦6。",
-      "C. 4 個"
-    ],
-    "answer": 2,
-    "hint": "請回想「數學：核心概念理解與運算」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「數學：核心概念理解與運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-23-7-mat-5",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第3次段考",
-    "semester": "2",
-    "stage": "3",
-    "stage_name": "第2學期・第3次段考",
-    "subject": "math",
-    "grade": "7",
-    "concept": "數學：核心概念理解與運算",
-    "stem": "下列關於對稱軸的敘述正確有幾個？ 甲：正 n 邊形有 n 條對稱軸。 乙：正方形和長方形的對稱軸都是 4 條。 丙：平行四邊形有 2 條對稱軸。 丁：圓形的對稱軸只有 1 條。",
-    "options": [
-      "A. 1",
-      "B. －2x＋1≧3",
-      "B. 3 個",
-      "A. 4"
-    ],
-    "answer": 0,
-    "hint": "請回想「數學：核心概念理解與運算」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「數學：核心概念理解與運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-23-7-mat-2",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第3次段考",
-    "semester": "2",
-    "stage": "3",
-    "stage_name": "第2學期・第3次段考",
-    "subject": "math",
-    "grade": "7",
-    "concept": "數學：核心概念理解與運算",
-    "stem": "x＝－2 不是下列哪一個不等式的解？",
-    "options": [
-      "A. 3x＋1≦－3",
-      "B. 「不夠」⇒「＜」",
-      "B. 2",
-      "C. 3"
-    ],
-    "answer": 2,
-    "hint": "請回想「數學：核心概念理解與運算」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「數學：核心概念理解與運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "fh-23-7-mat-6",
     "school": "福和國中",
     "exam": "114學年度第2學期第3次段考",
@@ -38892,27 +37004,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 3,
     "hint": "請回想「數學：一元一次方程式應用」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【D】。本題測驗核心為「數學：一元一次方程式應用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-23-7-mat-14",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第3次段考",
-    "semester": "2",
-    "stage": "3",
-    "stage_name": "第2學期・第3次段考",
-    "subject": "math",
-    "grade": "7",
-    "concept": "數學：核心概念理解與運算",
-    "stem": "滿足不等式 3x＋7＜－5－2x，則 2x＋3 之值可能為下列何者？",
-    "options": [
-      "A. 1",
-      "B. 0",
-      "D. －2",
-      "A. 甲"
-    ],
-    "answer": 3,
-    "hint": "請回想「數學：核心概念理解與運算」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「數學：核心概念理解與運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "fh-23-7-mat-1",
@@ -39564,48 +37655,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 2,
     "hint": "請回想「國文：成語運用與語境判斷」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【C】。本題測驗核心為「國文：成語運用與語境判斷」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-21-8-chi-15",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "chinese",
-    "grade": "8",
-    "concept": "國文：語文素養與生活閱讀理解",
-    "stem": "毛毛陪媽媽參加陳老先生的金婚慶宴，在會場中聽到以下幾組對話，請問哪一組用詞 最為得體？",
-    "options": [
-      "A. 陳老先生之孫說：「各位長輩，歡迎蒞臨敝府，家祖母已在內堂等候。」 來賓回應：「令祖母真是福壽全歸。」",
-      "A. 木蘭為了守護家庭與國家，毅然代父從軍，在戰場上展現過人膽識與智慧，不畏艱 難、屢建戰功，最終木蘭「巾幗英雄」的形象深植人心，她的故事提醒人們勇氣、 責任與堅持的重要，也象徵女性同樣能為社會與國家做出偉大貢獻。→可替換為 「不讓鬚眉」",
-      "B. 武則天作為中國歷史上唯一的正統女皇帝，雖然常被人以「牝雞司晨」形容，暗指 女性掌權不合常規，但她以非凡的政治手腕整頓朝政、任用賢能，推動經濟與文化 發展，展現超越性別的統治能力；歷史對她的評價既有爭議，也彰顯了女性在權力 舞台上同樣能成就卓越事業的可能性。→可替換為「母雞報曉」",
-      "C. 西施自古以絕世容顏著稱，她的美貌被譽為「沉魚落雁」，不僅令江南水鄉的魚兒見 之沉入水底，飛鳥見之也低頭驚嘆，更因其才情與智慧輔佐國家，使後世不僅讚美 她的外貌，也敬佩她兼具美貌與智慧的人格魅力，成為千古流傳的傳奇佳人。→可 替換為「貌似無鹽」"
-    ],
-    "answer": 3,
-    "hint": "請回想「國文：語文素養與生活閱讀理解」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「國文：語文素養與生活閱讀理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-21-8-chi-13",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "chinese",
-    "grade": "8",
-    "concept": "國文：白話文意理解與主旨分析",
-    "stem": "隱地〈舌花〉:「現代人的兩片嘴唇，像溫煦的春風，也如凌厲的冬風，能夠讓你如 醉如癡，也可以把你活活颳進地獄。」請問上述這段話的意思，最近於下列何者?",
-    "options": [
-      "A. 吉人之辭寡，躁人之辭多",
-      "B. 誣善之人，其辭遊。失其守者，其辭屈",
-      "C. 兩喜必多溢美之言，兩怒必多溢惡之言",
-      "D. 與人善言，暖於布帛。傷人以言，深於矛戟 (應用文) 根據上文人物關係，下列說明何者正確?"
-    ],
-    "answer": 3,
-    "hint": "請回想「國文：白話文意理解與主旨分析」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「國文：白話文意理解與主旨分析」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "fh-21-8-chi-17",
@@ -40364,27 +38413,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【A】。本題測驗核心為「理化：酸鹼中和與氧化還原」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "fh-21-8-sci-28",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "science",
-    "grade": "8",
-    "concept": "理化：酸鹼中和與氧化還原",
-    "stem": "已知 Na、Ca、Mg、",
-    "options": [
-      "C. Cu 對氧的活性順序是：Na＞Ca＞Mg＞C＞Cu，下列四組物質，何者會發生氧化還原反 應？",
-      "A. C＋Na2O",
-      "B. C＋CaO",
-      "C. Mg＋CO2"
-    ],
-    "answer": 2,
-    "hint": "請回想「理化：酸鹼中和與氧化還原」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「理化：酸鹼中和與氧化還原」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "fh-21-8-sci-29",
     "school": "福和國中",
     "exam": "114學年度第2學期第1次段考",
@@ -40509,27 +38537,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 2,
     "hint": "請回想「理化：酸鹼中和與氧化還原」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【C】。本題測驗核心為「理化：酸鹼中和與氧化還原」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-21-8-sci-35",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第1次段考",
-    "semester": "2",
-    "stage": "1",
-    "stage_name": "第2學期・第1次段考",
-    "subject": "science",
-    "grade": "8",
-    "concept": "理化：酸鹼中和與氧化還原",
-    "stem": "若焫雃在進行反應式乙的燒製時，於縮小通風口的窯內加入碳粉輔助反應，其反應式為： Fe2O3+ C → 2FeO + CO。關於此反應與活性的判斷，下列何者正確？",
-    "options": [
-      "A. 碳粉",
-      "C. 能奪取鐵的氧，代表碳對氧的活性比鐵大。",
-      "B. 氧化鐵 (Fe2O3) 提供了氧原子給碳，在此反應中進行氧化反應。",
-      "C. 因為碳的活性大，故在此反應中碳會失去氧，發生還原反應。"
-    ],
-    "answer": 0,
-    "hint": "請回想「理化：酸鹼中和與氧化還原」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「理化：酸鹼中和與氧化還原」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "fh-21-8-sci-36",
@@ -41036,48 +39043,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【C】。本題測驗核心為「社會：社會領域核心素養」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "fh-12-8-soc-17",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考",
-    "subject": "social",
-    "grade": "8",
-    "concept": "社會：社會領域核心素養",
-    "stem": "依據內文，上述「家鄉代言人」的興起背景，可能與下列何者最相關？",
-    "options": [
-      "D. 壯族風情的銅鼓小模型",
-      "D. 隨牛隻於山間垂直遷徙",
-      "A. 中美貿易戰激烈，切斷中國海外銷售通路",
-      "B. 短影片直播平台興起，縮短商品保存期限"
-    ],
-    "answer": 3,
-    "hint": "請回想「社會：社會領域核心素養」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「社會：社會領域核心素養」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-13-8-eng-24",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "english",
-    "grade": "8",
-    "concept": "英文：情態助動詞用法",
-    "stem": "Americans can learn Chinese by _______ movies.",
-    "options": [
-      "C. left",
-      "D. ugly",
-      "C. watch",
-      "D. watched"
-    ],
-    "answer": 0,
-    "hint": "請回想「英文：情態助動詞用法」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「英文：情態助動詞用法」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "fh-13-8-eng-25",
     "school": "福和國中",
     "exam": "114學年度第1學期第3次段考",
@@ -41097,69 +39062,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 1,
     "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【B】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-13-8-eng-28",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "english",
-    "grade": "8",
-    "concept": "英文：特殊疑問句型與日常問答",
-    "stem": "A: Winter vacation is _______ the corner. B: Yeah. It is next week.",
-    "options": [
-      "D. Where",
-      "A. on",
-      "B. at",
-      "C. in"
-    ],
-    "answer": 3,
-    "hint": "請回想「英文：特殊疑問句型與日常問答」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「英文：特殊疑問句型與日常問答」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-13-8-eng-29",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "english",
-    "grade": "8",
-    "concept": "英文：生活素養文法與單字運用",
-    "stem": "Some students go to school by _______ every day.",
-    "options": [
-      "D. around",
-      "A. the metro",
-      "B. bus",
-      "C. cars"
-    ],
-    "answer": 1,
-    "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-13-8-eng-31",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "english",
-    "grade": "8",
-    "concept": "英文：特殊疑問句型與日常問答",
-    "stem": "Jason: _______ did it take you to finish this? Charlie: About three months.",
-    "options": [
-      "D. cost",
-      "A. How much",
-      "B. How long",
-      "C. What time"
-    ],
-    "answer": 1,
-    "hint": "請回想「英文：特殊疑問句型與日常問答」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「英文：特殊疑問句型與日常問答」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "fh-13-8-eng-32",
@@ -41202,48 +39104,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 2,
     "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【C】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-13-8-mat-1",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "math",
-    "grade": "8",
-    "concept": "數學：指數律與科學記號",
-    "stem": "經化簡後，下列何者是 x 的一元二次方程式？",
-    "options": [
-      "A. x2＋2x＋1",
-      "B. －6 2b±",
-      "D. 四 4b 2－4ac 2a",
-      "B. －b± －b± b2－ac 4b2－4ac"
-    ],
-    "answer": 3,
-    "hint": "請回想「數學：指數律與科學記號」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「數學：指數律與科學記號」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-13-8-mat-2",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "math",
-    "grade": "8",
-    "concept": "數學：指數律與科學記號",
-    "stem": "若一元二次方程式 (𝑥 − 3)(2𝑥 − 5) = 0 ，則 (2𝑥 − 5) 的值是多少？",
-    "options": [
-      "A. 0",
-      "B. 10 3",
-      "B. 4",
-      "C. 28 3 1 1 ± √11 ，其中 a、b 為兩數，則 a＋b 之值為何？ 3 3"
-    ],
-    "answer": 3,
-    "hint": "請回想「數學：指數律與科學記號」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「數學：指數律與科學記號」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "fh-13-8-mat-11",
@@ -41307,27 +39167,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 2,
     "hint": "請回想「數學：一元一次方程式應用」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【C】。本題測驗核心為「數學：一元一次方程式應用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-13-8-mat-20",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "math",
-    "grade": "8",
-    "concept": "數學：一元一次方程式應用",
-    "stem": "若 α、β 為方程式",
-    "options": [
-      "A. 2",
-      "C. －22",
-      "B. 22 𝑥 (𝑥−2) 的兩根，且 α＞β，則 α－β 的值是多少？ 8",
-      "D. －8"
-    ],
-    "answer": 1,
-    "hint": "請回想「數學：一元一次方程式應用」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「數學：一元一次方程式應用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "fh-13-8-mat-21",
@@ -41918,27 +39757,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【C】。本題測驗核心為「英文：進行式與過去時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "fh-23-8-eng-24",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第3次段考",
-    "semester": "2",
-    "stage": "3",
-    "stage_name": "第2學期・第3次段考",
-    "subject": "english",
-    "grade": "8",
-    "concept": "英文：進行式與過去時態",
-    "stem": "Jerry: What’s wrong with you?",
-    "options": [
-      "A. finger",
-      "C. if",
-      "D. although Meg: I hurt my _______ when I was sleeping last night. I can’t even turn my head now.",
-      "B. neck"
-    ],
-    "answer": 1,
-    "hint": "請回想「英文：進行式與過去時態」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「英文：進行式與過去時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "fh-23-8-eng-25",
     "school": "福和國中",
     "exam": "114學年度第2學期第3次段考",
@@ -42378,27 +40196,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 3,
     "hint": "請回想「自然科學：核心科學觀念理解」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【D】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-23-8-sci-14",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第3次段考",
-    "semester": "2",
-    "stage": "3",
-    "stage_name": "第2學期・第3次段考",
-    "subject": "science",
-    "grade": "8",
-    "concept": "理化：酸鹼中和與氧化還原",
-    "stem": "高雄氣爆事件是因為地下管線中的丙烯（C3H6）大量外洩而造成。丙烯是化學工業中重要的原料，常用來製造日常生活中常 見的塑膠製品聚丙烯（PP）。有關丙烯與聚丙烯的相關敘述，下列何者錯誤？",
-    "options": [
-      "A. 丙烯只含有碳和氫兩種元素，屬於烴類化合物",
-      "C. 丙烯在空氣中完全燃燒後，會產生二氧化碳與水",
-      "B. 丙烯在常溫常壓下為氣體，且易溶於水",
-      "D. 聚丙烯（PP）受熱會軟化變形，屬於熱塑性聚合物。"
-    ],
-    "answer": 1,
-    "hint": "請回想「理化：酸鹼中和與氧化還原」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「理化：酸鹼中和與氧化還原」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "fh-23-8-sci-15",
@@ -42989,27 +40786,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【A】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "fh-22-8-sci-4",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第2次段考",
-    "semester": "2",
-    "stage": "2",
-    "stage_name": "第2學期・第2次段考",
-    "subject": "science",
-    "grade": "8",
-    "concept": "理化：酸鹼中和與氧化還原",
-    "stem": "甲、⼄兩種化合物在⽔中解離後，陰、陽離⼦數⽬都分別是 4 莫⽿與 2 莫⽿，已知兩化合物的⽔溶液在 25℃下其 pH 值皆為 7，則關於甲、⼄的敘述下列何者正確？",
-    "options": [
-      "A. 甲、⼄的⽔溶液中皆不含 H+和 OH",
-      "C. 甲可能是碳酸氫鈉",
-      "B. ⼄可能是氯化鎂",
-      "D. ⼄⽔溶液中陽離⼦所帶的總電量⼩於陰離⼦所帶的總電量。"
-    ],
-    "answer": 1,
-    "hint": "請回想「理化：酸鹼中和與氧化還原」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「理化：酸鹼中和與氧化還原」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "fh-22-8-sci-5",
     "school": "福和國中",
     "exam": "114學年度第2學期第2次段考",
@@ -43493,48 +41269,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【C】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "fh-22-8-mat-2",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第2次段考",
-    "semester": "2",
-    "stage": "2",
-    "stage_name": "第2學期・第2次段考",
-    "subject": "math",
-    "grade": "8",
-    "concept": "數學：等差數列與級數",
-    "stem": "已知有一個 𝑛 邊形的每一個內角度數由小到大排列，恰成一個等差數列，且最小內角為104°，最大內角為176°， 則 𝑛 為多少？ (",
-    "options": [
-      "C. 120°",
-      "A. 9",
-      "B. 8",
-      "C. 7"
-    ],
-    "answer": 0,
-    "hint": "請回想「數學：等差數列與級數」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「數學：等差數列與級數」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-22-8-mat-4",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第2次段考",
-    "semester": "2",
-    "stage": "2",
-    "stage_name": "第2學期・第2次段考",
-    "subject": "math",
-    "grade": "8",
-    "concept": "數學：核心概念理解與運算",
-    "stem": "已知 ∠𝐴 和 ∠𝐵 互補、∠𝐵 和 ∠𝐶 互餘，且 ∠𝐴 ∶ ∠𝐵 = 2 ∶ 1，則 ∠𝐶 為多少度？",
-    "options": [
-      "A. 15°",
-      "C. 5",
-      "B. 30°",
-      "C. 45°"
-    ],
-    "answer": 1,
-    "hint": "請回想「數學：核心概念理解與運算」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「數學：核心概念理解與運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "fh-22-8-mat-8",
     "school": "福和國中",
     "exam": "114學年度第2學期第2次段考",
@@ -43724,27 +41458,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【D】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "fh-11-8-eng-25",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "english",
-    "grade": "8",
-    "concept": "英文：現在完成式與時態",
-    "stem": "Mrs. Smith is looking for a new nurse for her grandpa because when she saw this, she was mad.",
-    "options": [
-      "A. they",
-      "B. his",
-      "C. his nurses",
-      "D. you ? We don’t have that much money."
-    ],
-    "answer": 1,
-    "hint": "請回想「英文：現在完成式與時態」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「英文：現在完成式與時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "fh-11-8-eng-26",
     "school": "福和國中",
     "exam": "114學年度第1學期第1次段考",
@@ -43827,27 +41540,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 1,
     "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【B】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-11-8-eng-31",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "english",
-    "grade": "8",
-    "concept": "英文：現在完成式與時態",
-    "stem": "Kelly’s dad always",
-    "options": [
-      "B. summer some pomelo hats for her after they eat pomelos on Mid-Autumn Festival.",
-      "A. sends",
-      "B. shows",
-      "C. cooks snowy here in winter?"
-    ],
-    "answer": 3,
-    "hint": "請回想「英文：現在完成式與時態」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「英文：現在完成式與時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "fh-11-8-sci-2",
@@ -50150,27 +47842,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【D】。本題測驗核心為「英文：進行式與過去時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "yh-22-9-eng-13",
-    "school": "永和國中",
-    "exam": "114學年度第2學期第2次段考",
-    "semester": "2",
-    "stage": "2",
-    "stage_name": "第2學期・第2次段考",
-    "subject": "english",
-    "grade": "9",
-    "concept": "英文：進行式與過去時態",
-    "stem": "Last night, when we were staying at a hotel in London, we watched a street dancer dance to the music ______ a magic trick on the sidewalk. It was amazing!",
-    "options": [
-      "A. did",
-      "B. doing",
-      "C. and do",
-      "D. and did 14 One of the AI paintings shown in the national contests ______ many people because it looks so real."
-    ],
-    "answer": 2,
-    "hint": "請回想「英文：進行式與過去時態」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「英文：進行式與過去時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "yh-22-9-eng-15",
     "school": "永和國中",
     "exam": "114學年度第2學期第2次段考",
@@ -52922,27 +50593,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【D】。本題測驗核心為「國文：語文素養與生活閱讀理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "yh-11-9-chi-38",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "chinese",
-    "grade": "9",
-    "concept": "國文：語文素養與生活閱讀理解",
-    "stem": "根據本詩，下列哪一句話最能說明魏徵的人生觀、價值觀？【讀想喜閱】",
-    "options": [
-      "A. 縱橫計不就，慷慨志猶存",
-      "B. 人生感意氣，功名誰復論",
-      "C. 豈不憚艱險？深懷國士恩",
-      "D. 杖策謁天子，驅馬出關門 宋濂嘗與客飲，帝密使人偵視。翌日，問濂昨飲酒否？坐客為誰？饌何物？濂具以實對。笑曰：「誠然，卿不 欺朕。」間召問群臣贓否，濂惟舉其善者，曰:「善者與臣友，臣知之；其不善者，不能知也。」主事茹太素上書萬 餘言，帝怒，問廷臣。或指其書曰：「此不敬，此誹謗非法。」問濂，對曰: 「彼盡忠於陛下耳，陛下方開言路， 惡可深罪?」既而帝覽其書，有足採者，悉召廷臣詰責，因呼濂字曰： 「微景濂，幾誤罪言者。」 ——改寫自《明史·宋濂列傳》"
-    ],
-    "answer": 1,
-    "hint": "請回想「國文：語文素養與生活閱讀理解」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「國文：語文素養與生活閱讀理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "yh-11-9-chi-39",
     "school": "永和國中",
     "exam": "114學年度第1學期第1次段考",
@@ -52962,27 +50612,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 1,
     "hint": "請回想「國文：語文素養與生活閱讀理解」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【B】。本題測驗核心為「國文：語文素養與生活閱讀理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "yh-11-9-chi-40",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "chinese",
-    "grade": "9",
-    "concept": "國文：語文素養與生活閱讀理解",
-    "stem": "根據本文，下列句意說明何者正確？【讀想喜閱】",
-    "options": [
-      "A. 「微景濂，幾誤罪言者。」：皇帝對宋濂的作為表示肯定",
-      "B. 「此不敬，此誹謗非法。」：茹太素在朝堂中結黨營私，以不實言論批判宋濂",
-      "C. 「善者與臣友，臣知之；其不善者，不能知也。」：宋濂處事圓融，不願得罪旁人",
-      "D. 「彼盡忠於陛下耳，陛下方開言路，惡可深罪?」：得知宋濂極力為自己的上書辯駁"
-    ],
-    "answer": 0,
-    "hint": "請回想「國文：語文素養與生活閱讀理解」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「國文：語文素養與生活閱讀理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "yh-11-9-eng-21",
@@ -53676,27 +51305,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 2,
     "hint": "請回想「社會：社會領域核心素養」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【C】。本題測驗核心為「社會：社會領域核心素養」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "yh-11-9-soc-46",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "social",
-    "grade": "9",
-    "concept": "社會：社會領域核心素養",
-    "stem": "大禾是小禾的爸爸，在小禾失業時給小禾一個店面讓小禾自由運用，表 B 是大禾 選擇 月收租金 給的四種建議，若僅考慮月收租金多寡，請依表 B 選出正確的敘述？(L1+L2) 租給超商 9萬 表",
-    "options": [
-      "A. 不考慮自己開咖啡廳的話，自己住的機會成本最低 租給補習班 10 萬 B",
-      "B. 補習班給小禾的租金屬於補習班老闆的利潤 自己開咖啡廳 ?萬",
-      "C. 大禾給小禾店面運用的建議，是為誰生產的課題 自己住 0萬",
-      "D. 自己開咖啡廳應付給自己租金，是考慮到機會成本。"
-    ],
-    "answer": 3,
-    "hint": "請回想「社會：社會領域核心素養」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「社會：社會領域核心素養」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "yh-11-9-soc-47",
@@ -54789,27 +52397,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 0,
     "hint": "請回想「數學：核心概念理解與運算」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【A】。本題測驗核心為「數學：核心概念理解與運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "yh-13-7-mat-17",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "math",
-    "grade": "7",
-    "concept": "數學：核心概念理解與運算",
-    "stem": "反派組織的琴酒將小蘭關押在一個矩形牢籠裡面，柯南必須計算出該牢籠的周長與面積，才能解開鎖的密碼救出 小蘭。經過智慧眼鏡的測量，矩形的長為(𝑥 + 5)、寬為 7，假設面積為",
-    "options": [
-      "A. 周長為B，請問2A − B的計算結果為 何?",
-      "A. 8𝑥 + 17",
-      "B. 12𝑥 + 46",
-      "C. 12𝑥 + 91"
-    ],
-    "answer": 1,
-    "hint": "請回想「數學：核心概念理解與運算」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「數學：核心概念理解與運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "yh-13-7-mat-18",
@@ -56576,48 +54163,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【D】。本題測驗核心為「社會：社會領域核心素養」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "yh-12-7-sci-1",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：人體生理與器官協調",
-    "stem": "下列有關酵素的敘述，何者錯誤？【3-2】 09.小腸絨毛增加養分吸收的效率的原理，與下列何者最相似？",
-    "options": [
-      "A. 主要成分為蛋白質",
-      "A. 植物根上的根毛",
-      "B. 與受質的結合具有專一性",
-      "B. 消化道的蠕動運動"
-    ],
-    "answer": 3,
-    "hint": "請回想「生物：人體生理與器官協調」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「生物：人體生理與器官協調」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "yh-12-7-sci-2",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：細胞構造與能量代謝",
-    "stem": "下列何者反應無酵素參與反應，且不產生新的物質？【3-2】10.關於「光與光合作用實驗」的步驟與目的，下列何者皆正確？",
-    "options": [
-      "A. 植物行光合作用合成葡萄糖",
-      "A. 放入熱水中煮 →釋放葉子中的澱粉",
-      "B. 植物可將葡萄糖合成澱粉",
-      "B. 放入恆溫水槽 →讓本氏液充分反應"
-    ],
-    "answer": 2,
-    "hint": "請回想「生物：細胞構造與能量代謝」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「生物：細胞構造與能量代謝」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "yh-12-7-sci-5",
     "school": "永和國中",
     "exam": "114學年度第1學期第2次段考",
@@ -56639,69 +54184,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【A】。本題測驗核心為「生物：細胞構造與能量代謝」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "yh-12-7-sci-7",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：人體生理與器官協調",
-    "stem": "關於人體中消化系統的描述，何者最合理？【3-4】 ，並調整成相同重量。 【4-2+活動 4-1】",
-    "options": [
-      "A. 腸腺分泌腸液，與水分的吸收有關 請問在通風光照的環境中三小時後，",
-      "B. 膽汁可以分解脂質，直接被消化道吸收 實驗結果應該為何？",
-      "C. 口腔的唾液澱粉酶可以分解蛋白質",
-      "A. 甲組較輕"
-    ],
-    "answer": 3,
-    "hint": "請回想「生物：人體生理與器官協調」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「生物：人體生理與器官協調」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "yh-12-7-sci-8",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：人體生理與器官協調",
-    "stem": "以下各消化道名稱與其內的消化液名稱之配對，",
-    "options": [
-      "C. 維持等重 下列何選項，完全正確？",
-      "D. 無法預測 消化道 消化液名稱",
-      "A. 胃 胃酸",
-      "A. 通常位於胸腔中央偏右"
-    ],
-    "answer": 3,
-    "hint": "請回想「生物：人體生理與器官協調」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「生物：人體生理與器官協調」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "yh-12-7-sci-18",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：人體生理與器官協調",
-    "stem": "人體的血液循環中，哪些部位會具有瓣膜？ 環境就融化)的化合物 →在腸胃道以最佳活性反應 (甲)大靜脈、(乙)動脈、(丙)微血管、(丁)心房與心室間、",
-    "options": [
-      "C. 包裹鹼性物質 添加維生素 →幫助溶菌酶補充 (戊)心室與動脈間、(己)心房與靜脈間",
-      "A. 甲丁戊",
-      "B. 乙丁己",
-      "C. 甲丙丁己"
-    ],
-    "answer": 0,
-    "hint": "請回想「生物：人體生理與器官協調」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「生物：人體生理與器官協調」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "yh-12-7-sci-21",
     "school": "永和國中",
     "exam": "114學年度第1學期第2次段考",
@@ -56717,27 +54199,6 @@ const REAL_EXAM_QUESTIONS = [
       "B. 丁→甲→丙→乙→戊→己→甲 甲 在沸水中持續 X 物質+澱粉酶 37℃",
       "C. 丙→甲→丁→乙→甲→戊→己 加熱 30 分鐘",
       "D. 甲→丙→丁→乙→甲→己→戊 乙 無加熱 葡萄糖+澱粉酶 37℃"
-    ],
-    "answer": 2,
-    "hint": "請回想「生物：人體生理與器官協調」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「生物：人體生理與器官協調」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "yh-12-7-sci-23",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：人體生理與器官協調",
-    "stem": "凱爾很好奇人體中溶菌酶的各種性質，以下是他找到的資 28.伊森想要讓反應後的丙試管加入本氏液並隔水加熱後，有 料，已知溶菌酶的基本性質與一般的酵素無異，請依所學 機會變到橘紅色，下列在實驗步驟上的調整，何者較不合理？ 知識推論，下列資訊何者錯誤？",
-    "options": [
-      "A. 讓丙試管反應完後，改加入碘液即可",
-      "A. 人體製造的溶菌酶的活性最佳溫度約在 37℃左右",
-      "B. 丙試管的酵素在反應前，不能被加熱",
-      "B. 人體中的溶菌酶即使離開體外，也能繼續反應"
     ],
     "answer": 2,
     "hint": "請回想「生物：人體生理與器官協調」之基礎定義與核心解題步驟。",
@@ -56765,48 +54226,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【C】。本題測驗核心為「生物：細胞構造與能量代謝」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "yh-12-7-sci-42",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "自然科學：核心科學觀念理解",
-    "stem": "依婡墀的血小板數目判斷，她可能會有下列哪一種症狀？ 45.下列哪一項最符合文中關於腸道中「中性菌」的特性？",
-    "options": [
-      "A. 容易血流不止，無法癒合傷口",
-      "A. 數量最少，只會在腸道中短暫停留",
-      "B. 微血管易因膽固醇過高而阻塞",
-      "B. 平時不會造成疾病，但在環境改變時可能變成好菌或壞菌"
-    ],
-    "answer": 0,
-    "hint": "請回想「自然科學：核心科學觀念理解」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "yh-12-7-sci-43",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "自然科學：核心科學觀念理解",
-    "stem": "在這份報告中，依據白血球數量來判斷，婡墀目前可能 46.根據本文，下列哪一項最能正確描述「人類的闌尾」？ 還需再做哪一種檢查？",
-    "options": [
-      "A. 闌尾是沒有功能的退化器官，存在與否都不影響健康",
-      "A. 是否容易暈眩",
-      "B. 是否正受病原體侵襲感染",
-      "B. 闌尾主要用來幫助分解食物中的纖維"
-    ],
-    "answer": 1,
-    "hint": "請回想「自然科學：核心科學觀念理解」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【B】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "yh-12-7-sci-47",
     "school": "永和國中",
     "exam": "114學年度第1學期第2次段考",
@@ -56826,27 +54245,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 3,
     "hint": "請回想「生物：細胞構造與能量代謝」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【D】。本題測驗核心為「生物：細胞構造與能量代謝」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "yh-12-7-sci-44",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第2次段考",
-    "semester": "1",
-    "stage": "2",
-    "stage_name": "第1學期・第2次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：人體生理與器官協調",
-    "stem": "根據文章，下列對於「腸胃道及共生菌」的敘述何者正確？ 的何處吸收？又是由血液中的何部分運送？",
-    "options": [
-      "A. 腸胃道中的細菌並不會對人體做出任何有益的貢獻",
-      "A. 小腸的絨毛吸收，紅血球運送",
-      "B. 大腸桿菌只會造成腹痛及噁心，對人體有害",
-      "B. 小腸的絨毛吸收，血漿運送"
-    ],
-    "answer": 2,
-    "hint": "請回想「生物：人體生理與器官協調」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「生物：人體生理與器官協調」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "yh-12-7-mat-12",
@@ -57815,69 +55213,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【B】。本題測驗核心為「社會：公民權利、法治與經濟生活」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "yh-22-7-sci-1",
-    "school": "永和國中",
-    "exam": "114學年度第2學期第2次段考",
-    "semester": "2",
-    "stage": "2",
-    "stage_name": "第2學期・第2次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "自然科學：核心科學觀念理解",
-    "stem": "請分辨下列的育種方式，何者為「現代育種」？ 便；(丙)琥珀中的蚊子；(丁)樹蕨所形成的煤礦；(戊)三葉蟲",
-    "options": [
-      "A. 古代野生灰狼→長時間馴化→各種形態與功用的狗 休憩所留下的凹槽；(己)現今食肉蟻的洞穴。",
-      "B. 野生甘藍菜→長時間不斷篩選→花椰菜、大頭菜、高麗菜",
-      "A. 甲乙丙丁戊己",
-      "B. 甲乙丙丁戊"
-    ],
-    "answer": 3,
-    "hint": "請回想「自然科學：核心科學觀念理解」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "yh-22-7-sci-2",
-    "school": "永和國中",
-    "exam": "114學年度第2學期第2次段考",
-    "semester": "2",
-    "stage": "2",
-    "stage_name": "第2學期・第2次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "自然科學：核心科學觀念理解",
-    "stem": "為產生第一隻複製動物桃莉，請問牠有幾個媽媽，幾個爸爸？",
-    "options": [
-      "A. 根據研究，馬的祖先最開始是像老鼠一樣大，後來才演",
-      "A. 1 個媽媽，1 個爸爸",
-      "B. 2 個媽媽，1 個爸爸 變成現在大小",
-      "B. 依據化石推測，馬從適合生活森林，演變"
-    ],
-    "answer": 2,
-    "hint": "請回想「自然科學：核心科學觀念理解」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "yh-22-7-sci-3",
-    "school": "永和國中",
-    "exam": "114學年度第2學期第2次段考",
-    "semester": "2",
-    "stage": "2",
-    "stage_name": "第2學期・第2次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：遺傳法則與生物演化",
-    "stem": "人類利用細菌製造出人類所需的胰島素。請問細菌沒有胰臟， 為什麼能製造出人類的胰島素呢？ 11. 今年是馬年，下列這些「馬」(河馬 Hippopotamus",
-    "options": [
-      "A. 科學家找到有胰島組織的細菌 amphibius，平原斑馬 Equus quagga，歐洲海馬 Hippocampus hippocampus)，請參考學名以及和真正的野馬(Equus ferus) 的",
-      "B. 科學家找到有製造人類胰島素基因的細菌 演化親緣關係，由近到遠排列，何者正確？",
-      "C. 科學家將細菌照射輻射線，產生製造人類胰島素的突變細菌",
-      "A. 平原斑馬，河馬，歐洲海馬"
-    ],
-    "answer": 3,
-    "hint": "請回想「生物：遺傳法則與生物演化」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「生物：遺傳法則與生物演化」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "yh-22-7-sci-5",
     "school": "永和國中",
     "exam": "114學年度第2學期第2次段考",
@@ -57920,27 +55255,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【C】。本題測驗核心為「生物：細胞構造與能量代謝」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "yh-22-7-sci-8",
-    "school": "永和國中",
-    "exam": "114學年度第2學期第2次段考",
-    "semester": "2",
-    "stage": "2",
-    "stage_name": "第2學期・第2次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：遺傳法則與生物演化",
-    "stem": "對於一些經基因改造的農作物(如植入抗除草劑基因)，大量",
-    "options": [
-      "A. 日本松為此樹木的學名 種植會為環境，帶來什麼影響？",
-      "B. Japanese pine 為此樹木的學名",
-      "A. 容易造成除草劑使用過量而汙染環境",
-      "C. pine 代表學名中的「種小名」"
-    ],
-    "answer": 0,
-    "hint": "請回想「生物：遺傳法則與生物演化」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「生物：遺傳法則與生物演化」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "yh-22-7-sci-15",
     "school": "永和國中",
     "exam": "114學年度第2學期第2次段考",
@@ -57981,27 +55295,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 3,
     "hint": "請回想「自然科學：核心科學觀念理解」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【D】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "yh-22-7-sci-28",
-    "school": "永和國中",
-    "exam": "114學年度第2學期第2次段考",
-    "semester": "2",
-    "stage": "2",
-    "stage_name": "第2學期・第2次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "自然科學：核心科學觀念理解",
-    "stem": "優酪乳中有乳酸桿菌，請問乳酸桿菌是上述表格中的哪一種",
-    "options": [
-      "C. g.i.n.o.",
-      "D. g.n.o.p. 生物？",
-      "A. A",
-      "B. B"
-    ],
-    "answer": 0,
-    "hint": "請回想「自然科學：核心科學觀念理解」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "yh-22-7-sci-19",
@@ -58235,27 +55528,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【C】。本題測驗核心為「生物：細胞構造與能量代謝」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "yh-22-7-sci-39",
-    "school": "永和國中",
-    "exam": "114學年度第2學期第2次段考",
-    "semester": "2",
-    "stage": "2",
-    "stage_name": "第2學期・第2次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "自然科學：核心科學觀念理解",
-    "stem": "有關斑馬驢的敘述，下列何者正確？",
-    "options": [
-      "B. 某些食品可以利用放射線來加工",
-      "A. 只具有平原斑馬的全部特徵",
-      "C. 可以利用胡椒或鹽巴對食品加工",
-      "B. 是非洲野驢突變產生的"
-    ],
-    "answer": 3,
-    "hint": "請回想「自然科學：核心科學觀念理解」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "yh-22-7-sci-40",
     "school": "永和國中",
     "exam": "114學年度第2學期第2次段考",
@@ -58317,27 +55589,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 2,
     "hint": "請回想「自然科學：核心科學觀念理解」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【C】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "yh-22-7-sci-45",
-    "school": "永和國中",
-    "exam": "114學年度第2學期第2次段考",
-    "semester": "2",
-    "stage": "2",
-    "stage_name": "第2學期・第2次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：細胞構造與能量代謝",
-    "stem": "文章裡的研究者是用電子顯微鏡，從「長期在化石上被認為",
-    "options": [
-      "B. 定子帶動轉子讓鞭毛上下左右擺動 是細菌的結構」，觀察到此結構的何種特徵，而重建出近鳥",
-      "C. 轉子帶動定子讓鞭毛上下左右擺動 龍或中華龍鳥的羽毛顏色？",
-      "D. 定子帶動轉子進而轉動整根鞭毛",
-      "A. 形狀"
-    ],
-    "answer": 0,
-    "hint": "請回想「生物：細胞構造與能量代謝」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「生物：細胞構造與能量代謝」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "yh-22-7-sci-49",
@@ -58527,27 +55778,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 2,
     "hint": "請回想「英文：生活素養文法與單字運用」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【C】。本題測驗核心為「英文：生活素養文法與單字運用」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "yh-22-7-eng-29",
-    "school": "永和國中",
-    "exam": "114學年度第2學期第2次段考",
-    "semester": "2",
-    "stage": "2",
-    "stage_name": "第2學期・第2次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：現在完成式與時態",
-    "stem": "Mom: I need something sweet with the coffee. Dad: ___________ Mom: Sure! That’s a good idea. 🕮 idea 主意",
-    "options": [
-      "A. How about some yummy cake?",
-      "B. Why don’t you put in some cake?",
-      "C. Why do you need some sugar?",
-      "D. Can you get some sugar for me?"
-    ],
-    "answer": 0,
-    "hint": "請回想「英文：現在完成式與時態」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【A】。本題測驗核心為「英文：現在完成式與時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "yh-22-7-eng-30",
@@ -60522,27 +57752,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 0,
     "hint": "請回想「自然科學：核心科學觀念理解」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【A】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "yh-11-7-sci-11",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "science",
-    "grade": "7",
-    "concept": "生物：細胞構造與能量代謝",
-    "stem": "下列各選項中，何項的養分皆不能提供能量，但對維持正常生命機能",
-    "options": [
-      "B. 細胞間的分工合作 無 有 很重要？",
-      "C. 單一細胞生命現象 較少 較多",
-      "A. 礦物質、蛋白質、酵素",
-      "B. 蛋白質、脂質、維生素"
-    ],
-    "answer": 3,
-    "hint": "請回想「生物：細胞構造與能量代謝」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「生物：細胞構造與能量代謝」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "yh-11-7-sci-12",
@@ -63693,27 +60902,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 1,
     "hint": "請回想「英文：現在完成式與時態」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【B】。本題測驗核心為「英文：現在完成式與時態」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "yh-23-7-eng-31",
-    "school": "永和國中",
-    "exam": "114學年度第2學期第3次段考",
-    "semester": "2",
-    "stage": "3",
-    "stage_name": "第2學期・第3次段考",
-    "subject": "english",
-    "grade": "7",
-    "concept": "英文：關係代名詞與子句",
-    "stem": "Which “way” is different from the others?",
-    "options": [
-      "A. People there make money this way.",
-      "B. We can learn English in a fun way.",
-      "C. Do you always wash hands that way?",
-      "D. It’s a long way from here to there."
-    ],
-    "answer": 3,
-    "hint": "請回想「英文：關係代名詞與子句」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「英文：關係代名詞與子句」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "yh-23-7-eng-32",
@@ -72200,27 +69388,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【C】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "yh-11-8-sci-26",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "science",
-    "grade": "8",
-    "concept": "理化：莫耳濃度與化學計量",
-    "stem": "饅頭兄為下個科學實驗大賽做準備。他拿了一些特殊的能量粉末和水裝入 A 試管中，蓋上蓋子並確實搖晃混合，靜置一段 時間後，底部留下了一層未溶解的粉末。饅頭兄取上層較清澈的液體倒入 B 試管中。請問這",
-    "options": [
-      "A. B 兩支試管中的能量粉末 濃度比例為多少？",
-      "A. 7：3",
-      "B. 3：7",
-      "C. 1：1"
-    ],
-    "answer": 2,
-    "hint": "請回想「理化：莫耳濃度與化學計量」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「理化：莫耳濃度與化學計量」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "yh-11-8-sci-27",
     "school": "永和國中",
     "exam": "114學年度第1學期第1次段考",
@@ -72956,27 +70123,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【D】。本題測驗核心為「國文：白話文意理解與主旨分析」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "yh-11-8-chi-26",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "chinese",
-    "grade": "8",
-    "concept": "國文：詞性辨析與句型結構",
-    "stem": "下列字詞的詞性說明，何者正確？",
-    "options": [
-      "A. 「伐」薪與討「伐」的「伐」字均為副詞",
-      "B. 炭「賤」與貴遠「賤」近的「賤」字均為動詞",
-      "C. 「曉」駕與破「曉」的「曉」字均為動詞",
-      "D. 衣正「單」與「單」純的「單」字均為形容詞。 昔京師有琢冰為人物之形者，被以衣裳，綴以丹碧，神色如生，形制如真。京師天寒，置之堂背①，逾日 不變，變則修飾之。往觀者日數百人，皆嘆其巧，驚其神。 一日，語眾曰:「孰能與我三斗粟?吾授之以吾技。」人無應者。 乃問之曰:「吾之技亦巧矣!吾欲鬻②技， 得三斗粟，而人無應者，其故何也?」有笑之曰:「子之技誠巧矣!子何不範金琢玉，為夏、殷、周、漢之器，可 以寶而不壞。今乃琢冰為玩物，其形雖肖，不日而化矣。吾甚惜子之技巧而非真，心勞而無用，可以娛目前而 不可以傳久遠也。」文而無質，亦猶是也。 (唐甄 潛書)"
-    ],
-    "answer": 3,
-    "hint": "請回想「國文：詞性辨析與句型結構」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【D】。本題測驗核心為「國文：詞性辨析與句型結構」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "yh-11-8-chi-27",
     "school": "永和國中",
     "exam": "114學年度第1學期第1次段考",
@@ -73059,27 +70205,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 0,
     "hint": "請回想「國文：語文素養與生活閱讀理解」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【A】。本題測驗核心為「國文：語文素養與生活閱讀理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "yh-11-8-chi-31",
-    "school": "永和國中",
-    "exam": "114學年度第1學期第1次段考",
-    "semester": "1",
-    "stage": "1",
-    "stage_name": "第1學期・第1次段考",
-    "subject": "chinese",
-    "grade": "8",
-    "concept": "國文：語文素養與生活閱讀理解",
-    "stem": "看完本文，可知文中透露什麼道理？",
-    "options": [
-      "A. 信心可破除懷疑",
-      "B. 仁義可獲得同情",
-      "C. 孝心可感動人",
-      "D. 忠心可獲得信任。 洛陽布衣申屠敦，有漢鼎一，得於長安深川之下。雲螭① 斜錯，其文爛如②也。西鄰魯生見而悅焉，呼金工 象而鑄之。淬以奇藥，穴地藏之者三年。土與藥交蝕，銅質已化，與敦所有者略類。 一旦，持獻權貴人，貴人寶之，饗賓而玩之。敦偶在坐，心知為魯生物也，乃曰:「敦亦有鼎，其形酷肖是， 第③不知孰為真耳?」權貴人請觀之，良久曰:「非真也!」眾賓次第④咸曰:「是，誠非真也!」敦不平，辨數不已。 眾共折辱之，敦噤不敢言，歸而嘆曰:「吾今然後知勢之足以變易是非也!」 龍門子聞而笑曰:「敦何見之晚哉?士之於文也，亦然。」 (節選自明 宋濂宋學士文集)"
-    ],
-    "answer": 2,
-    "hint": "請回想「國文：語文素養與生活閱讀理解」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「國文：語文素養與生活閱讀理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "yh-11-8-chi-32",
@@ -75371,27 +72496,6 @@ const REAL_EXAM_QUESTIONS = [
     "explanation": "正確答案為【A】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
-    "id": "fh-13-9-sci-29",
-    "school": "福和國中",
-    "exam": "114學年度第1學期第3次段考",
-    "semester": "1",
-    "stage": "3",
-    "stage_name": "第1學期・第3次段考",
-    "subject": "science",
-    "grade": "9",
-    "concept": "自然科學：核心科學觀念理解",
-    "stem": "甲、乙、丙三條電阻線通電時的電壓 V 與電流 I 之關係圖如右所示。假設這三條是由相同材料 製成，他們長度分別為 L 甲、L 乙、L 丙，截面積為Ａ甲、Ａ乙、Ａ丙；且圖中三條線皆為直線，則 下列關係何者正確?",
-    "options": [
-      "A. 若長度相同，則Ａ甲>Ａ丙>Ａ乙",
-      "C. 若長度相同，則Ａ丙<Ａ乙<Ａ甲",
-      "B. 若截面積相同，則 L 甲>L 乙>L 丙",
-      "D. 若甲電阻最細，同時一定也是最長的。"
-    ],
-    "answer": 2,
-    "hint": "請回想「自然科學：核心科學觀念理解」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
     "id": "fh-13-9-sci-41",
     "school": "福和國中",
     "exam": "114學年度第1學期第3次段考",
@@ -75915,48 +73019,6 @@ const REAL_EXAM_QUESTIONS = [
     "answer": 1,
     "hint": "請回想「自然科學：核心科學觀念理解」之基礎定義與核心解題步驟。",
     "explanation": "正確答案為【B】。本題測驗核心為「自然科學：核心科學觀念理解」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-23-8-mat-2",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第3次段考",
-    "semester": "2",
-    "stage": "3",
-    "stage_name": "第2學期・第3次段考",
-    "subject": "math",
-    "grade": "8",
-    "concept": "數學：核心概念理解與運算",
-    "stem": "下列各組數中，哪一組可以作為三角形的三邊長？ 1 1",
-    "options": [
-      "A. 2、3、5",
-      "B. 1、 、",
-      "C. 0.6、0.9、1.3 2 3 2 2 ) △ABC 中， AB ＝10， BC ＝21，則 AC 的範圍為何？",
-      "A. 10＜ AC ＜21"
-    ],
-    "answer": 2,
-    "hint": "請回想「數學：核心概念理解與運算」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「數學：核心概念理解與運算」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
-  },
-  {
-    "id": "fh-23-8-sci-34",
-    "school": "福和國中",
-    "exam": "114學年度第2學期第3次段考",
-    "semester": "2",
-    "stage": "3",
-    "stage_name": "第2學期・第3次段考",
-    "subject": "science",
-    "grade": "8",
-    "concept": "理化：密度、浮力與壓力",
-    "stem": "現代人注重休閒生活，有時會想出遠門渡假幾天，家裡如果有飼養貓、狗等寵物，沒有人可以幫忙 餵食或倒水將是一大煩惱。我們可以藉由基礎的理化概念，動手 DIY 寵物自動給水器，寵物自動 給水器也是大氣壓力與水壓的應用。當寵物喝了水盤內的水，使水盤內水位下降，則儲水瓶中的水 會從底部連接管流出補充，圖中箭頭即為補充的水流向水盤。若儲水瓶中 A 點、B 點壓力分別為 P",
-    "options": [
-      "A. PB，水盤中 C 點壓力為 PC，已知",
-      "B. C 在同一水平面上，則下列敘述何者正確？ (甲)B 點壓力是 由上方液柱及空氣柱所造成 (乙)在系統靜止平衡且水位蓋過連接口時，",
-      "B. C 在同一水平面上，故 PB ＝PC (丙)若水盤內的水位下降，使管口露出，空氣進入後，儲水瓶的水會流出補充，使其水位也跟著 下降 (丁)儲水瓶內 PA 等於當時外界大氣壓力。",
-      "A. 僅甲乙"
-    ],
-    "answer": 2,
-    "hint": "請回想「理化：密度、浮力與壓力」之基礎定義與核心解題步驟。",
-    "explanation": "正確答案為【C】。本題測驗核心為「理化：密度、浮力與壓力」，解題關鍵在於依循題幹定義與觀念邏輯推導。"
   },
   {
     "id": "fh-22-8-sci-31",

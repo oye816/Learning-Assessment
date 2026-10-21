@@ -85,6 +85,24 @@ def is_self_contained(q):
         eng_passage = re.compile(r"according to the (reading|passage|article|dialogue|chart)", re.I)
         if eng_passage.search(text_no_idiom) and len(stem_no_idiom.strip()) < 120:
             return False, "eng_passage_short"
+
+    # 5. 選項規格與題幹洩漏審查 (嚴禁題幹夾帶至選項、嚴禁標籤缺失倒錯)
+    if not isinstance(opts, list) or len(opts) != 4:
+        return False, "invalid_options_len"
+
+    expected_labels = ["A", "B", "C", "D"]
+    actual_labels = []
+    for opt in opts:
+        if not isinstance(opt, str):
+            return False, "non_string_opt"
+        m = re.match(r"^([A-D])[\.、\s]", opt.strip())
+        actual_labels.append(m.group(1) if m else "?")
+        # 嚴禁題幹洩漏：包含填空底線 ___、人名對話 (如 Anna: 或 Nick:)、長問句
+        if "___" in opt or ("?" in opt and len(opt) > 30) or re.search(r"\b[A-Z][a-z]{1,8}:\s*", opt):
+            return False, "stem_leak_in_options"
+
+    if actual_labels != expected_labels:
+        return False, "options_order_mismatch"
             
     return True, "ok"
 

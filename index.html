@@ -678,7 +678,7 @@
               <div class="flex flex-wrap items-center gap-2">
                 <h3 class="text-lg sm:text-xl font-black text-white">名校段考全真題庫</h3>
                 <span id="examStageLabelBadge" class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[11px] font-extrabold">第一學期・第二次段考</span>
-                <span id="examStageCountBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold">新北三大名校 3,696 題純淨真題收錄</span>
+                <span id="examStageCountBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold">新北三大名校 3,556 題純淨真題收錄</span>
               </div>
               <p class="text-xs text-slate-300 mt-1">
                 依<span class="text-amber-300 font-bold">學期</span>與<span class="text-amber-300 font-bold">段考次數</span>精準分類，精選新北升學名校（海山、永和、福和國中）全科真題，支援分科測驗、章節考點特訓與五科綜合大考！
@@ -836,11 +836,19 @@
               <label for="alchemyQuestionInput" class="block text-xs font-bold text-slate-300">
                 📝 貼上題目、錯誤選項或卡關觀念：
               </label>
-              <!-- RAG 自訂題庫管理徽章按鈕 -->
-              <button type="button" onclick="openCustomRagModal()" id="btnCustomRagBadge" class="text-[11px] font-bold px-2.5 py-1 rounded-xl bg-indigo-950/80 border border-indigo-500/40 text-indigo-300 hover:text-white hover:border-indigo-400 transition-all flex items-center gap-1 shadow-sm" title="檢視所有拍照收錄的 RAG 知識庫題庫">
-                <span>📚</span>
-                <span>RAG 題庫：<span id="customRagCountBadge" class="text-amber-300 font-mono font-extrabold">0</span> 題自訂考題</span>
-              </button>
+              <div class="flex items-center gap-2">
+                <!-- 生題異常紀錄入口 -->
+                <button type="button" onclick="openGenerationAnomaliesModal()" id="btnOpenAnomaliesModal" class="text-[11px] font-bold px-2.5 py-1 rounded-xl bg-slate-900 border border-slate-700 hover:border-amber-500/50 text-slate-300 hover:text-amber-300 transition-all flex items-center gap-1 shadow-sm" title="檢視與管理生題異常除錯紀錄">
+                  <span>🐞</span>
+                  <span>異常除錯</span>
+                  <span id="anomalyCountBadge" class="hidden px-1.5 py-0.2 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] font-black">0</span>
+                </button>
+                <!-- RAG 自訂題庫管理徽章按鈕 -->
+                <button type="button" onclick="openCustomRagModal()" id="btnCustomRagBadge" class="text-[11px] font-bold px-2.5 py-1 rounded-xl bg-indigo-950/80 border border-indigo-500/40 text-indigo-300 hover:text-white hover:border-indigo-400 transition-all flex items-center gap-1 shadow-sm" title="檢視所有拍照收錄的 RAG 知識庫題庫">
+                  <span>📚</span>
+                  <span>RAG 題庫：<span id="customRagCountBadge" class="text-amber-300 font-mono font-extrabold">0</span> 題</span>
+                </button>
+              </div>
             </div>
             <textarea id="alchemyQuestionInput" rows="4" class="w-full rounded-2xl bg-slate-950/90 border border-slate-700 focus:border-fuchsia-400 focus:outline-none p-3.5 text-sm text-white placeholder-slate-500 leading-relaxed" placeholder="例如：一件衣服按定價打八折出售，還比成本多賺 120 元；若按定價打六折出售則賠 80 元，請問這件衣服成本多少元？（亦可直接拍照上傳考卷或題目圖片！）"></textarea>
 
@@ -1644,6 +1652,109 @@
       </div>
     </div>
 
+    <!-- ==================== MODAL: GENERATION ANOMALIES & DEBUGGER ==================== -->
+    <div id="generationAnomaliesModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
+      <div class="rpg-card rounded-3xl p-6 sm:p-8 max-w-3xl w-full max-h-[85vh] overflow-y-auto border border-rose-500/40 shadow-2xl relative space-y-4">
+        <button type="button" onclick="closeGenerationAnomaliesModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg font-bold">✕</button>
+        <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 pr-8 gap-2">
+          <div class="flex items-center gap-2.5">
+            <span class="text-2xl">🐞</span>
+            <div>
+              <h3 class="text-lg sm:text-xl font-black text-white">AI 生題異常紀錄與除錯中心</h3>
+              <p class="text-xs text-slate-400">完整記錄出題過程捕獲之網路、JSON 解析、規格瑕疵或格式錯誤，以利開發除錯與 AI 自動修復！</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="copyAllAnomaliesJson()" class="text-xs text-cyan-300 hover:text-cyan-200 font-bold flex items-center gap-1 bg-cyan-950/60 hover:bg-cyan-900/60 px-3 py-1.5 rounded-xl border border-cyan-800/60 transition-all shadow-sm">
+              <span>📋</span> 複製除錯 JSON
+            </button>
+            <button type="button" onclick="clearAllGenerationAnomalies()" class="text-xs text-rose-400 hover:text-rose-300 font-bold flex items-center gap-1 bg-rose-950/60 hover:bg-rose-900/60 px-3 py-1.5 rounded-xl border border-rose-800/60 transition-all shadow-sm">
+              <span>🗑️</span> 清空紀錄
+            </button>
+          </div>
+        </div>
+        <div id="generationAnomaliesListContainer" class="space-y-3 mt-4">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== MODAL: AI QUESTION REPAIR WORKBENCH ==================== -->
+    <div id="questionRepairModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
+      <div class="rpg-card rounded-3xl p-6 sm:p-8 max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-amber-500/40 shadow-2xl relative space-y-4">
+        <button type="button" onclick="closeQuestionRepairModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg font-bold">✕</button>
+        <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 pr-8 gap-2">
+          <div class="flex items-center gap-2.5">
+            <span class="text-2xl">🔧</span>
+            <div>
+              <h3 class="text-lg sm:text-xl font-black text-white">AI 題目修正與重構工作台</h3>
+              <p class="text-xs text-slate-400">運用 Gemini AI 智能補全幾何/實驗 SVG 繪圖、優化誘答項難度、轉換純文字數學排版並重寫秒殺解析！</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 原始題目預覽 -->
+        <div class="space-y-2">
+          <label class="text-xs font-bold text-slate-400 flex items-center gap-1">
+            <span>📄</span> 待修正題目預覽：
+          </label>
+          <div id="repairOriginalQuestionBox" class="bg-slate-900/90 rounded-2xl p-4 border border-slate-700/80 space-y-2 text-xs sm:text-sm text-slate-200">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- 快捷修正需求標籤 -->
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-amber-300 flex items-center gap-1">
+            <span>🎯</span> 快捷修正要求（點擊自動帶入）：
+          </label>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" onclick="applyRepairTag('📐 補全標準深色主題幾何/實驗圖 SVG 向量繪圖')" class="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-[11px] font-bold text-sky-300 border border-slate-700 transition-all">📐 補全幾何/實驗圖 SVG</button>
+            <button type="button" onclick="applyRepairTag('🎯 優化 4 個選項，設計具備會考段考鑑別度的優質誘答項')" class="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-[11px] font-bold text-emerald-300 border border-slate-700 transition-all">🎯 強化選項誘答度</button>
+            <button type="button" onclick="applyRepairTag('🧮 將所有數學符號轉換為人類一目了然的自然純文字（嚴禁 LaTeX）')" class="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-[11px] font-bold text-fuchsia-300 border border-slate-700 transition-all">🧮 數學符號自然化</button>
+            <button type="button" onclick="applyRepairTag('💡 補充詳細解題步驟、陷阱說明與秒殺破題心法')" class="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-[11px] font-bold text-amber-300 border border-slate-700 transition-all">💡 擴寫秒殺解析</button>
+          </div>
+        </div>
+
+        <!-- 自訂修復指示 -->
+        <div class="space-y-1.5">
+          <label for="repairUserInstructionInput" class="text-xs font-bold text-slate-300">
+            ✏️ 自訂修正或重構指示：
+          </label>
+          <textarea id="repairUserInstructionInput" rows="2" class="w-full rounded-2xl bg-slate-950/90 border border-slate-700 focus:border-amber-400 focus:outline-none p-3 text-xs sm:text-sm text-white placeholder-slate-500 leading-relaxed" placeholder="例如：將題幹改為『若直角三角形兩股長為 6、8，斜邊為 x』，並繪製標準深色 SVG 直角三角形圖形..."></textarea>
+        </div>
+
+        <!-- 開始修正按鈕 -->
+        <div>
+          <button type="button" id="btnExecuteRepair" onclick="executeQuestionRepair()" class="w-full py-2.5 rounded-2xl bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 hover:from-amber-500 hover:to-orange-400 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg transition-all active:scale-98">
+            <span id="repairBtnIcon">🚀</span>
+            <span id="repairBtnText">召喚 AI 修正並重構此題</span>
+          </button>
+        </div>
+
+        <!-- 修復後題目預覽卡片 (初始隱藏) -->
+        <div id="repairedResultContainer" class="hidden space-y-3 pt-3 border-t border-slate-800">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-black text-emerald-400 flex items-center gap-1">
+              <span>✨</span> AI 題目修復成果預覽：
+            </span>
+            <span id="repairNoteBadge" class="text-[11px] text-amber-300 font-semibold bg-amber-950/60 border border-amber-800/60 px-2 py-0.5 rounded-full"></span>
+          </div>
+          <div id="repairedQuestionCardBox" class="bg-slate-950/90 rounded-2xl p-4 sm:p-5 border border-emerald-500/50 space-y-3 shadow-xl">
+            <!-- Populated by JS -->
+          </div>
+          <div class="flex flex-wrap items-center justify-end gap-2 pt-2">
+            <button type="button" onclick="applyRepairedQuestionToPack()" id="btnApplyRepairedToPack" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition-all">
+              ✅ 替換至當前試題包
+            </button>
+            <button type="button" onclick="applyRepairedQuestionAndSaveToRag()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-extrabold flex items-center gap-1.5 shadow-md transition-all">
+              <span>📥</span> 套用並收錄至 RAG 典範庫
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ==================== MODAL: IMAGE LIGHTBOX PREVIEW ==================== -->
     <div id="imageLightboxModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md" onclick="closeImageLightboxModal()">
       <div class="relative max-w-4xl max-h-[90vh] flex flex-col items-center" onclick="event.stopPropagation()">
@@ -1861,11 +1972,16 @@
 
     /**
      * 隨機洗牌單一題目的選項（A/B/C/D），並自動重新對應正確答案索引與解析文字
+     * 針對名校段考真題（帶有 school/exam/stage 標記），嚴格保留官方原始命題選項排列與詳解對應，不予打亂
      */
     function shuffleQuestion(q) {
       if (!q || !Array.isArray(q.options) || q.options.length < 2) return q;
+      // 名校段考全真題庫（真題來源）嚴格保留官方命題原始選項排列與解析對應，不進行隨機洗牌
+      if (q.school || q.exam || q.stage || (q.id && (q.id.startsWith('yh-') || q.id.startsWith('fh-') || q.id.startsWith('hs-')))) {
+        return Object.assign({}, q);
+      }
       const cloned = Object.assign({}, q);
-      const rawOptions = cloned.options.map(opt => opt.replace(/^[A-D]\.\s*/, '').trim());
+      const rawOptions = cloned.options.map(opt => opt.replace(/^[A-D][\.、\s]\s*/, '').trim());
       const oldAnswerIdx = (typeof cloned.answer === 'number' && cloned.answer >= 0 && cloned.answer < rawOptions.length) ? cloned.answer : 0;
       const letters = ['A', 'B', 'C', 'D'];
       const oldLetter = letters[oldAnswerIdx] || 'A';
@@ -1885,9 +2001,12 @@
       cloned.options = newOptions;
       cloned.answer = finalAnswerIdx;
 
-      // 若解析包含「正確答案為 X」，自動更新為新的選項英文字母
+      // 若解析包含「正確答案為 X」或「正確答案為【X】」，自動精確更新為新的選項英文字母
       if (typeof cloned.explanation === 'string' && oldLetter !== newLetter) {
-        cloned.explanation = cloned.explanation.replace(new RegExp(`(正確答案[為是]\\s*)[A-D]`, 'g'), `$1${newLetter}`);
+        cloned.explanation = cloned.explanation
+          .replace(/(正確答案[為是]\s*【)[A-D](】)/g, `$1${newLetter}$2`)
+          .replace(/(正確答案[為是]\s*\()[A-D](\))/g, `$1${newLetter}$2`)
+          .replace(/(正確答案[為是]\s*)[A-D]/g, `$1${newLetter}`);
       }
 
       return cloned;
@@ -2621,6 +2740,23 @@
         }
       }
 
+      // 5. 選項規格與題幹洩漏審查（阻絕選項倒錯、缺漏或包含題幹填空與對話）
+      if (!Array.isArray(opts) || opts.length !== 4) {
+        return false;
+      }
+      const expectedLabels = ['A', 'B', 'C', 'D'];
+      for (let i = 0; i < 4; i++) {
+        const opt = typeof opts[i] === 'string' ? opts[i].trim() : '';
+        const m = opt.match(/^([A-D])[\.、\s]/);
+        if (!m || m[1] !== expectedLabels[i]) {
+          return false;
+        }
+        // 嚴禁選項內洩漏題幹填空或對話人名
+        if (opt.includes('___') || (opt.includes('?') && opt.length > 30) || /\b[A-Z][a-z]{1,8}:\s*/.test(opt)) {
+          return false;
+        }
+      }
+
       return true;
     }
 
@@ -3291,6 +3427,479 @@
       }
     }
 
+    // ==================== 生題異常紀錄 (Generation Anomalies) 處理邏輯 ====================
+    function updateAnomalyCountBadge() {
+      const badge = document.getElementById('anomalyCountBadge');
+      if (!badge) return;
+      if (!window.GeminiService || typeof window.GeminiService.getAnomalies !== 'function') {
+        badge.classList.add('hidden');
+        return;
+      }
+      const list = window.GeminiService.getAnomalies();
+      const unresolvedCount = list.filter(item => item.status !== 'repaired').length;
+      if (list.length > 0) {
+        badge.textContent = unresolvedCount > 0 ? `${unresolvedCount}` : '✓';
+        badge.className = unresolvedCount > 0
+          ? 'px-1.5 py-0.2 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] font-black'
+          : 'px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-black';
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    function openGenerationAnomaliesModal() {
+      renderGenerationAnomaliesList();
+      const modal = document.getElementById('generationAnomaliesModal');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeGenerationAnomaliesModal() {
+      const modal = document.getElementById('generationAnomaliesModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function renderGenerationAnomaliesList() {
+      const container = document.getElementById('generationAnomaliesListContainer');
+      if (!container || !window.GeminiService) return;
+
+      const list = window.GeminiService.getAnomalies();
+      updateAnomalyCountBadge();
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-10 px-4 rounded-2xl bg-slate-900/60 border border-dashed border-slate-800">
+            <span class="text-3xl">🎉</span>
+            <h4 class="text-white font-extrabold text-sm sm:text-base mt-2">太棒了！目前無任何生題異常紀錄</h4>
+            <p class="text-xs text-slate-400 mt-1 max-w-md mx-auto leading-relaxed">
+              當 AI 智慧生題過程遇到網路問題、JSON 格式解析錯誤、或題目缺少選項等異常時，系統會自動捕捉並記錄於此，提供一鍵除錯與 AI 自動修復！
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      const stageLabels = {
+        network: { text: '🌐 網路/金鑰異常', bg: 'bg-rose-950/70 text-rose-300 border-rose-800/60' },
+        json_parse: { text: '⚠️ JSON 解析失敗', bg: 'bg-amber-950/70 text-amber-300 border-amber-800/60' },
+        schema_validation: { text: '📐 題目規格瑕疵', bg: 'bg-indigo-950/70 text-indigo-300 border-indigo-800/60' },
+        generation: { text: '⚙️ 模型生成異常', bg: 'bg-purple-950/70 text-purple-300 border-purple-800/60' },
+        user_reported: { text: '🙋 學生回報瑕疵', bg: 'bg-sky-950/70 text-sky-300 border-sky-800/60' }
+      };
+
+      container.innerHTML = list.map(item => {
+        const stageMeta = stageLabels[item.stage] || { text: item.stage || '生題異常', bg: 'bg-slate-800 text-slate-300 border-slate-700' };
+        const timeStr = item.timestamp ? new Date(item.timestamp).toLocaleString() : '未知時間';
+        const isRepaired = item.status === 'repaired';
+        const hasFaultyQ = !!(item.faultyQuestion && (item.faultyQuestion.stem || item.faultyQuestion.options));
+        const canAiRepair = hasFaultyQ || (item.rawResponse && item.rawResponse.length > 20);
+
+        return `
+          <div class="bg-slate-950/90 rounded-2xl p-4 sm:p-5 border ${isRepaired ? 'border-emerald-500/40' : 'border-slate-800 hover:border-rose-500/40'} transition-all space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold px-2 py-0.5 rounded-full border ${stageMeta.bg}">${escapeHtml(stageMeta.text)}</span>
+                <span class="text-xs text-slate-400 font-semibold">${escapeHtml(item.subject)}・${escapeHtml(item.grade)}年級</span>
+                ${isRepaired ? '<span class="text-[10px] text-emerald-400 bg-emerald-950/70 border border-emerald-800/60 px-2 py-0.5 rounded-full font-bold">✓ AI 已修正修復</span>' : '<span class="text-[10px] text-rose-400 bg-rose-950/70 border border-rose-800/60 px-2 py-0.5 rounded-full font-bold">待除錯修復</span>'}
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-[11px] text-slate-500 font-mono">${escapeHtml(timeStr)}</span>
+                <button type="button" onclick="deleteSingleAnomaly('${item.id}')" class="text-[11px] text-rose-400 hover:text-rose-300 font-bold px-2 py-0.5 rounded bg-rose-950/40 border border-rose-800/40 transition-colors" title="刪除此異常紀錄">
+                  🗑️ 刪除
+                </button>
+              </div>
+            </div>
+
+            <!-- 錯誤原因 -->
+            <div class="text-xs sm:text-sm font-bold text-rose-300 bg-rose-950/30 border border-rose-900/40 rounded-xl p-3">
+              ❌ 異常原因：${escapeHtml(item.errorReason || '未提供具體原因')}
+            </div>
+
+            <!-- 輸入提示詞或題目概要 -->
+            ${item.inputText ? `
+              <div class="text-xs text-slate-300">
+                <span class="text-slate-500 font-semibold">輸入考點/錯題：</span>${escapeHtml(item.inputText)}
+              </div>
+            ` : ''}
+
+            <!-- 展開除錯詳情與原始回傳 -->
+            <details class="text-xs text-slate-400 bg-slate-900/60 rounded-xl p-3 border border-slate-800">
+              <summary class="cursor-pointer font-bold text-amber-300/90 hover:text-amber-300 select-none">
+                🔍 展開檢視除錯 Payload、Raw Response 與 Prompt 參數
+              </summary>
+              <div class="mt-2.5 space-y-2 pt-2 border-t border-slate-800 font-mono text-[11px]">
+                <div><span class="text-slate-500">模型：</span><span class="text-cyan-300">${escapeHtml(item.model || 'Gemini')}</span> | <span class="text-slate-500">模式：</span>${escapeHtml(item.style || 'progressive')} | <span class="text-slate-500">含圖片：</span>${item.hasImage ? '是' : '否'}</div>
+                ${item.faultyQuestion ? `
+                  <div class="space-y-1">
+                    <span class="text-amber-400 font-bold">瑕疵題目物件：</span>
+                    <pre class="bg-black/60 p-2.5 rounded-lg overflow-x-auto text-slate-300 max-h-40 overflow-y-auto">${escapeHtml(JSON.stringify(item.faultyQuestion, null, 2))}</pre>
+                  </div>
+                ` : ''}
+                ${item.rawResponse ? `
+                  <div class="space-y-1">
+                    <span class="text-amber-400 font-bold">模型原始回傳文本 (Raw Response)：</span>
+                    <pre class="bg-black/60 p-2.5 rounded-lg overflow-x-auto text-slate-300 max-h-40 overflow-y-auto whitespace-pre-wrap">${escapeHtml(item.rawResponse)}</pre>
+                  </div>
+                ` : ''}
+                ${item.repairedQuestion ? `
+                  <div class="space-y-1">
+                    <span class="text-emerald-400 font-bold">修復後題目 (Repaired Question)：</span>
+                    <pre class="bg-black/60 p-2.5 rounded-lg overflow-x-auto text-emerald-300 max-h-40 overflow-y-auto">${escapeHtml(JSON.stringify(item.repairedQuestion, null, 2))}</pre>
+                  </div>
+                ` : ''}
+              </div>
+            </details>
+
+            <!-- 操作列 -->
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-800/60">
+              <span class="text-[11px] text-slate-500">ID: ${escapeHtml(item.id)}</span>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="copySingleAnomalyJson('${item.id}')" class="text-xs text-slate-300 hover:text-white font-bold px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-colors">
+                  📋 複製此筆
+                </button>
+                ${canAiRepair ? `
+                  <button type="button" onclick="launchRepairFromAnomaly('${item.id}')" class="text-xs font-bold px-3 py-1 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white flex items-center gap-1 shadow-md transition-all active:scale-95">
+                    <span>🤖</span>
+                    <span>AI 修正此題</span>
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function clearAllGenerationAnomalies() {
+      if (!confirm('確定要清空所有生題異常紀錄嗎？')) return;
+      if (window.GeminiService && typeof window.GeminiService.clearAnomalies === 'function') {
+        window.GeminiService.clearAnomalies();
+      }
+      renderGenerationAnomaliesList();
+      showToast('🗑️ 已清空所有生題異常紀錄', 'info');
+    }
+
+    function deleteSingleAnomaly(id) {
+      if (window.GeminiService && typeof window.GeminiService.deleteAnomaly === 'function') {
+        window.GeminiService.deleteAnomaly(id);
+      }
+      renderGenerationAnomaliesList();
+    }
+
+    function copyAllAnomaliesJson() {
+      const list = window.GeminiService ? window.GeminiService.getAnomalies() : [];
+      if (list.length === 0) {
+        showToast('目前無異常紀錄可複製', 'warning');
+        return;
+      }
+      navigator.clipboard.writeText(JSON.stringify(list, null, 2)).then(() => {
+        showToast(`📋 已複製全數 ${list.length} 筆生題異常除錯 JSON！`, 'success');
+      }).catch(() => {
+        showToast('複製失敗，請手動選取', 'danger');
+      });
+    }
+
+    function copySingleAnomalyJson(id) {
+      const list = window.GeminiService ? window.GeminiService.getAnomalies() : [];
+      const item = list.find(x => x.id === id);
+      if (!item) return;
+      navigator.clipboard.writeText(JSON.stringify(item, null, 2)).then(() => {
+        showToast('📋 已複製該筆異常除錯 JSON！', 'success');
+      }).catch(() => {});
+    }
+
+    // ==================== AI 題目修正工作台 (AI Repair Workbench) ====================
+    let currentRepairContext = {
+      targetIdx: -1, // 指向 appState.alchemyCurrentPack.questions[idx]
+      anomalyId: null, // 若從異常清單開啟
+      faultyQuestion: null,
+      repairedQuestion: null,
+      subject: 'math',
+      grade: '8'
+    };
+
+    function openQuestionRepairModal(idxOrObject, errorReason = '', anomalyId = null) {
+      let targetQ = null;
+      let targetIdx = -1;
+      let sub = 'math';
+      let grd = '8';
+
+      if (typeof idxOrObject === 'number') {
+        targetIdx = idxOrObject;
+        if (appState.alchemyCurrentPack && appState.alchemyCurrentPack.questions[targetIdx]) {
+          targetQ = appState.alchemyCurrentPack.questions[targetIdx];
+          sub = targetQ.subject || appState.alchemyCurrentPack.subject || 'math';
+          grd = targetQ.grade || appState.alchemyCurrentPack.grade || '8';
+        }
+      } else if (idxOrObject && typeof idxOrObject === 'object') {
+        targetQ = idxOrObject;
+        sub = targetQ.subject || 'math';
+        grd = targetQ.grade || '8';
+      }
+
+      if (!targetQ) {
+        showToast('找不到待修復題目資料', 'warning');
+        return;
+      }
+
+      currentRepairContext = {
+        targetIdx,
+        anomalyId,
+        faultyQuestion: JSON.parse(JSON.stringify(targetQ)),
+        repairedQuestion: null,
+        errorReason: errorReason || '',
+        subject: sub,
+        grade: grd
+      };
+
+      // 渲染原始題目預覽
+      const origBox = document.getElementById('repairOriginalQuestionBox');
+      if (origBox) {
+        origBox.innerHTML = `
+          <div class="flex items-center justify-between text-xs text-slate-400">
+            <span class="font-bold text-amber-300">【考點：${escapeHtml(targetQ.concept || '觀念')}】</span>
+            <span>${escapeHtml(sub)}・${escapeHtml(grd)}年級</span>
+          </div>
+          <p class="font-bold text-white text-sm sm:text-base leading-relaxed">${escapeHtml(targetQ.stem || '(題幹為空或異常)')}</p>
+          ${(targetQ.diagramSvg && typeof window.renderSafeSvg === 'function') ? window.renderSafeSvg(targetQ.diagramSvg, '原題圖形') : ''}
+          ${Array.isArray(targetQ.options) ? `
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              ${targetQ.options.map(opt => `<div class="p-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-300">${escapeHtml(opt)}</div>`).join('')}
+            </div>
+          ` : '<div class="text-rose-400 text-xs">⚠️ 選項缺失或非陣列</div>'}
+          ${errorReason ? `<div class="text-rose-400 font-bold text-xs">異常摘要：${escapeHtml(errorReason)}</div>` : ''}
+        `;
+      }
+
+      // 重設輸入框與結果區
+      const inputEl = document.getElementById('repairUserInstructionInput');
+      if (inputEl) inputEl.value = errorReason ? `請特別修正此問題：${errorReason}` : '';
+
+      const resBox = document.getElementById('repairedResultContainer');
+      if (resBox) resBox.classList.add('hidden');
+
+      const applyPackBtn = document.getElementById('btnApplyRepairedToPack');
+      if (applyPackBtn) {
+        applyPackBtn.style.display = targetIdx >= 0 ? 'inline-flex' : 'none';
+      }
+
+      const modal = document.getElementById('questionRepairModal');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeQuestionRepairModal() {
+      const modal = document.getElementById('questionRepairModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function applyRepairTag(tagText) {
+      const inputEl = document.getElementById('repairUserInstructionInput');
+      if (!inputEl) return;
+      if (inputEl.value.trim()) {
+        inputEl.value += '；' + tagText;
+      } else {
+        inputEl.value = tagText;
+      }
+      inputEl.focus();
+    }
+
+    function launchRepairFromAnomaly(anomalyId) {
+      const list = window.GeminiService ? window.GeminiService.getAnomalies() : [];
+      const item = list.find(x => x.id === anomalyId);
+      if (!item) return;
+
+      closeGenerationAnomaliesModal();
+
+      let targetQ = item.faultyQuestion;
+      if (!targetQ && item.rawResponse) {
+        targetQ = {
+          stem: item.inputText || '請重構此題目',
+          rawResponse: item.rawResponse
+        };
+      }
+
+      openQuestionRepairModal(targetQ, item.errorReason, anomalyId);
+    }
+
+    async function executeQuestionRepair() {
+      if (!window.GeminiService) return;
+      const apiKey = window.GeminiService.getApiKey();
+      if (!apiKey) {
+        showToast('請先設定 Gemini API Key！', 'warning');
+        openGeminiKeyModal();
+        return;
+      }
+
+      const inputEl = document.getElementById('repairUserInstructionInput');
+      const userInstruction = inputEl ? inputEl.value.trim() : '';
+
+      const btn = document.getElementById('btnExecuteRepair');
+      const icon = document.getElementById('repairBtnIcon');
+      const text = document.getElementById('repairBtnText');
+      if (btn) btn.disabled = true;
+      if (icon) icon.textContent = '⏳';
+      if (text) text.textContent = 'AI 正在分析命題並精密修復中...';
+
+      try {
+        const repaired = await window.GeminiService.repairQuestion({
+          faultyQuestion: currentRepairContext.faultyQuestion,
+          errorReason: currentRepairContext.errorReason,
+          userInstruction: userInstruction,
+          subject: currentRepairContext.subject,
+          grade: currentRepairContext.grade,
+          apiKey
+        });
+
+        currentRepairContext.repairedQuestion = repaired;
+
+        // 若是由生題異常啟動，自動更新該異常紀錄
+        if (currentRepairContext.anomalyId) {
+          window.GeminiService.updateAnomaly(currentRepairContext.anomalyId, {
+            status: 'repaired',
+            repairedQuestion: repaired,
+            repairNote: repaired.repairNote || '由 AI 題目修正工作台修復完成'
+          });
+          updateAnomalyCountBadge();
+        }
+
+        // 渲染修復成果卡片
+        const cardBox = document.getElementById('repairedQuestionCardBox');
+        const noteBadge = document.getElementById('repairNoteBadge');
+        if (noteBadge) {
+          noteBadge.textContent = repaired.repairNote ? `優化：${repaired.repairNote}` : '✓ 修復符合嚴格題庫標準';
+        }
+        if (cardBox) {
+          const optsHtml = (repaired.options || []).map((opt, i) => `
+            <div class="p-3 rounded-xl ${i === repaired.answer ? 'bg-emerald-950/70 border-emerald-500/70 text-emerald-200 font-bold' : 'bg-slate-900 border-slate-700/80 text-slate-300'} border text-xs sm:text-sm flex items-center justify-between">
+              <span>${escapeHtml(opt)}</span>
+              ${i === repaired.answer ? '<span class="text-xs text-emerald-400 font-black">✓ 正確答案</span>' : ''}
+            </div>
+          `).join('');
+
+          cardBox.innerHTML = `
+            <div class="flex items-center justify-between text-xs text-slate-400 border-b border-slate-800 pb-2">
+              <span class="font-extrabold text-amber-300">【${escapeHtml(repaired.concept || '核心考點')}】</span>
+              <span class="text-emerald-400 font-bold">4 選項標準單選題</span>
+            </div>
+            <p class="q-stem-scalable font-bold text-white text-sm sm:text-base leading-relaxed tracking-wide">${escapeHtml(repaired.stem)}</p>
+            ${(repaired.diagramSvg && typeof window.renderSafeSvg === 'function') ? window.renderSafeSvg(repaired.diagramSvg, '修復後 SVG 圖形') : ''}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              ${optsHtml}
+            </div>
+            <div class="text-xs text-slate-300 bg-slate-900/80 rounded-xl p-3 border border-slate-800 space-y-1">
+              <div><strong class="text-amber-400">💡 破題提示：</strong>${escapeHtml(repaired.hint || '掌握題幹關鍵條件。')}</div>
+              <div><strong class="text-emerald-400">📝 詳解推導：</strong>${escapeHtml(repaired.explanation || '依據題意與定義逐步推論。')}</div>
+            </div>
+          `;
+        }
+
+        const resBox = document.getElementById('repairedResultContainer');
+        if (resBox) {
+          resBox.classList.remove('hidden');
+          resBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        showToast('✨ AI 題目修復完成！可直接替換或納入 RAG 典範庫！', 'success');
+      } catch (err) {
+        console.error('修復失敗:', err);
+        showToast('❌ 題目修復失敗：' + (err.message || '請檢查連線或 API Key'), 'danger');
+      } finally {
+        if (btn) btn.disabled = false;
+        if (icon) icon.textContent = '🚀';
+        if (text) text.textContent = '召喚 AI 修正並重構此題';
+      }
+    }
+
+    function applyRepairedQuestionToPack() {
+      const rep = currentRepairContext.repairedQuestion;
+      const tIdx = currentRepairContext.targetIdx;
+      if (!rep || tIdx < 0 || !appState.alchemyCurrentPack || !appState.alchemyCurrentPack.questions[tIdx]) {
+        showToast('無法套用至當前試題包', 'warning');
+        return;
+      }
+
+      rep.isRepaired = true;
+      appState.alchemyCurrentPack.questions[tIdx] = rep;
+      renderAlchemyPackOutput(appState.alchemyCurrentPack);
+      closeQuestionRepairModal();
+      showToast(`✨ 第 ${tIdx + 1} 題已成功替換為 AI 修復後的高素養試題！`, 'success');
+    }
+
+    async function applyRepairedQuestionAndSaveToRag() {
+      const rep = currentRepairContext.repairedQuestion;
+      if (!rep) {
+        showToast('尚無修復後的題目資料', 'warning');
+        return;
+      }
+
+      // 若在試題包中，同步替換
+      if (currentRepairContext.targetIdx >= 0 && appState.alchemyCurrentPack && appState.alchemyCurrentPack.questions[currentRepairContext.targetIdx]) {
+        rep.isRepaired = true;
+        appState.alchemyCurrentPack.questions[currentRepairContext.targetIdx] = rep;
+        renderAlchemyPackOutput(appState.alchemyCurrentPack);
+      }
+
+      if (window.RagEngine) {
+        try {
+          const apiKey = window.GeminiService ? window.GeminiService.getApiKey() : '';
+          await window.RagEngine.addCustomQuestion({
+            ...rep,
+            subject: rep.subject || currentRepairContext.subject,
+            grade: rep.grade || currentRepairContext.grade,
+            school: 'AI 修正題型典範',
+            source: 'ai_repaired',
+            repairNote: rep.repairNote || 'AI 題目修正工作台精修題型'
+          }, apiKey, appState.currentUser);
+
+          updateCustomRagCountBadge();
+          showToast('📥 題目已成功收錄至 RAG 典範庫！未來同考點生題將自動參考此題型！', 'success');
+        } catch (ragErr) {
+          console.warn('收錄 RAG 失敗:', ragErr);
+          showToast('收錄 RAG 失敗: ' + ragErr.message, 'danger');
+        }
+      }
+
+      closeQuestionRepairModal();
+    }
+
+    async function saveAlchemyQuestionToRag(idx) {
+      if (!appState.alchemyCurrentPack || !appState.alchemyCurrentPack.questions[idx]) return;
+      const q = appState.alchemyCurrentPack.questions[idx];
+      if (!window.RagEngine) return;
+
+      const btn = document.getElementById(`btnSaveToRag-${idx}`);
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '⏳ 向量化收錄中...';
+      }
+
+      try {
+        const apiKey = window.GeminiService ? window.GeminiService.getApiKey() : '';
+        await window.RagEngine.addCustomQuestion({
+          ...q,
+          subject: q.subject || appState.alchemyCurrentPack.subject,
+          grade: q.grade || appState.alchemyCurrentPack.grade,
+          school: q.isRepaired ? 'AI 修正題型典範' : 'AI 精選好題典範',
+          source: q.isRepaired ? 'ai_repaired' : 'ai_curated'
+        }, apiKey, appState.currentUser);
+
+        updateCustomRagCountBadge();
+        showToast('✨ 成功收錄至 RAG 典範庫！未來相關考點出題將自動參考此題型！', 'success');
+
+        if (btn) {
+          btn.className = 'text-xs text-emerald-400 font-bold flex items-center gap-1 bg-emerald-950/60 border border-emerald-800/60 px-2 py-0.5 rounded-lg';
+          btn.innerHTML = '✓ 已為 RAG 典範';
+        }
+      } catch (err) {
+        console.error('收錄 RAG 失敗:', err);
+        showToast('❌ 收錄 RAG 失敗: ' + (err.message || '請稍後再試'), 'danger');
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '📥 納入 RAG';
+        }
+      }
+    }
+
     function initImageUploadHandlers() {
       // 支援全局截圖貼上 (Ctrl+V / Cmd+V)
       window.addEventListener('paste', function(e) {
@@ -3473,7 +4082,7 @@
         coreConcept: '① 本單元聚焦「' + primaryConcept + '」的核心素養概念；② 請仔細審查題幹給予之已知條件，辨別是原理定義題或計算應用題；③ 逐一檢驗選項，排除易混淆干擾項。',
         commonTrap: '常因審題疏漏、單位換算錯誤，或將反向關係記反導致落入命題誘答陷阱。',
         mnemonic: '🔮 破題心法：「審題抓關鍵，觀念先定位；排除誘答項，會考穩穩拿分！」',
-        questions: selectedQuestions.map(q => shuffleQuestion(q)),
+        questions: selectedQuestions.map(q => Object.assign({}, q)),
         ragExemplars: selectedQuestions.slice(0, 2)
       };
 
@@ -3590,10 +4199,21 @@
               <div class="flex items-center gap-2.5">
                 <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-fuchsia-600 text-white text-xs sm:text-sm font-black flex items-center justify-center shadow">Q${idx + 1}</span>
                 <span class="text-sm sm:text-base font-extrabold text-amber-300">${escapeHtml(q.concept)}</span>
+                ${q.isRepaired ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">🛠️ AI 校正修復</span>' : ''}
               </div>
-              <button type="button" onclick="saveQuestionToGrimoireFromAlchemy(${idx})" class="text-xs sm:text-sm text-slate-400 hover:text-amber-300 font-semibold">
-                📌 收錄至錯題本
-              </button>
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <button type="button" onclick="openQuestionRepairModal(${idx})" class="text-xs text-amber-300 hover:text-amber-200 font-bold px-2.5 py-1 rounded-xl bg-amber-950/40 hover:bg-amber-900/50 border border-amber-800/50 transition-all flex items-center gap-1 shadow-sm" title="召喚 AI 修正、美化或調整此題目">
+                  <span>🔧</span>
+                  <span>AI 修正</span>
+                </button>
+                <button type="button" id="btnSaveToRag-${idx}" onclick="saveAlchemyQuestionToRag(${idx})" class="text-xs text-indigo-300 hover:text-indigo-200 font-bold px-2.5 py-1 rounded-xl bg-indigo-950/50 hover:bg-indigo-900/50 border border-indigo-700/50 transition-all flex items-center gap-1 shadow-sm" title="將此題型收錄至 RAG 典範庫，提供日後出題參考">
+                  <span>📥</span>
+                  <span>納入 RAG</span>
+                </button>
+                <button type="button" onclick="saveQuestionToGrimoireFromAlchemy(${idx})" class="text-xs text-slate-400 hover:text-white font-medium px-2 py-1 rounded-lg hover:bg-slate-800 transition-colors">
+                  📌 錯題本
+                </button>
+              </div>
             </div>
             <p class="q-stem-scalable font-bold text-white leading-relaxed tracking-wide">${escapeHtml(q.stem)}</p>
             ${(q.diagramSvg && typeof window.renderSafeSvg === 'function') ? window.renderSafeSvg(q.diagramSvg, `${subMeta.name}・幾何實驗圖解`) : ''}
@@ -3833,7 +4453,7 @@
       launchBattleSession(
         `💡 AI 弱點延伸測驗：${pack.topicTitle}`,
         'AI 弱點強化守門者',
-        pack.questions.map(q => shuffleQuestion(q))
+        pack.questions.map(q => Object.assign({}, q))
       );
     }
 
@@ -3898,7 +4518,7 @@
         appState.recentQuestionIds = appState.recentQuestionIds.slice(-35);
       }
 
-      return selected.map(q => shuffleQuestion(q));
+      return selected;
     }
 
     function startSubjectDungeon(subjectId) {
@@ -4902,7 +5522,8 @@
         }
       } catch (err) {
         console.error('Gemini 生題錯誤:', err);
-        showToast('❌ ' + (err.message || '出題失敗，請檢查 API Key 或網路'), 'danger');
+        updateAnomalyCountBadge();
+        showToast('❌ ' + (err.message || '出題失敗，請檢查 API Key 或網路') + '（已記錄至生題異常紀錄）', 'danger');
       } finally {
         if (spinIcon) spinIcon.classList.add('hidden');
       }
@@ -5479,6 +6100,21 @@
     window.closeCustomRagModal = closeCustomRagModal;
     window.deleteCustomRagQuestion = deleteCustomRagQuestion;
 
+    window.openGenerationAnomaliesModal = openGenerationAnomaliesModal;
+    window.closeGenerationAnomaliesModal = closeGenerationAnomaliesModal;
+    window.clearAllGenerationAnomalies = clearAllGenerationAnomalies;
+    window.deleteSingleAnomaly = deleteSingleAnomaly;
+    window.copyAllAnomaliesJson = copyAllAnomaliesJson;
+    window.copySingleAnomalyJson = copySingleAnomalyJson;
+    window.launchRepairFromAnomaly = launchRepairFromAnomaly;
+    window.openQuestionRepairModal = openQuestionRepairModal;
+    window.closeQuestionRepairModal = closeQuestionRepairModal;
+    window.applyRepairTag = applyRepairTag;
+    window.executeQuestionRepair = executeQuestionRepair;
+    window.applyRepairedQuestionToPack = applyRepairedQuestionToPack;
+    window.applyRepairedQuestionAndSaveToRag = applyRepairedQuestionAndSaveToRag;
+    window.saveAlchemyQuestionToRag = saveAlchemyQuestionToRag;
+
     // ==================== 12. INITIALIZATION ====================
     window.onload = function () {
       initQuestionFontScale();
@@ -5501,6 +6137,11 @@
 
       updateGeminiKeyUI();
       updateCustomRagCountBadge();
+      updateAnomalyCountBadge();
+      window.addEventListener('generation-anomaly-logged', updateAnomalyCountBadge);
+      window.addEventListener('generation-anomalies-cleared', updateAnomalyCountBadge);
+      window.addEventListener('generation-anomaly-updated', updateAnomalyCountBadge);
+      window.addEventListener('generation-anomaly-deleted', updateAnomalyCountBadge);
       initImageUploadHandlers();
       initAuthListener();
       document.getElementById('alchemyQuestionInput').value = ALCHEMY_PRESETS[0].sampleInput;
