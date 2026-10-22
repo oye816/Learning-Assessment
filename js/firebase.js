@@ -109,6 +109,12 @@ function initFirebase() {
 
       // 監聽 Auth 變化並主動更新快取與廣播
       onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          // 先拉取雲端動態管理員名單以校準最新權限
+          try {
+            await FirebaseService.fetchCloudAdminList();
+          } catch (e) {}
+        }
         const admin = FirebaseService.isAdmin(user);
         if (user) {
           FirebaseService.syncUnsyncedLocalRecords(user).catch(() => {});
@@ -137,6 +143,8 @@ function initFirebase() {
 initFirebase();
 
 export class FirebaseService {
+  static _cloudAdminsCache = new Set();
+
   static isAvailable() {
     return isFirebaseConfigured() && !!auth && !!db;
   }
@@ -145,7 +153,35 @@ export class FirebaseService {
     return APP_CONFIG;
   }
 
-  static saveCustomConfig(customFirebase, adminEmailsList) {
+  /**
+   * 自 Firestore "system_admins" 集合拉取最新授權管理員名單
+   */
+  static async fetchCloudAdminList() {
+    if (!this.isAvailable()) return Array.from(this._cloudAdminsCache);
+    try {
+      const snap = await getDocs(collection(db, "system_admins"));
+      if (!snap.empty) {
+        snap.docs.forEach(docSnap => {
+          const mail = (docSnap.id ? docSnap.id : (docSnap.data()?.email || '')).toLowerCase().trim();
+          if (mail) this._cloudAdminsCache.add(mail);
+        });
+        // 雙重安全快取至 localStorage
+        try {
+          const localAdmins = JSON.parse(localStorage.getItem('jh_quest_admin_emails') || '[]');
+          const merged = Array.from(new Set([...localAdmins, ...Array.from(this._cloudAdminsCache)]));
+          localStorage.setItem('jh_quest_admin_emails', JSON.stringify(merged));
+        } catch (e) {}
+      }
+    } catch (err) {
+      console.debug("讀取雲端 system_admins 狀態:", err.message);
+    }
+    return Array.from(this._cloudAdminsCache);
+  }
+
+  /**
+   * 儲存自訂設定並自動非同步同步管理員至 Firestore system_admins
+   */
+  static async saveCustomConfig(customFirebase, adminEmailsList, currentUser = null) {
     const configToSave = {
       firebase: customFirebase,
       adminEmails: adminEmailsList
@@ -155,14 +191,27 @@ export class FirebaseService {
     APP_CONFIG.adminEmails = adminEmailsList;
     window.APP_CONFIG = APP_CONFIG;
     initFirebase();
+
+    // 若 Firebase 連線可用，批次將管理員同步至雲端 system_admins 集合
+    if (this.isAvailable() && Array.isArray(adminEmailsList)) {
+      for (const email of adminEmailsList) {
+        const cleanEmail = String(email || '').toLowerCase().trim();
+        if (cleanEmail) {
+          this.grantAdmin(cleanEmail, currentUser).catch(() => {});
+        }
+      }
+    }
   }
 
   /**
-   * 授權特定信箱為管理員
+   * 授權特定信箱為管理員（本機 + Firestore system_admins 雲端雙寫）
    */
-  static grantAdmin(email) {
-    if (!email) return;
+  static async grantAdmin(email, byUser = null) {
+    if (!email) return false;
     const cleaned = email.toLowerCase().trim();
+    this._cloudAdminsCache.add(cleaned);
+
+    // 1. 更新本機 localStorage
     const localAdmins = JSON.parse(localStorage.getItem('jh_quest_admin_emails') || '[]');
     if (!localAdmins.includes(cleaned)) {
       localAdmins.push(cleaned);
@@ -171,17 +220,69 @@ export class FirebaseService {
     if (!APP_CONFIG.adminEmails.map(e => e.toLowerCase().trim()).includes(cleaned)) {
       APP_CONFIG.adminEmails.push(cleaned);
     }
+
+    // 2. 寫入 Firestore system_admins 集合，確保 firestore.rules 動態核准
+    if (this.isAvailable()) {
+      try {
+        await setDoc(doc(db, "system_admins", cleaned), {
+          email: cleaned,
+          grantedBy: byUser?.email || (auth?.currentUser?.email || 'admin'),
+          grantedAt: serverTimestamp()
+        }, { merge: true });
+        console.log(`👑 管理者「${cleaned}」已同步至 Firestore 雲端授權清單`);
+        return true;
+      } catch (cloudErr) {
+        console.warn("⚠️ 同步管理者至雲端 system_admins 失敗 (本機已生效):", cloudErr);
+      }
+    }
+    return true;
+  }
+
+  /**
+   * 撤銷特定信箱之管理員身分
+   */
+  static async revokeAdmin(email) {
+    if (!email) return false;
+    const cleaned = email.toLowerCase().trim();
+    this._cloudAdminsCache.delete(cleaned);
+
+    // 1. 本機快取移除
+    try {
+      let localAdmins = JSON.parse(localStorage.getItem('jh_quest_admin_emails') || '[]');
+      localAdmins = localAdmins.filter(e => e.toLowerCase().trim() !== cleaned);
+      localStorage.setItem('jh_quest_admin_emails', JSON.stringify(localAdmins));
+    } catch (e) {}
+
+    APP_CONFIG.adminEmails = (APP_CONFIG.adminEmails || []).filter(e => e.toLowerCase().trim() !== cleaned);
+
+    // 2. 自 Firestore 刪除
+    if (this.isAvailable()) {
+      try {
+        await deleteDoc(doc(db, "system_admins", cleaned));
+        console.log(`👑 管理者「${cleaned}」已從 Firestore 雲端授權清單移除`);
+        return true;
+      } catch (cloudErr) {
+        console.warn("⚠️ 自雲端移除管理者失敗:", cloudErr);
+      }
+    }
+    return true;
   }
 
   static isAdmin(user) {
     if (!user || !user.email) return false;
     const email = user.email.toLowerCase().trim();
     
-    // 檢查 APP_CONFIG
+    // 1. 始祖超級管理員預設名單保底
+    if (email === 'oye816@gmail.com') return true;
+
+    // 2. 檢查雲端動態管理員快取 (system_admins)
+    if (this._cloudAdminsCache.has(email)) return true;
+
+    // 3. 檢查 APP_CONFIG
     const adminList = (APP_CONFIG.adminEmails || []).map(e => e.toLowerCase().trim());
     if (adminList.includes(email)) return true;
 
-    // 檢查 localStorage
+    // 4. 檢查 localStorage
     try {
       const localAdmins = JSON.parse(localStorage.getItem('jh_quest_admin_emails') || '[]');
       if (localAdmins.map(e => e.toLowerCase().trim()).includes(email)) return true;
@@ -399,6 +500,107 @@ export class FirebaseService {
       }
     }
     return record;
+  }
+
+  /**
+   * 刪除指定的一筆測驗評量紀錄（支援本地快取刪除與 Firestore 雲端同步刪除）
+   * @param {Object|string} recordOrId 評量紀錄物件或紀錄 ID / cloudDocId
+   * @param {Object} [user] 當前操作的使用者
+   */
+  static async deleteAssessmentRecord(recordOrId, user = null) {
+    if (!recordOrId) return { success: false, message: '無效的紀錄識別碼' };
+
+    let targetId = typeof recordOrId === 'string' ? recordOrId : (recordOrId.id || recordOrId.clientRecordId || recordOrId.recordId);
+    let cloudDocId = typeof recordOrId === 'object' ? recordOrId.cloudDocId : null;
+
+    // 1. 本機快取刪除
+    let localDeleted = false;
+    try {
+      let localRecords = JSON.parse(localStorage.getItem('jh_quest_local_history') || '[]');
+      const initialLen = localRecords.length;
+      localRecords = localRecords.filter(r => {
+        const rId = r.clientRecordId || r.recordId || r.id;
+        const rCloudId = r.cloudDocId;
+        if (targetId && (rId === targetId || r.id === targetId)) return false;
+        if (cloudDocId && rCloudId === cloudDocId) return false;
+        if (targetId && rCloudId === targetId) return false;
+        return true;
+      });
+      if (localRecords.length < initialLen) {
+        localDeleted = true;
+        localStorage.setItem('jh_quest_local_history', JSON.stringify(localRecords));
+      }
+    } catch (e) {
+      console.warn("本機刪除評量紀錄失敗:", e);
+    }
+
+    // 2. 雲端 Firestore 同步刪除
+    let cloudDeleted = false;
+    if (this.isAvailable()) {
+      try {
+        // 若已有 cloudDocId，直接刪除文檔
+        if (cloudDocId) {
+          await deleteDoc(doc(db, "assessment_records", cloudDocId));
+          cloudDeleted = true;
+        } else if (targetId && !String(targetId).startsWith('rec_')) {
+          // 若 targetId 本身就是 Firestore Document ID
+          await deleteDoc(doc(db, "assessment_records", targetId));
+          cloudDeleted = true;
+        } else if (targetId) {
+          // 若只有 clientRecordId，透過查詢比對刪除
+          const q = query(
+            collection(db, "assessment_records"),
+            where("clientRecordId", "==", targetId)
+          );
+          const snap = await getDocs(q);
+          if (!snap.empty) {
+            for (const d of snap.docs) {
+              await deleteDoc(d.ref);
+            }
+            cloudDeleted = true;
+          }
+        }
+      } catch (cloudErr) {
+        console.warn("⚠️ 雲端刪除評量紀錄失敗:", cloudErr);
+      }
+    }
+
+    return { success: localDeleted || cloudDeleted, localDeleted, cloudDeleted };
+  }
+
+  /**
+   * 清空指定使用者的所有測驗紀錄（本地與雲端一併清除）
+   * @param {Object} [user] 當前登入的使用者
+   */
+  static async clearAllAssessmentRecords(user = null) {
+    // 1. 清空本地快取
+    try {
+      localStorage.removeItem('jh_quest_local_history');
+    } catch (e) {
+      console.warn("清空本機評量紀錄失敗:", e);
+    }
+
+    // 2. 若已登入且 Firebase 可用，清空雲端屬於該使用者的紀錄
+    let cloudCount = 0;
+    if (this.isAvailable() && user && user.uid) {
+      try {
+        const q = query(
+          collection(db, "assessment_records"),
+          where("userId", "==", user.uid)
+        );
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+          for (const d of snap.docs) {
+            await deleteDoc(d.ref);
+            cloudCount++;
+          }
+        }
+      } catch (err) {
+        console.warn("⚠️ 清空雲端評量紀錄失敗:", err);
+      }
+    }
+
+    return { success: true, cloudDeletedCount: cloudCount };
   }
 
   /**

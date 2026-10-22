@@ -1386,9 +1386,14 @@
               完整記錄你在系統中完成的所有段考真題、單元評量與 AI 延伸練習成績。登入 Google 帳號後將自動同步至雲端！
             </p>
           </div>
-          <button type="button" onclick="loadMyHistory()" class="self-start sm:self-center px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-200 flex items-center gap-1.5 transition-colors">
-            <span>🔄</span> <span>重新整理測驗紀錄</span>
-          </button>
+          <div class="flex flex-wrap items-center gap-2 self-start sm:self-center">
+            <button type="button" onclick="loadMyHistory()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-200 flex items-center gap-1.5 transition-colors">
+              <span>🔄</span> <span>重新整理測驗紀錄</span>
+            </button>
+            <button type="button" onclick="confirmClearAllHistory()" class="px-3.5 py-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/70 border border-rose-800/60 text-xs font-bold text-rose-300 hover:text-white flex items-center gap-1.5 transition-all">
+              <span>🗑️</span> <span>清空所有紀錄</span>
+            </button>
+          </div>
         </div>
 
         <!-- Personal Summary Metrics -->
@@ -1622,7 +1627,7 @@
           <div>
             <label class="block text-xs font-bold text-slate-300 mb-1">管理者 Google 帳號清單 (以逗號分隔)：</label>
             <input type="text" id="inputCustomAdminEmails" placeholder="oye816@gmail.com, teacher@example.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-violet-400" />
-            <small class="text-[10px] text-slate-400">登入符合信箱的使用者將自動解鎖「👑 導師管理後台」。</small>
+            <small class="text-[10px] text-slate-400">登入符合信箱的使用者將自動解鎖「👑 導師管理後台」，並自動同步至 Firestore <code class="text-emerald-400 font-mono">system_admins</code> 雲端集合動態授權。</small>
           </div>
           <div class="flex items-center justify-end gap-2 pt-2">
             <button type="button" onclick="saveCustomFirebaseFromModal()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-xs font-black text-white shadow-lg shadow-emerald-600/30">
@@ -4096,14 +4101,89 @@
             <td class="px-4 py-3 text-center ${rankColor}">${r.rank || 'B'}</td>
             <td class="px-4 py-3 text-xs text-slate-400 font-mono">${dateStr}</td>
             <td class="px-4 py-3 text-center">
-              <button type="button" onclick="openRecordDetailModal('personal', ${idx})" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-cyan-300">
-                檢視明細
-              </button>
+              <div class="flex items-center justify-center gap-1.5">
+                <button type="button" onclick="openRecordDetailModal('personal', ${idx})" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-cyan-300 transition-colors">
+                  檢視明細
+                </button>
+                <button type="button" onclick="deletePersonalRecord(${idx})" class="px-2.5 py-1 rounded-lg bg-rose-950/40 hover:bg-rose-900 border border-rose-800/60 text-xs font-semibold text-rose-300 hover:text-white transition-colors" title="刪除此筆測驗紀錄">
+                  🗑️ 刪除
+                </button>
+              </div>
             </td>
           </tr>
         `;
       }).join('');
     }
+
+    /**
+     * 刪除單筆個人測驗紀錄（支援 Firestore 雲端與本機同步清除）
+     */
+    async function deletePersonalRecord(idx) {
+      const records = appState.personalRecords || [];
+      const record = records[idx];
+      if (!record) return;
+
+      const title = record.title || '一般測驗';
+      const confirmed = window.confirm(`確定要刪除「${title}」這筆測驗紀錄嗎？\n（此動作將從雲端與本機同步移除，刪除後將無法復原）`);
+      if (!confirmed) return;
+
+      try {
+        if (window.FirebaseService) {
+          await window.FirebaseService.deleteAssessmentRecord(record, appState.currentUser);
+        } else {
+          let localRecords = JSON.parse(localStorage.getItem('jh_quest_local_history') || '[]');
+          const rId = record.clientRecordId || record.recordId || record.id;
+          localRecords = localRecords.filter(r => (r.clientRecordId || r.recordId || r.id) !== rId);
+          localStorage.setItem('jh_quest_local_history', JSON.stringify(localRecords));
+        }
+
+        if (typeof showToast === 'function') {
+          showToast('🗑️ 測驗紀錄已成功刪除！', 'success');
+        }
+        await loadMyHistory();
+      } catch (err) {
+        console.error('刪除測驗紀錄失敗:', err);
+        if (typeof showToast === 'function') {
+          showToast('⚠️ 刪除失敗：' + (err.message || '請稍後再試'), 'error');
+        }
+      }
+    }
+    window.deletePersonalRecord = deletePersonalRecord;
+
+    /**
+     * 一鍵清空所有個人測驗紀錄
+     */
+    async function confirmClearAllHistory() {
+      const records = appState.personalRecords || [];
+      if (!records || records.length === 0) {
+        if (typeof showToast === 'function') {
+          showToast('目前沒有可清空的測驗紀錄！', 'info');
+        }
+        return;
+      }
+
+      const confirmed = window.confirm(`⚠️ 確定要清空所有的測驗紀錄嗎？\n共 ${records.length} 筆紀錄將同時自本機快取與雲端 Firestore 永久刪除，無法復原！`);
+      if (!confirmed) return;
+
+      try {
+        if (window.FirebaseService) {
+          await window.FirebaseService.clearAllAssessmentRecords(appState.currentUser);
+        } else {
+          localStorage.removeItem('jh_quest_local_history');
+        }
+
+        if (typeof showToast === 'function') {
+          showToast('🗑️ 已成功清空所有測驗歷程紀錄！', 'success');
+        }
+        await loadMyHistory();
+      } catch (err) {
+        console.error('清空測驗歷程失敗:', err);
+        if (typeof showToast === 'function') {
+          showToast('⚠️ 清空失敗：' + (err.message || '請稍後再試'), 'error');
+        }
+      }
+    }
+    window.confirmClearAllHistory = confirmClearAllHistory;
 
     // --- Admin Dashboard View ---
     async function loadAdminDashboard() {
@@ -4195,14 +4275,49 @@
             <td class="px-4 py-3 text-center font-black ${r.rank === 'S' ? 'text-amber-400' : 'text-slate-300'}">${r.rank || 'B'}</td>
             <td class="px-4 py-3 text-xs text-slate-400 font-mono">${dateStr}</td>
             <td class="px-4 py-3 text-center">
-              <button type="button" onclick="openRecordDetailModal('admin', ${idx})" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-amber-300">
-                查看作答
-              </button>
+              <div class="flex items-center justify-center gap-1.5">
+                <button type="button" onclick="openRecordDetailModal('admin', ${idx})" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-amber-300 transition-colors">
+                  查看作答
+                </button>
+                <button type="button" onclick="deleteAdminRecord(${idx})" class="px-2.5 py-1 rounded-lg bg-rose-950/40 hover:bg-rose-900 border border-rose-800/60 text-xs font-semibold text-rose-300 hover:text-white transition-colors" title="管理者刪除此筆學員紀錄">
+                  🗑️ 刪除
+                </button>
+              </div>
             </td>
           </tr>
         `;
       }).join('');
     }
+
+    /**
+     * 管理者刪除指定學員之測驗紀錄
+     */
+    async function deleteAdminRecord(idx) {
+      const records = appState.adminRecords || [];
+      const record = records[idx];
+      if (!record) return;
+
+      const userName = record.userName || '未知學員';
+      const title = record.title || '一般測驗';
+      const confirmed = window.confirm(`👑 管理者操作確認：\n確定要刪除學員「${userName}」的「${title}」測驗紀錄嗎？\n（此動作將自雲端資料庫永久刪除）`);
+      if (!confirmed) return;
+
+      try {
+        if (window.FirebaseService) {
+          await window.FirebaseService.deleteAssessmentRecord(record, appState.currentUser);
+        }
+        if (typeof showToast === 'function') {
+          showToast(`🗑️ 已成功刪除 ${userName} 的測驗紀錄！`, 'success');
+        }
+        await loadAdminDashboard();
+      } catch (err) {
+        console.error('管理者刪除紀錄失敗:', err);
+        if (typeof showToast === 'function') {
+          showToast('⚠️ 刪除失敗：' + (err.message || '請稍後再試'), 'error');
+        }
+      }
+    }
+    window.deleteAdminRecord = deleteAdminRecord;
 
     function exportAdminRecordsToCSV() {
       const records = appState.adminRecords;
@@ -4350,7 +4465,7 @@
       }
       const adminEmails = adminStr ? adminStr.split(',').map(s => s.trim().toLowerCase()).filter(Boolean) : [];
       if (window.FirebaseService) {
-        window.FirebaseService.saveCustomConfig(firebaseObj, adminEmails);
+        window.FirebaseService.saveCustomConfig(firebaseObj, adminEmails, appState.currentUser);
         showToast('☁️ Firebase 雲端設定已儲存！請嘗試點選「Google 登入」', 'success');
         closeGeminiKeyModal();
         setTimeout(() => window.location.reload(), 800);
