@@ -366,6 +366,8 @@
       // 3. 回填當前帳號與管理者狀態
       const user = (window.appState && window.appState.currentUser) || null;
       if (curEmailEl) curEmailEl.textContent = user ? user.email : "尚未登入 (請先點選右上角 Google 登入)";
+      const settingsLogoutBtn = document.getElementById("btnSettingsLogout");
+      if (settingsLogoutBtn) settingsLogoutBtn.style.display = user ? "inline-flex" : "none";
       if (adminStatEl) {
         const isAdmin = window.appState ? window.appState.isAdmin : (window.FirebaseService && window.FirebaseService.isAdmin ? window.FirebaseService.isAdmin(user) : false);
         adminStatEl.textContent = isAdmin ? "👑 管理員 (已獲授權)" : "一般學員 (可點下方按鈕授權)";
@@ -554,7 +556,9 @@
             <button type="button" id="btnClaimAdmin" onclick="claimAdminRole()" class="hidden px-2 py-0.5 rounded-md bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[10px] font-bold transition-all" title="將此 Google 帳號設為管理員">
               👑 設管理員
             </button>
-            <button type="button" onclick="handleGoogleLogout()" class="text-slate-400 hover:text-rose-400 text-xs ml-1" title="登出">✕</button>
+            <button type="button" id="btnNavLogout" onclick="handleGoogleLogout()" class="px-2 py-1 rounded-lg bg-rose-950/40 hover:bg-rose-900/80 border border-rose-800/60 text-rose-300 hover:text-white text-[11px] font-bold flex items-center gap-1 transition-all ml-1 shadow-sm" title="登出 Google 帳號">
+              <span>🚪</span> <span>登出</span>
+            </button>
           </div>
         </div>
       </div>
@@ -1393,6 +1397,9 @@
             <button type="button" onclick="confirmClearAllHistory()" class="px-3.5 py-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/70 border border-rose-800/60 text-xs font-bold text-rose-300 hover:text-white flex items-center gap-1.5 transition-all">
               <span>🗑️</span> <span>清空所有紀錄</span>
             </button>
+            <button type="button" id="btnHistoryLogout" onclick="handleGoogleLogout()" class="px-3.5 py-2 rounded-xl bg-slate-800/80 hover:bg-rose-950/60 border border-slate-700 hover:border-rose-800/80 text-xs font-bold text-slate-300 hover:text-rose-300 flex items-center gap-1.5 transition-all" title="登出當前 Google 帳號">
+              <span>🚪</span> <span>登出帳號</span>
+            </button>
           </div>
         </div>
 
@@ -1614,9 +1621,12 @@
               <span class="text-xs font-bold text-slate-300">目前管理員狀態：</span>
               <span id="settingsAdminStatusText" class="text-xs font-bold text-slate-400">一般學員</span>
             </div>
-            <div class="pt-1">
-              <button type="button" onclick="claimAdminRole(); closeGeminiKeyModal();" class="w-full py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black text-xs shadow-md transition-all active:scale-95">
-                👑 一鍵將【目前登入帳號】設為管理員
+            <div class="pt-1 flex items-center gap-2">
+              <button type="button" onclick="claimAdminRole(); closeGeminiKeyModal();" class="flex-1 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black text-xs shadow-md transition-all active:scale-95">
+                👑 一鍵設為管理員
+              </button>
+              <button type="button" id="btnSettingsLogout" onclick="handleGoogleLogout(); closeGeminiKeyModal();" class="py-2 px-3 rounded-xl bg-rose-950/50 hover:bg-rose-900 border border-rose-800/80 text-rose-300 hover:text-white font-bold text-xs transition-all active:scale-95 flex items-center gap-1" title="登出目前 Google 帳號">
+                <span>🚪</span> <span>登出</span>
               </button>
             </div>
           </div>
@@ -3951,12 +3961,28 @@
     }
 
     async function handleGoogleLogout() {
+      const email = appState.currentUser?.email || '';
+      const confirmMsg = email ? `確定要登出 Google 帳號「${email}」嗎？` : '確定要登出 Google 帳號嗎？';
+      const confirmed = window.confirm(confirmMsg);
+      if (!confirmed) return;
+
       playSoundEffect('click');
-      if (window.FirebaseService) {
-        await window.FirebaseService.logout();
+      try {
+        if (window.FirebaseService) {
+          await window.FirebaseService.logout();
+        }
+      } catch (err) {
+        console.warn('Firebase logout 警告:', err);
       }
+
       await applyUserLoggedIn(null, false);
-      showToast('👋 已安全登出 Google 帳號', 'info');
+
+      // 若當前在導師管理後台，登出後自動切回測驗大廳
+      if (appState.currentTab === 'admin') {
+        switchTab('hub');
+      }
+
+      showToast('👋 已安全登出 Google 帳號！', 'info');
     }
 
     function initAuthListener() {
