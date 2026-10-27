@@ -385,8 +385,11 @@ export class FirebaseService {
         if (recCloudId && (recCloudId === exId || recCloudId === existing.cloudDocId)) return true;
         if (exCloudId && (exCloudId === recId || exCloudId === record.cloudDocId)) return true;
 
-        // 3. 內容特徵指紋匹配 (同標題、同科目、同得分、同總題數，且作答時間誤差在 120 秒內)
+        // 3. 內容特徵指紋匹配 (僅限「同一位學員」同標題、同科目、同得分、同總題數，且作答時間誤差在 120 秒內)
+        const isSameUser = (existing.userId && record.userId && existing.userId === record.userId) ||
+                           (existing.userEmail && record.userEmail && existing.userEmail.toLowerCase().trim() === record.userEmail.toLowerCase().trim());
         if (
+          isSameUser &&
           existing.title === record.title &&
           existing.subject === record.subject &&
           Number(existing.score) === Number(record.score) &&
@@ -781,6 +784,10 @@ export class FirebaseService {
             id: docSnap.id,
             cloudDocId: docSnap.id,
             ...d,
+            userEmail: d.userEmail || d.email || '',
+            userName: d.userName || d.displayName || d.name || d.userEmail || d.email || '勇者學員',
+            userId: d.userId || d.uid || '',
+            userPhoto: d.userPhoto || d.photoURL || '',
             createdAtDate: parsedIso || new Date().toISOString()
           };
         });

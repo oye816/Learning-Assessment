@@ -4237,6 +4237,7 @@
         document.getElementById('adminStatAvgAccuracy').textContent = `${avgAcc}%`;
         document.getElementById('adminStatRewards').textContent = `+${totalExp} EXP`;
 
+        console.log(`📊 導師後台已載入 ${records.length} 筆全員紀錄，包含學員信箱:`, records.map(r => r.userEmail || r.email));
         renderFilteredAdminRecords(records);
       } catch (err) {
         let msg = err.message || '';
@@ -4257,6 +4258,7 @@
         filtered = filtered.filter(r => 
           (r.userName && r.userName.toLowerCase().includes(keyword)) ||
           (r.userEmail && r.userEmail.toLowerCase().includes(keyword)) ||
+          (r.email && r.email.toLowerCase().includes(keyword)) ||
           (r.title && r.title.toLowerCase().includes(keyword))
         );
       }
@@ -4281,7 +4283,9 @@
       tbody.innerHTML = records.map((r, idx) => {
         const dateStr = r.createdAtDate ? new Date(r.createdAtDate).toLocaleString('zh-TW', { hour12: false }) : '未知';
         const subMeta = SUBJECT_META[r.subject] || { name: '綜合領域', icon: '⚔️' };
-        const avatar = r.userPhoto || 'https://api.dicebear.com/7.x/bottts/svg?seed=' + encodeURIComponent(r.userName || 'user');
+        const studentEmail = r.userEmail || r.email || '';
+        const studentName = r.userName || r.displayName || studentEmail.split('@')[0] || '未知學員';
+        const avatar = r.userPhoto || r.photoURL || 'https://api.dicebear.com/7.x/bottts/svg?seed=' + encodeURIComponent(studentName);
 
         return `
           <tr class="hover:bg-slate-900/60 transition-colors">
@@ -4289,8 +4293,8 @@
               <div class="flex items-center gap-2">
                 <img src="${avatar}" class="w-6 h-6 rounded-full border border-slate-700 object-cover" />
                 <div>
-                  <div class="font-bold text-white">${r.userName || '未知學員'}</div>
-                  <div class="text-[10px] text-slate-400 font-mono">${r.userEmail || ''}</div>
+                  <div class="font-bold text-white">${studentName}</div>
+                  <div class="text-[10px] text-slate-400 font-mono">${studentEmail}</div>
                 </div>
               </div>
             </td>
