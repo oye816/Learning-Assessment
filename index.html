@@ -1468,6 +1468,22 @@
           </div>
         </div>
 
+        <!-- Admin Team Quick Overview Banner -->
+        <div class="mt-4 p-3.5 rounded-2xl bg-slate-900/90 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="flex items-start sm:items-center gap-2.5">
+            <span class="text-lg">👑</span>
+            <div>
+              <div class="text-xs font-bold text-amber-300">導師管理團隊（已獲權限管理者，彼此互見並共享後台）：</div>
+              <div id="adminTeamBadgesContainer" class="flex flex-wrap items-center gap-1.5 mt-1.5">
+                <span class="text-[11px] text-slate-500">載入管理員團隊中...</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-[11px] text-slate-400 self-start sm:self-center">
+            💡 點選任一管理員信箱可快速檢視其評量作答
+          </div>
+        </div>
+
         <!-- Admin Overview Metrics Cards -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-5">
           <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 text-center">
@@ -1636,7 +1652,7 @@
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-300 mb-1">管理者 Google 帳號清單 (以逗號分隔)：</label>
-            <input type="text" id="inputCustomAdminEmails" placeholder="oye816@gmail.com, teacher@example.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-violet-400" />
+            <input type="text" id="inputCustomAdminEmails" placeholder="admin@example.com, teacher@example.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-violet-400" />
             <small class="text-[10px] text-slate-400">登入符合信箱的使用者將自動解鎖「👑 導師管理後台」，並自動同步至 Firestore <code class="text-emerald-400 font-mono">system_admins</code> 雲端集合動態授權。</small>
           </div>
           <div class="flex items-center justify-end gap-2 pt-2">
@@ -4238,6 +4254,22 @@
         document.getElementById('adminStatRewards').textContent = `+${totalExp} EXP`;
 
         console.log(`📊 導師後台已載入 ${records.length} 筆全員紀錄，包含學員信箱:`, records.map(r => r.userEmail || r.email));
+
+        // 渲染導師管理團隊名單標籤，確保管理員彼此互見
+        if (window.FirebaseService && typeof window.FirebaseService.fetchCloudAdminList === 'function') {
+          window.FirebaseService.fetchCloudAdminList().then(admins => {
+            const container = document.getElementById('adminTeamBadgesContainer');
+            if (container && Array.isArray(admins)) {
+              container.innerHTML = admins.map(email => {
+                const isCur = appState.currentUser?.email?.toLowerCase() === email.toLowerCase();
+                return `<button type="button" onclick="quickFilterAdminByEmail('${escapeHtml(email)}')" class="px-2.5 py-1 rounded-xl ${isCur ? 'bg-amber-500 text-slate-950 font-black' : 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40'} text-xs font-mono transition-all flex items-center gap-1 shadow-sm active:scale-95" title="點擊檢視 ${escapeHtml(email)} 的評量紀錄">
+                  <span>${isCur ? '👑 您' : '👑'}</span> <span>${escapeHtml(email)}</span>
+                </button>`;
+              }).join('');
+            }
+          });
+        }
+
         renderFilteredAdminRecords(records);
       } catch (err) {
         let msg = err.message || '';
@@ -4247,6 +4279,16 @@
         tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-rose-400 font-medium">讀取失敗：${escapeHtml(msg)}</td></tr>`;
       }
     }
+
+    function quickFilterAdminByEmail(email) {
+      const searchInput = document.getElementById('adminSearchKeyword');
+      if (searchInput) {
+        searchInput.value = email;
+        filterAdminRecords();
+        searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+    window.quickFilterAdminByEmail = quickFilterAdminByEmail;
 
     function filterAdminRecords() {
       const keyword = (document.getElementById('adminSearchKeyword').value || '').trim().toLowerCase();
@@ -4286,6 +4328,8 @@
         const studentEmail = r.userEmail || r.email || '';
         const studentName = r.userName || r.displayName || studentEmail.split('@')[0] || '未知學員';
         const avatar = r.userPhoto || r.photoURL || 'https://api.dicebear.com/7.x/bottts/svg?seed=' + encodeURIComponent(studentName);
+        const isAdminStudent = window.FirebaseService ? window.FirebaseService.isAdmin({ email: studentEmail }) : false;
+        const roleBadge = isAdminStudent ? '<span class="px-1.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[9px] font-black ml-1.5 inline-flex items-center gap-0.5"><span>👑</span><span>導師</span></span>' : '';
 
         return `
           <tr class="hover:bg-slate-900/60 transition-colors">
@@ -4293,7 +4337,7 @@
               <div class="flex items-center gap-2">
                 <img src="${avatar}" class="w-6 h-6 rounded-full border border-slate-700 object-cover" />
                 <div>
-                  <div class="font-bold text-white">${studentName}</div>
+                  <div class="font-bold text-white flex items-center">${studentName} ${roleBadge}</div>
                   <div class="text-[10px] text-slate-400 font-mono">${studentEmail}</div>
                 </div>
               </div>

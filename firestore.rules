@@ -3,14 +3,9 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     // 💡 系統管理員動態判斷函式：
-    // 符合下列任一條件即具備管理員權限：
-    // 1. 最高超級管理員信箱 (oye816@gmail.com 保底)
-    // 2. 登記於 system_admins 雲端動態集合中的授權信箱
+    // 凡登記於 system_admins 雲端動態集合中的授權信箱即具備管理員權限
     function isAdmin() {
       return request.auth != null && (
-        request.auth.token.email in [
-          "oye816@gmail.com"
-        ] ||
         exists(/databases/$(database)/documents/system_admins/$(request.auth.token.email.lower()))
       );
     }

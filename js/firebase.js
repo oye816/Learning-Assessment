@@ -162,16 +162,21 @@ export class FirebaseService {
       const snap = await getDocs(collection(db, "system_admins"));
       if (!snap.empty) {
         snap.docs.forEach(docSnap => {
-          const mail = (docSnap.id ? docSnap.id : (docSnap.data()?.email || '')).toLowerCase().trim();
-          if (mail) this._cloudAdminsCache.add(mail);
+          const d = docSnap.data() || {};
+          const candidates = [docSnap.id, d.email, d.userEmail, d.adminEmail];
+          for (const c of candidates) {
+            if (typeof c === 'string' && c.includes('@')) {
+              this._cloudAdminsCache.add(c.toLowerCase().trim());
+            }
+          }
         });
-        // 雙重安全快取至 localStorage
-        try {
-          const localAdmins = JSON.parse(localStorage.getItem('jh_quest_admin_emails') || '[]');
-          const merged = Array.from(new Set([...localAdmins, ...Array.from(this._cloudAdminsCache)]));
-          localStorage.setItem('jh_quest_admin_emails', JSON.stringify(merged));
-        } catch (e) {}
       }
+      // 雙重安全快取至 localStorage
+      try {
+        const localAdmins = JSON.parse(localStorage.getItem('jh_quest_admin_emails') || '[]');
+        const merged = Array.from(new Set([...localAdmins, ...Array.from(this._cloudAdminsCache)]));
+        localStorage.setItem('jh_quest_admin_emails', JSON.stringify(merged));
+      } catch (e) {}
     } catch (err) {
       console.debug("讀取雲端 system_admins 狀態:", err.message);
     }
@@ -272,10 +277,7 @@ export class FirebaseService {
     if (!user || !user.email) return false;
     const email = user.email.toLowerCase().trim();
     
-    // 1. 始祖超級管理員預設名單保底
-    if (email === 'oye816@gmail.com') return true;
-
-    // 2. 檢查雲端動態管理員快取 (system_admins)
+    // 1. 檢查雲端動態管理員快取 (system_admins 集合)
     if (this._cloudAdminsCache.has(email)) return true;
 
     // 3. 檢查 APP_CONFIG
