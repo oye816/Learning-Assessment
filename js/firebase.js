@@ -758,38 +758,47 @@ export class FirebaseService {
 
     let cloudList = [];
     try {
+      // 為避免 Firestore orderBy("createdAt") 自動忽略缺少 createdAt 欄位的文件，
+      // 這裡直接拉取 assessment_records 集合全量文件，並由客戶端進行容錯排序
       let snap;
       try {
-        const q = query(
-          collection(db, "assessment_records"),
-          orderBy("createdAt", "desc")
-        );
+        const q = collection(db, "assessment_records");
         snap = await getDocs(q);
-      } catch (orderErr) {
-        console.warn("無法以 createdAt 排序讀取全體紀錄，改用無排序查詢:", orderErr.message);
-        const fallbackQ = collection(db, "assessment_records");
-        snap = await getDocs(fallbackQ);
+      } catch (collErr) {
+        // 若集合讀取失敗，拋出具體錯誤（不靜默吞掉，確保 UI 能提示權限狀態）
+        console.error("Firestore assessment_records 集合讀取失敗:", collErr);
+        throw collErr;
       }
 
       if (snap && !snap.empty) {
-        cloudList = snap.docs.map(doc => {
-          const d = doc.data();
+        cloudList = snap.docs.map(docSnap => {
+          const d = docSnap.data();
+          let parsedIso = d.createdAtDate;
+          if (d.createdAt && typeof d.createdAt.toDate === 'function') {
+            try { parsedIso = d.createdAt.toDate().toISOString(); } catch (e) {}
+          }
           return {
-            id: doc.id,
-            cloudDocId: doc.id,
+            id: docSnap.id,
+            cloudDocId: docSnap.id,
             ...d,
-            createdAtDate: d.createdAt?.toDate ? d.createdAt.toDate().toISOString() : (d.createdAtDate || new Date().toISOString())
+            createdAtDate: parsedIso || new Date().toISOString()
           };
+        });
+
+        // 客戶端統一降序排序 (最新測驗排在最前，兼顧 Timestamp 與 ISO 字串)
+        cloudList.sort((a, b) => {
+          const tA = new Date(a.createdAtDate || 0).getTime();
+          const tB = new Date(b.createdAtDate || 0).getTime();
+          return tB - tA;
         });
       }
     } catch (err) {
-      console.warn("雲端讀取全體紀錄失敗，降級使用本機紀錄:", err);
-      if (localRecords.length === 0) {
-        throw err;
-      }
+      console.error("雲端全員資料庫讀取失敗:", err);
+      // 若為權限不足或雲端異常，直接向上拋出，讓後台介面顯示正確的診斷指引
+      throw new Error(`無法載入雲端全員紀錄 (${err.code || err.message})。若顯示權限不足，請確認 Firebase Console 的 firestore.rules 規則已部署，且您的信箱已加入 system_admins 或管理員清單。`);
     }
 
-    // 2. 整合雲端全員資料與本機紀錄（雙軌去重融合，確保即時呈現在管理後台）
+    // 2. 整合雲端全員資料與本機紀錄（雙軌去重融合）
     return this.deduplicateRecords([...cloudList, ...localRecords]);
   }
 
